@@ -1,0 +1,23 @@
+.node circle {
+  fill: #159;
+  r: 12;
+}
+.node text {
+  font: 12px sans-serif;
+  font-family: Arial;
+}
+.node--internal circle {
+  fill: #33f;
+}
+.node-title {
+  font-family: Arial, Verdana;
+}
+.link {
+  fill: none;
+  stroke: #555;
+  stroke-opacity: 0.4;
+  stroke-width: 2.0px;
+}
+.node {
+  stroke: #fff;
+}

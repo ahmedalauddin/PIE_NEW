@@ -1,0 +1,96 @@
+{
+  "root": true,
+  "env": {
+    "es6": true,
+    "browser": true,
+    "node": false,
+    "commonjs": true,
+    "shared-node-browser": false,
+    "worker": false,
+    "amd": false,
+    "mocha": false,
+    "jasmine": false,
+    "jest": true,
+    "phantomjs": false,
+    "protractor": false,
+    "qunit": false,
+    "jquery": false,
+    "prototypejs": false,
+    "shelljs": false,
+    "meteor": false,
+    "mongo": false,
+    "applescript": false,
+    "nashorn": false,
+    "serviceworker": false,
+    "atomtest": false,
+    "embertest": false,
+    "webextensions": true,
+    "greasemonkey": false
+  },
+  "plugins": [
+    "html",
+    "prettier",
+    "import",
+    "react",
+    "jsx-a11y",
+    "jest",
+    "json",
+    "jsx-control-statements",
+    "eslint-comments",
+    "filenames",
+    "sort-class-members"
+  ],
+  "parser": "babel-eslint",
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true,
+      "globalReturn": true,
+      "impliedStrict": true
+    }
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "prettier/react",
+    "prettier/standard",
+    "plugin:import/errors",
+    "plugin:import/warnings",
+    "plugin:prettier/recommended",
+    "plugin:jsx-control-statements/recommended"
+  ],
+  "settings": {
+    "react": {
+      "pragma": "React",
+      "version": "detect"
+    }
+  },
+  "overrides": [
+    {
+      "files": ["*.test.js"],
+      "rules": {
+        "no-unused-expressions": "off"
+      }
+    }
+  ],
+  "rules": {
+    "consistent-return": 2,
+    "semi": ["error", "always"],
+    "indent": ["warn", 2],
+    "quotes": "warn",
+    "no-invalid-this": "warn",
+    "no-console": "warn",
+    "html/indent": "+2",
+    "prettier/prettier": "warn",
+    "react/jsx-indent": ["warn", 2],
+    "react/jsx-indent-props": ["error", 2],
+    "react/jsx-no-undef": [
+      "warn",
+      {
+        "allowGlobals": true
+      }
+    ],
+    "react/prop-types": "warn"
+  }
+}

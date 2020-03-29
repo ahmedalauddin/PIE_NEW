@@ -1,0 +1,28 @@
+{
+  "env": "test",
+  "db": {
+    "user": "viadmin",
+    "password": "chary-offshoot-which",
+    "name": "mvptest",
+    "host": "valueinfinity2.cgrq1bgu4ual.us-east-2.rds.amazonaws.com",
+    "dialect": "mysql"
+  },
+  "log": {
+    "level": "debug",
+    "debugNamespaces": "",
+    "outputs": {
+      "std": {
+        "active": true,
+        "path": "/var/log/valueinfinity-mvp/std.test.log"
+      },
+      "error": {
+        "active": true,
+        "path": "/var/log/valueinfinity-mvp/err.test.log"
+      },
+      "console": {
+        "active": true,
+        "handleExceptions": true
+      }
+    }
+  }
+}

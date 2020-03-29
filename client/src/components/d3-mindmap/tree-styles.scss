@@ -1,0 +1,25 @@
+.tree-chart {
+  .tree-chart__node {
+    circle {
+      fill: #999;
+    }
+  }
+
+  .tree-chart__node--internal {
+    circle {
+      fill: gray;
+    }
+  }
+
+  .tree-chart__link {
+    fill: none;
+    stroke: gray;
+    stroke-opacity: 0.4;
+    stroke-width: 1.5px;
+  }
+}
+
+.scrollable {
+  overflow: scroll;
+  max-height: 45rem;
+}

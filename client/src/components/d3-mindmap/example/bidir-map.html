@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div>
+    <svg width="800" height="1000" />
+    <script type="text/javascript" src="http://d3js.org/d3.v4.min.js"></script>
+    <script type="text/javascript">
+      var treeData = {
+        "id": "_ns1nvi0ai",
+        "name": "Coffee",
+        "children": [{
+          "name": "Tastessdf",
+          "id": "_o4r47dq71",
+          "children": [{"name": "Sour", "id": "_ntwl2sk1h"}, {"name": "", "id": "_deg0e0a7q"}, {
+            "name": "",
+            "id": "_ma3e6bdsh"
+          }, {"name": "", "id": "_qv0dy0v8n"}, {"name": "", "id": "_w2v06wwan"}, {
+            "name": "",
+            "id": "_al6om6znz",
+            "children": [{"name": "dfsfsdfdf", "id": "_r46knsls0"}]
+          }, {"name": "", "id": "_7uf3wuu6z"}, {"name": "", "id": "_hhj5294tg"}]
+        }, {
+          "name": "Aromas",
+          "id": "_46ct4o4oy",
+          "children": [{
+            "name": "Fruity",
+            "id": "_gasoodmjs",
+            "children": [{"name": "", "id": "_gj1v51emb"}, {"name": "", "id": "_b0dvexp77"}]
+          }, {"name": "", "id": "_mzpk2x77k"}, {
+            "name": "",
+            "id": "_fhxng92of",
+            "children": [{"name": "", "id": "_2xtrznvc9"}]
+          }]
+        }, {
+          "name": "Red\u0026lt;div\u0026gt;\u0026lt;br\u0026gt;\u0026lt;/div\u0026gt;",
+          "id": "_ea00nojwy",
+          "children": [{"name": "", "id": "_y1wteasyx"}]
+        }, {"name": "", "id": "_z3uk0721f"}, {"name": "", "id": "_vkwj53r0p"}, {
+          "name": "",
+          "id": "_pzxe7589x"
+        }, {"name": "", "id": "_uajrljib9"}, {"name": "", "id": "_9uogvlurc"}, {
+          "name": "",
+          "id": "_jtbc3g08c"
+        }, {"name": "", "id": "_uguzpgdta"}, {"name": "", "id": "_f99zlqhbs"}, {"name": "", "id": "_rov9nknna"}]
+      };
+
+      chart = () => {
+        // Create the SVG
+        // As you an see, the svg is initialized with height = dx.
+        // This will be updated later when the rest of the nodes in the tree are entered.v
+        var j = 3;
+        var svg = d3.select("svg")
+          .attr("width", width)
+          .attr("height", dx)
+          .style("font", "1rem sans-serif")
+          .on("click", handleClickOnCanvas);
+
+        // 2.1 Create a container for all the nodes in the graph
+        var gNode =
+        svg
+          .append("g")
+          .attr('id', 'nodes')
+          .attr("cursor", "pointer");
+
+        // 2.2 Create a container for all the links in the graph
+        var gLink =
+        svg
+          .append("g")
+          .attr('id', 'links')
+          .attr("fill", "none")
+          .attr("stroke", "#555")
+          .attr("stroke-opacity", 0.4)
+          .attr("stroke-width", 1.5);
+
+        // 3. Fill in the nodes and links with the hierarchy data
+        update(svg);
+
+        // 4. Register other event handlers
+        d3.select('body')
+        .on("keydown", function (e) {
+          console.log(`keydown: ${d3.event.keyCode}`);
+          // Check to see if a node is being edited
+          let nodeIsBeingEdited = gNode.select('g.node-editing').size();
+
+          if (d3.event.keyCode == 9) {
+            console.log("tab - append child to selected node");
+            appendChildToSelectedNode(svg);
+          } else if (d3.event.keyCode == 13 && !nodeIsBeingEdited) {
+            console.log("enter - add sibling to selected node");
+            addSiblingToSelectedNode(svg);
+          } else if (d3.event.keyCode == 8 && !nodeIsBeingEdited) {
+            console.log("delete - remove selected node");
+            removeSelectedNode(svg);
+          } else if (d3.event.keyCode == 27) {
+            console.log("esc - deselect node");
+            handleKeypressEsc(svg);
+          }
+        });
+
+      return svg.node();
+      }
+
+
+      update = (svg) => {
+
+        // d3.hierarchy object is a data structure that represents a hierarchy
+        // It has a number of functions defined on it for retrieving things like
+        // ancestor, descendant, and leaf nodes, and for computing the path between nodes
+        // const root = d3.hierarchy(treeData);
+        const root = d3.hierarchy(treeData);
+
+        root.x0 = dy / 2;
+        root.y0 = 0;
+
+        // console.log(root)
+        // console.log(root.descendants())
+
+        root.descendants().forEach((d, i) => {
+          // console.log(d)
+          // console.log(i)
+          d.id = d.data.id;
+          d._children = d.children;
+        });
+
+        const duration = 100;
+        const nodes = root.descendants().reverse();
+        const links = root.links();
+
+        // Compute the new tree layout.
+        tree(root);
+
+        let left = root;
+        let right = root;
+        root.eachBefore(node => {
+          if (node.x < left.x) left = node;
+          if (node.x > right.x) right = node;
+        });
+
+        const height = right.x - left.x + margin.top + margin.bottom;
+
+        const transition =
+          svg
+            .transition()
+            .duration(duration)
+            .attr("height", height)
+            .attr("viewBox", [-margin.left, left.x - margin.top, width, height])
+            .tween("resize", window.ResizeObserver ? null : () => () => svg.dispatch("toggle"));
+
+        // Update the nodes
+        const existingNodeContainers = svg.select('#nodes').selectAll("g").data(nodes, d => d.id);
+
+        // Enter any new nodes at the parent's previous position.
+        // Create new node containers that each contains a circle and a text label
+        const newNodeContainers = existingNodeContainers.enter().append("g")
+          .attr('id', (d, i) => `${d.id}`)
+          .attr('class', 'node')
+          .attr("transform", d => `translate(${root.y0},${root.x0})`)
+          .attr("fill-opacity", 0)
+          .attr("stroke-opacity", 0);
+
+
+        newNodeContainers.append("circle")
+          .attr("r", 2)
+          .attr("fill", d => d._children ? "#555" : "#999");
+
+        newNodeContainers.append('foreignObject')
+          .attr('x', -50)
+          .attr('y', -35)
+          .attr('width', 80)
+          .attr('height', 40)
+          .append("xhtml:p")
+          .text(d => d.data.name);
+
+        existingNodeContainers.merge(newNodeContainers)
+          .on("click", handleClickOnNode);
+        // Transition nodes to their new position.
+        // Increase opacity from 0 to 1 during transition
+        const nodeUpdate = existingNodeContainers.merge(newNodeContainers).transition(transition)
+          .attr("transform", d => `translate(${d.y},${d.x})`)
+          .attr("fill-opacity", 1)
+          .attr("stroke-opacity", 1);
+
+        // Transition exiting nodes to the parent's new position.
+        // Reduce opacity from 1 to 0 during transition
+        const nodeExit = existingNodeContainers.exit().transition(transition).remove()
+          .attr("transform", d => `translate(${root.y},${root.x})`)
+          .attr("fill-opacity", 0)
+          .attr("stroke-opacity", 0);
+
+
+        // Update the links…
+        const existingLinkPaths = svg.select('#links').selectAll("path").data(links, d => d.target.id);
+
+        // Enter any new links at the parent's previous position.
+        const newLinkPaths = existingLinkPaths.enter().append("path")
+          .attr("d", d => {
+            const o = {x: root.x0, y: root.y0};
+            return diagonal({source: o, target: o});
+          });
+
+        // Transition links to their new position.
+        existingLinkPaths.merge(newLinkPaths).transition(transition)
+          .attr("d", diagonal);
+
+        // Transition exiting nodes to the parent's new position.
+        existingLinkPaths.exit().transition(transition).remove()
+          .attr("d", d => {
+            const o = {x: root.x, y: root.y};
+            return diagonal({source: o, target: o});
+          });
+
+        // Stash the old positions for transition.
+        root.eachBefore(d => {
+          d.x0 = d.x;
+          d.y0 = d.y;
+        });
+      };
+      removeSelectedNode = (svg) => {
+
+        let idOfSelectedNode = svg
+          .selectAll('g.node')
+          .filter(".node-selected")
+          .attr('id');
+
+        // console.log(idOfSelectedNode)
+
+        let parentNodes = [treeData];
+        let nodeFound = false;
+        let parent;
+
+        while (parentNodes.length != 0) {
+          let allNextLevelParents = [];
+          for (let node of parentNodes) {
+            if (node.children) {
+              allNextLevelParents = allNextLevelParents.concat(node.children);
+              if (node.children.map(child => child.id).includes(idOfSelectedNode)) {
+                nodeFound = true;
+                parent = node;
+              }
+            }
+          }
+          if (nodeFound) break;
+          else {
+            parentNodes = allNextLevelParents;
+          }
+        }
+
+        parent.children = parent.children.filter(child => child.id !== idOfSelectedNode);
+
+        parent.children.length === 0 && delete parent.children;
+
+        update(svg);
+
+        updateJSONOnServer();
+      };
+
+      appendChildToSelectedNode = (svg) => {
+
+        let idOfSelectedNode = svg
+          .selectAll('g.node')
+          .filter(".node-selected")
+          .attr('id');
+
+        // console.log(idOfSelectedNode)
+
+        let nodeInTree = [treeData];
+
+        let nodeFound = false;
+        let parent;
+
+        while (nodeInTree.length != 0) {
+          let allCurrentLevelChildren = [];
+          for (let node of nodeInTree) {
+            if (node.children) {
+              allCurrentLevelChildren = allCurrentLevelChildren.concat(node.children);
+            }
+            if (node.id === idOfSelectedNode) {
+              nodeFound = true;
+              parent = node;
+            }
+          }
+          if (nodeFound) break;
+          else {
+            nodeInTree = allCurrentLevelChildren;
+          }
+        }
+
+        let child = {
+          name: '',
+          id: ID()
+        };
+
+        if (parent.children) parent.children.push(child);
+        else parent.children = [child];
+
+        update(svg);
+
+        updateJSONOnServer();
+      };
+      addSiblingToSelectedNode = (svg) => {
+
+        let idOfSelectedNode = svg
+          .selectAll('g.node')
+          .filter(".node-selected")
+          .attr('id');
+
+        // console.log(idOfSelectedNode)
+
+        let parentNodes = [treeData];
+        let nodeFound = false;
+        let parent;
+
+        while (parentNodes.length != 0) {
+          let allNextLevelParents = [];
+          for (let node of parentNodes) {
+            if (node.children) {
+              allNextLevelParents = allNextLevelParents.concat(node.children);
+              if (node.children.map(child => child.id).includes(idOfSelectedNode)) {
+                nodeFound = true;
+                parent = node;
+              }
+            }
+          }
+          if (nodeFound) break;
+          else {
+            parentNodes = allNextLevelParents;
+          }
+        }
+
+        let child = {
+          name: '',
+          id: ID()
+        };
+
+        parent.children.push(child);
+
+        update(svg);
+
+        updateJSONOnServer();
+      };
+
+      handleKeypressEsc = (svg) => {
+        svg
+          .selectAll('g.node')
+          .filter(".node-selected")
+          .each(deselectNode);
+      };
+
+      handleClickOnNode = (d, i, nodes) => {
+
+        const currentlySelectedNode =
+          d3.selectAll(nodes)
+            .filter('.node-selected');
+
+        const clickedNodeIndex = i;
+        const clickedNode = nodes[clickedNodeIndex];
+        const clickedNodeID = d3.select(clickedNode).attr('id');
+        const otherNodes =
+          d3.selectAll(nodes)
+            .filter((d, i) => i !== clickedNodeIndex);
+
+        if (currentlySelectedNode.size() > 0 && currentlySelectedNode.attr('id') === clickedNodeID) {
+          console.log('going into editing mode!');
+          d3.select(clickedNode)
+            .call(editNode);
+        } else {
+
+          d3.select(clickedNode)
+            .call(selectNode);
+
+          // If not already selected, mark as selected
+          otherNodes
+            .each(deselectNode);
+        }
+
+        // d.children = d.children ? null : d._children;
+        // update(d);
+
+        // Prevent triggering clickOnCanvas handler
+        // https://stackoverflow.com/questions/22941796/attaching-onclick-event-to-d3-chart-background
+        d3.event.stopPropagation();
+      };
+
+      editNode = (node) => {
+        node
+          .classed('node-editing', true)
+          .select('foreignObject')
+          .select('p')
+          .style('background-color', '#ddd');
+        console.log(`${node.attr('id')} is being edited`);
+      };
+
+      selectNode = (node) => {
+        node
+          .classed('node-selected', true)
+          .select('foreignObject')
+          .select('p')
+          .attr('contenteditable', 'true')
+          .style('background-color', '#ddd');
+        console.log(`${node.attr('id')} selected`);
+      };
+
+      deselectNode = (d, i, nodes) => {
+
+        let idOfSelectedNode =
+          d3.select(nodes[i])
+            .attr('id');
+
+        let newValue =
+          d3.select(nodes[i])
+            .select('foreignObject')
+            .select('p')
+            .html();
+
+        d3.select(nodes[i])
+          .classed('node-editing', false)
+          .classed('node-selected', false)
+          .select('foreignObject')
+          .select('p')
+          .attr('contenteditable', 'false')
+          .style('background-color', null);
+
+        updateNodeValue(idOfSelectedNode, newValue);
+      };
+
+      updateNodeValue = (idOfSelectedNode, newValue) => {
+        let nodeInTree = [treeData];
+
+        let nodeFound = false;
+        let parent;
+
+        while (nodeInTree.length != 0) {
+          let allCurrentLevelChildren = [];
+          for (let node of nodeInTree) {
+            if (node.children) {
+              allCurrentLevelChildren = allCurrentLevelChildren.concat(node.children);
+            }
+            if (node.id === idOfSelectedNode) {
+              nodeFound = true;
+              parent = node;
+            }
+          }
+          if (nodeFound) break;
+          else {
+            nodeInTree = allCurrentLevelChildren;
+          }
+        }
+
+        parent.name = newValue;
+
+        updateJSONOnServer();
+      };
+
+      updateJSONOnServer = () => {
+        /*
+        $.ajax({
+          url: "https://api.myjson.com/bins/ai6xu",
+          type: "PUT",
+          data: JSON.stringify(treeData),
+          contentType: "application/json; charset=utf-8",
+          dataType: "json",
+          success: function (data, textStatus, jqXHR) {
+
+          }
+        });
+         */
+      };
+
+      handleClickOnCanvas = (d, i, nodes) => {
+        // console.log(nodes[i])
+        d3.select(nodes[i])
+          .selectAll('g.node')
+          .filter(".node-selected")
+          .each(deselectNode);
+      };
+
+      diagonal = d3.linkHorizontal().x(d => d.y).y(d => d.x);
+
+      var width = 1000;
+      var dx = 50;
+      var dy = width / 4;
+      var tree = d3.tree().nodeSize([dx, dy]);
+
+      var margin = ({top: 40, right: 120, bottom: 40, left: 80});
+      ID = () => '_' + Math.random().toString(36).substr(2, 9);
+      chart();
+    </script>
+
+</div>
+</body>
+</html>

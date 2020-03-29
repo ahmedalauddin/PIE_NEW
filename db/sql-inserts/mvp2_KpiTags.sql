@@ -1,0 +1,12 @@
+INSERT INTO mvp2.KpiTags (kpiId, tag, createdAt, updatedAt) VALUES (58, 'Linear regression', '2019-05-04 20:10:48', '2019-05-04 20:10:48');
+INSERT INTO mvp2.KpiTags (kpiId, tag, createdAt, updatedAt) VALUES (59, 'Linear regression', '2019-05-04 20:12:18', '2019-05-04 20:12:18');
+INSERT INTO mvp2.KpiTags (kpiId, tag, createdAt, updatedAt) VALUES (66, 'Natural language processing', '2019-05-04 20:45:01', '2019-05-04 20:45:01');
+INSERT INTO mvp2.KpiTags (kpiId, tag, createdAt, updatedAt) VALUES (66, 'Time-series analysis', '2019-05-04 20:45:01', '2019-05-04 20:45:01');
+INSERT INTO mvp2.KpiTags (kpiId, tag, createdAt, updatedAt) VALUES (67, 'Cluster analysis', '2019-05-04 21:28:59', '2019-05-04 21:28:59');
+INSERT INTO mvp2.KpiTags (kpiId, tag, createdAt, updatedAt) VALUES (67, 'Linear regression', '2019-05-04 21:28:59', '2019-05-04 21:28:59');
+INSERT INTO mvp2.KpiTags (kpiId, tag, createdAt, updatedAt) VALUES (67, 'Predictive analytics', '2019-05-04 21:28:59', '2019-05-04 21:28:59');
+INSERT INTO mvp2.KpiTags (kpiId, tag, createdAt, updatedAt) VALUES (67, 'Time-series analysis', '2019-05-04 21:28:59', '2019-05-04 21:28:59');
+INSERT INTO mvp2.KpiTags (kpiId, tag, createdAt, updatedAt) VALUES (68, '', '2019-05-07 21:02:35', '2019-05-07 21:02:35');
+INSERT INTO mvp2.KpiTags (kpiId, tag, createdAt, updatedAt) VALUES (69, '', '2019-05-07 21:02:37', '2019-05-07 21:02:37');
+INSERT INTO mvp2.KpiTags (kpiId, tag, createdAt, updatedAt) VALUES (70, '', '2019-05-07 21:02:39', '2019-05-07 21:02:39');
+INSERT INTO mvp2.KpiTags (kpiId, tag, createdAt, updatedAt) VALUES (85, 'Downtime', '2019-05-22 12:45:26', '2019-05-22 12:45:26');

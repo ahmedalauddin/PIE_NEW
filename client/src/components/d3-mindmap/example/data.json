@@ -1,0 +1,30 @@
+{
+  name: "Root",
+  children: [
+    {
+      name: "Reduce operating costs",
+      children: [
+        {
+          name: "Reduce inventory",
+          children: [
+            {
+              name: "Review part models"
+            },
+            {
+              name: "Optimize supply chain"
+            }
+          ]
+        },
+        {
+          name: "Operating procedures"
+        }
+      ]
+    },
+    {
+      name: "Review supply chain processes"
+    },
+    {
+      name: "Introduce automation"
+    }
+  ]
+}

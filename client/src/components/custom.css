@@ -1,0 +1,83 @@
+.list-cls>div{max-width:100%;}
+.list-cls tbody{max-width:100%;display:block;}
+.list-cls-tbody-displaycontents tbody{display:contents !important;}
+.gantt-container>div{background-color: #ffffff !important;}
+.org-people-search{max-width:100% !important;}
+.panel-dashboard .panel-dashboard-list{max-width:100% !important;}
+.project-dashboard-list .list-cls>div>div{max-width:100%;flex-basis:100%;}
+div.page-org,div.page-project{width:100%;}
+span.react-loading-skeleton {
+    width: 18.85%;
+    float: left; 
+    margin: 6px 6px !important;
+    padding: 12px 0px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+.h2heading {font-size: 18px !important;}
+.padding25px {padding: 25px;}
+.skeleton-mindmap{width:100%;float:left;}
+.skeleton-mindmap span.react-loading-skeleton {
+    width: 16.85%;
+}
+div.skeleton-org {
+    /* background: #fff; */
+    padding-bottom:20px;
+}
+.skeleton-org>h6{text-align: center;padding: 10px;}
+div.mobileShow{display:block}
+
+.more-menu-btn {
+    display: none;
+}
+
+.gantt-container>div>div>div{overflow: auto;}
+div.gantt-container{width:100%;}
+
+
+div.MuiGrid-item-65.MuiGrid-grid-xs-12-104.MuiGrid-grid-md-10-130 {
+    width: 100% !important;
+} 
+ 
+div.heder-title{text-align: center;display: block;}
+.dash{width: 100% !important;}
+
+div.panel-dashboard-list, div.panel-dashboard>div>div, div.panel-dashboard>div{margin: 0 auto;}
+div.panel-dashboard, div.panel-dashboard-list .list-cls>div, div.panel-dashboard-list .list-cls>div>div, div.panel-dashboard-list .list-cls>div>div>div{margin: 0 auto;display: block;}    
+.dashboard-filter-menu{margin: 0 auto !important;}
+div.panel-dashboard>div h6{text-align: center;}
+
+div.panel-dashboard-list .list-cls>div>div>div, .dashboard-filter-menu>div>div{max-width:100% !important;flex-basis: 100% !important;}
+.org-people-search{flex-basis:100% !important;}
+@media (max-width: 959.95px){
+.mobileShow {
+    display: none;
+}.more-menu-btn {
+    display: block;
+}div.mobileShow {
+    display: block;
+    position: absolute;
+    right: 0;
+    margin: 0;
+    background: white;
+    width: 235px;
+    top: 58px;
+    max-height: 300px;
+    overflow: auto;
+}.mobileShow>div>div>div>div {
+    display: flex;
+    flex-direction: column;
+
+    left: 0;
+    top: 100%;
+}.mobileShow>div>div>div>div a{padding: 0px !important;}
+.MuiTab-root-608{min-height: 38px;}
+.MuiTab-labelContainer-617{padding: 2px 10px;}
+}
+.inlineBlock{
+    display: inline-block;
+    margin: 0;
+    margin-left: 10px;
+    font: inherit;
+    width: 100%;
+}
+  

@@ -1,0 +1,90 @@
+{
+    "env": {
+        "doc": "defines the node environment",
+        "format": [
+            "prod", "dev", "test", "host"
+        ],
+        "default": "dev",
+        "arg": "nodeEnv",
+        "env": "NODE_ENV"
+    },
+    "debugNamespaces": {
+        "doc": "Namespaces for the debug library, used by component systems",
+        "format": "String",
+        "default": "",
+        "arg": "debugNamespaces",
+        "env": "DEBUG"
+    },
+    "server": {
+        "host": {
+            "doc": "server server host",
+            "format": "String",
+            "default": "localhost",
+            "arg": "serverHost",
+            "env": "SERVER_HOST"
+        },
+        "port": {
+            "doc": "server server port",
+            "format": "port",
+            "default": 3001,
+            "arg": "serverPort",
+            "env": "SERVER_PORT"
+        }
+    },
+    "db": {
+        "user": {
+            "doc": "login user for database",
+            "format": "String",
+            "default": "root",
+            "arg": "dbUser",
+            "env": "DB_USER"
+        },
+        "password": {
+            "doc": "password for db.user",
+            "format": "*",
+            "default": "",
+            "arg": "dbPassword",
+            "env": "DB_PASSWORD",
+            "sensitive": true
+        },
+        "name": {
+            "doc": "database/schema name",
+            "format": "String",
+            "default": "mvp2",
+            "arg": "dbName",
+            "env": "DB_NAME"
+        },
+        "host": {
+            "doc": "database server host",
+            "format": "*",
+            "default": "localhost",
+            "arg": "dbHost",
+            "env": "DB_HOST"
+        },
+        "dialect": {
+            "doc": "dialect of the connector to be used",
+            "format": [
+                "mysql", "sqlite", "postgres", "mssql"
+            ],
+            "default": "mysql",
+            "arg": "dbDialect",
+            "env": "DB_DIALECT"
+        }
+    },
+    "log": {
+        "path": {
+            "doc": "log file path",
+            "format": "String",
+            "default": ".",
+            "arg": "logPath",
+            "env": "LOG_PATH"
+        },
+        "type": {
+            "doc": "logger type",
+            "format": "String",
+            "default": "dev",
+            "arg": "logType",
+            "env": "LOG_TYPE"
+        }
+    }
+}

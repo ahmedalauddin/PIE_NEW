@@ -1,0 +1,66 @@
+[
+  {
+    "id": "_ns1nvi0ai",
+    "name": "Root",
+    "children": [
+      {
+        "id": "_o4r47dq71",
+        "name": "Reduce operating costs",
+        "children": [
+          {
+            "id": "_al6om6znz",
+            "name": "Reduce inventory",
+            "children": [
+              {
+                "id": "_46ct4o4oy",
+                "name": "Review part models"
+              }
+            ]
+          },
+          {
+            "id": "_z3uk0721f",
+            "name": "Operating procedures",
+            "children": [
+              {
+                "id": "_je49rrvdq",
+                "name": "red"
+              },
+              {
+                "id": "_riy5iihy9",
+                "name": "yellow"
+              },
+              {
+                "id": "_sy8zlb7vz",
+                "name": "blue"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "_uajrljib9",
+        "name": "Review supply chain processes"
+      },
+      {
+        "id": "_uguzpgdta",
+        "name": "Introduce automation",
+        "children": [
+          {
+            "id": "_t8ln1vlwa",
+            "name": "white",
+            "children": [
+              {
+                "id": "_qzltyy8rn",
+                "name": "green"
+              },
+              {
+                "id": "_92xtmt66p",
+                "name": "maroon"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -1,0 +1,15 @@
+INSERT INTO mvp2.Ideas (id, name, ideaText, nodeId, orgId, createdAt, updatedAt) VALUES (1, null, 'First idea here.  And more text.', '_al6om6znz', 2, '2019-07-09 20:42:15', '2019-07-23 00:19:10');
+INSERT INTO mvp2.Ideas (id, name, ideaText, nodeId, orgId, createdAt, updatedAt) VALUES (2, 'Reduce operating costs', 'Ideas for reducing operating costs.', '_o4r47dq71', 2, '2019-07-09 22:39:38', '2019-08-09 18:08:34');
+INSERT INTO mvp2.Ideas (id, name, ideaText, nodeId, orgId, createdAt, updatedAt) VALUES (3, null, 'Third idea.', '_z3uk0721f', 2, '2019-07-09 22:41:57', '2019-07-19 15:55:41');
+INSERT INTO mvp2.Ideas (id, name, ideaText, nodeId, orgId, createdAt, updatedAt) VALUES (4, null, 'Idea text goes here.', '_uguzpgdta', 2, '2019-07-19 15:55:42', '2019-07-19 15:55:42');
+INSERT INTO mvp2.Ideas (id, name, ideaText, nodeId, orgId, createdAt, updatedAt) VALUES (6, null, 'Add other ideas here.  Add other ideas here.  Add other ideas here.  Add other ideas here.  Add other ideas here.  Add other ideas here.  Add other ideas here.  Add other ideas here.  Add other ideas here.  
+
+Add some text here.', null, 2, '2019-07-22 23:51:23', '2019-07-22 23:51:23');
+INSERT INTO mvp2.Ideas (id, name, ideaText, nodeId, orgId, createdAt, updatedAt) VALUES (7, null, 'First idea here.  Adding text now.', null, 2, '2019-07-22 23:56:38', '2019-07-22 23:56:38');
+INSERT INTO mvp2.Ideas (id, name, ideaText, nodeId, orgId, createdAt, updatedAt) VALUES (8, null, 'New idea on 7/22.', null, 2, '2019-07-23 00:19:36', '2019-07-23 00:19:36');
+INSERT INTO mvp2.Ideas (id, name, ideaText, nodeId, orgId, createdAt, updatedAt) VALUES (9, null, 'Save new idea for "Review supply chain processes".', null, 2, '2019-07-23 01:41:49', '2019-07-23 01:41:49');
+INSERT INTO mvp2.Ideas (id, name, ideaText, nodeId, orgId, createdAt, updatedAt) VALUES (10, null, 'Adding text for "review supply chain processes".', null, 2, '2019-07-23 01:47:46', '2019-07-23 01:47:46');
+INSERT INTO mvp2.Ideas (id, name, ideaText, nodeId, orgId, createdAt, updatedAt) VALUES (11, 'white', 'New idea text here.', '_t8ln1vlwa', 2, '2019-07-23 01:50:30', '2019-07-23 01:51:25');
+INSERT INTO mvp2.Ideas (id, name, ideaText, nodeId, orgId, createdAt, updatedAt) VALUES (12, 'Review supply chain processes', 'Review Sourcing Strategy, P2P, Spend Analysis', '_uajrljib9', 2, '2019-07-23 01:52:01', '2019-09-02 21:13:19');
+INSERT INTO mvp2.Ideas (id, name, ideaText, nodeId, orgId, createdAt, updatedAt) VALUES (13, 'Optimize supply chain', 'Adjust minimum order level', '_ea00nojwy', 7, '2019-08-10 23:13:02', '2019-08-10 23:13:25');
+INSERT INTO mvp2.Ideas (id, name, ideaText, nodeId, orgId, createdAt, updatedAt) VALUES (14, 'Optimize supply chain', 'Adjust minimum order level', '_ea00nojwy', 7, '2019-08-10 23:13:04', '2019-08-10 23:13:25');

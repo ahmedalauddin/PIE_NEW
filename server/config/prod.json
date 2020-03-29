@@ -1,0 +1,28 @@
+{
+  "env": "host",
+  "db": {
+    "user": "viprod",
+    "password": "3=62YarV.aGxP,2F",
+    "name": "mvpprod",
+    "host": "valueinfinity2.cgrq1bgu4ual.us-east-2.rds.amazonaws.com",
+    "dialect": "mysql"
+  },
+  "log": {
+    "level": "info",
+    "debugNamespaces": "",
+    "outputs": {
+      "std": {
+        "active": true,
+        "path": "/var/log/valueinfinity-mvp/std.prod.log"
+      },
+      "error": {
+        "active": true,
+        "path": "/var/log/valueinfinity-mvp/err.prod.log"
+      },
+      "console": {
+        "active": true,
+        "handleExceptions": true
+      }
+    }
+  }
+}

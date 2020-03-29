@@ -1,0 +1,3 @@
+INSERT INTO mvp2.TaskStatuses (id, label, createdAt, updatedAt) VALUES (1, 'Pending', '2019-04-18 16:54:36', '2019-04-18 16:54:36');
+INSERT INTO mvp2.TaskStatuses (id, label, createdAt, updatedAt) VALUES (2, 'In Progress', '2019-04-18 16:54:36', '2019-04-18 16:54:36');
+INSERT INTO mvp2.TaskStatuses (id, label, createdAt, updatedAt) VALUES (3, 'Completed', '2019-04-18 16:54:36', '2019-04-18 16:54:36');
