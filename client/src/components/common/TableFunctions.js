@@ -20,6 +20,9 @@ export function desc(a, b, orderBy) {
 }
 
 export function stableSort(array, cmp) {
+  
+  if(!array || !array.map) return;
+
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = cmp(a[0], b[0]);

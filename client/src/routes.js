@@ -45,6 +45,7 @@ import OrganizationAction from "./components/organization/OrganizationAction";
 
 import OrganizationDocument from "./components/dashboard/OrganizationDocument";
 import OrganizationDocumentUpdate from "./components/dashboard/OrganizationDocumentUpdate";
+import OrganizationActionTable from "./components/dashboard/OrganizationActionTable";
 
 export default props => (
   <BrowserRouter>
@@ -101,7 +102,8 @@ export default props => (
         <Route exact path="/OrganizationDocument" component={withAuth(OrganizationDocument)} />
         <Route exact path="/OrganizationDocumentUpdate" component={withAuth(OrganizationDocumentUpdate)} />
 
-
+        
+        <Route exact path="/organizationactions" component={withAuth(OrganizationActionTable)} />
         <Route exact path="/OrganizationAction/:id" component={withAuth(OrganizationAction)} />
         <Route exact path="/OrganizationAction" component={withAuth(OrganizationAction)} />
       </Switch>

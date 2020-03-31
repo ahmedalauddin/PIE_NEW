@@ -11,7 +11,24 @@ module.exports = {
 
   // Find a Action Project by Id
   listByOrganization(req, res) {
-    logger.error(`${callerType} Action Organization, findAll `);
+    const where= [
+      {
+        orgId: req.params.orgId,
+        disabled: 0
+      }
+    ]
+
+    if(req.params.createdAt){
+      const startDate=new Date(req.params.createdAt);
+      const endDate = new Date(req.params.createdAt);
+      endDate.setHours( endDate.getHours() + 24 );
+      
+      where.push({createdAt:{
+          $lt: endDate,
+          $gt: startDate
+      }})
+    }
+    logger.info(`${callerType} Action Organization, findAll where ${JSON.stringify(where)}`);
     return models.OrganizationAction.findAll({
       
       include: [
@@ -26,12 +43,7 @@ module.exports = {
         },
   
       ],
-      where: [
-        {
-          orgId: req.params.orgId,
-          disabled: 0
-        }
-      ]
+      where
     })
       .then(_k => {
         logger.debug(

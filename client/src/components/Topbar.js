@@ -100,6 +100,10 @@ const AdminMenu = [
     pathname: "/mindmaplist"
   },
   {
+    label: "Meetings",
+    pathname: "/organizationactions"
+  },
+  {
     label: "Search",
     pathname: "/search"
   },
@@ -137,6 +141,10 @@ const StandardMenu = [
   {
     label: "Mind Maps",
     pathname: "/mindmaplist"
+  },
+  {
+    label: "Meetings",
+    pathname: "/organizationactions"
   },
   {
     label: "Search",
@@ -178,57 +186,64 @@ function getMenu(menuType) {
 function getAppbarValue(menuType, currentPath)  {
   var value = 0;
   if (menuType === "admin") {
-    if (currentPath === "/paneldashboard") {
+    if (!currentPath || currentPath === "/paneldashboard") {
       value = 0;
     }
     if (currentPath === "/mindmaplist") {
       value = 1;
     }
-    if (currentPath === "/search") {
+    if (currentPath === "/organizationactions" || currentPath.includes("/OrganizationAction")) {
       value = 2;
+    }
+    if (currentPath === "/search") {
+      value = 3;
     }
     if (currentPath === "/projectdashboard" || (currentPath !== undefined && currentPath.includes("/project/"))) {
-      value = 3;
-    }
-    if (currentPath === "/orgdashboard" || currentPath === "/organization" || currentPath === "/department" || (currentPath !== undefined && currentPath.includes("/organization/"))) {
       value = 4;
     }
-    if (currentPath === "/analytics") {
+    if (currentPath === "/orgdashboard"  || currentPath === "/department") {
       value = 5;
     }
-    if (currentPath === "/clientorg") {
+    if (currentPath === "/analytics") {
       value = 6;
     }
-    if (currentPath === "/logout") {
+    if (currentPath === "/clientorg") {
       value = 7;
     }
-    if (currentPath === "/about") {
+    if (currentPath === "/logout") {
       value = 8;
     }
+    if (currentPath === "/about") {
+      value = 9;
+    }
   } else if (menuType === "standard") {
-    if (currentPath === "/paneldashboard") {
+    if (!currentPath || currentPath === "/paneldashboard") {
       value = 0;
     }
     if (currentPath === "/mindmaplist") {
       value = 1;
     }
-    if (currentPath === "/search") {
+
+    if (currentPath === "/organizationactions" || currentPath.includes("/OrganizationAction")) {
       value = 2;
     }
-    if (currentPath === "/analytics") {
+    if (currentPath === "/search") {
       value = 3;
     }
-    if (currentPath === "/clientorg" || currentPath === "/organization" || currentPath === "/person" || currentPath === "/department") {
+    if (currentPath === "/analytics") {
       value = 4;
     }
-    if (currentPath === "/logout") {
+    if (currentPath === "/clientorg"  || currentPath === "/person" || currentPath === "/department") {
       value = 5;
     }
-    if (currentPath === "/about") {
+    if (currentPath === "/logout") {
       value = 6;
     }
+    if (currentPath === "/about") {
+      value = 7;
+    }
   } else {
-    if (currentPath === "/login") {
+    if (!currentPath || currentPath === "/login") {
       value = 0;
     }
   }

@@ -19,6 +19,12 @@ const Menu = [
     intro: false
   },
   {
+    label: "Meetings",
+    pathname: "/organizationactions",
+    admin: true,
+    intro: false
+  },
+  {
     label: "Projects",
     pathname: "/projectdashboard",
     admin: true,

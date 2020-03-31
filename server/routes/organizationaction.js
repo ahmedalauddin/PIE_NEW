@@ -10,6 +10,9 @@ module.exports = router => {
   logger.debug(`${callerClass} GET -> path: /api/action-organization/:orgId`);
   router.get("/api/action-organization/:orgId", organizationaction.listByOrganization);
 
+  logger.debug(`${callerClass} GET -> path: /api/action-organization/:orgId`);
+  router.get("/api/action-organization/:orgId/:createdAt", organizationaction.listByOrganization);
+
 
   // Post action-organization by organization
   logger.debug(`${callerClass} POST -> path: /api/action-organization/:orgId`);

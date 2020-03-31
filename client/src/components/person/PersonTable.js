@@ -328,7 +328,7 @@ class PersonTable extends React.Component {
               rowCount={persons.length}
             />
             <TableBody>
-              {stableSort(persons, getSorting(order, orderBy))
+              {persons && persons.length && stableSort(persons, getSorting(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map(person => {
                   const isSelected = this.isSelected(person.id);

@@ -11,6 +11,7 @@ import TableRow from "@material-ui/core/TableRow/index";
 import TableSortLabel from "@material-ui/core/TableSortLabel/index";
 import Tooltip from "@material-ui/core/Tooltip/index";
 import DeleteIcon from "@material-ui/icons/Delete";
+import CalendarIcon from "@material-ui/icons/CalendarTodayRounded";
 import { lighten } from "@material-ui/core/styles/colorManipulator";
 import { Link, Redirect } from "react-router-dom";
 import EditIcon from "@material-ui/icons/Edit";
@@ -27,6 +28,10 @@ import Button from "@material-ui/core/Button";
 import Fab from "@material-ui/core/Fab/index";
 import moment from "moment";
 import { styles } from "../styles/DashboardStyles";
+import CssBaseline from "@material-ui/core/CssBaseline/index";
+import Topbar from "../Topbar";
+import TextField from '@material-ui/core/TextField';
+import PageTitle from "../PageTitle";
 
 const rows = [
   // { id: "edit", numeric: false, disablePadding: false, label: "" },
@@ -45,7 +50,6 @@ const rows = [
   // // { id: "tags", numeric: false, disablePadding: false, label: "Tags" },
   // // { id: "delete", numeric: false, disablePadding: false, label: "Actions" }
 ];
-
 
 
 
@@ -95,6 +99,8 @@ newstyles = theme => ({
     flex: "0 0 auto"
   }
 });
+
+
 
   render() {
     const { order, orderBy, numSelected, rowCount, showProject } = this.props;
@@ -196,7 +202,9 @@ class OrganizationActionTable extends React.Component {
     submitted: null,
     page: 0,
     rowsPerPage: 5,
-    delLoader: 0
+    delLoader: 0,
+    filterDate: moment(new Date()).format("YYYY-MM-DD")
+
   };
 
   handleClose = () => {
@@ -205,18 +213,31 @@ class OrganizationActionTable extends React.Component {
 
   componentDidMount() {
     
-    let orgId = parseInt(getOrgId());
+    
     
       // Fetch the KPIs only for a single project
-      fetch(`/api/action-organization/${orgId}`)
-        .then(res => res.json())
-        .then(OrganizationActions => this.setState({
-          OrganizationActions: OrganizationActions,
-          fromOrganization: false
-        }));
+    this.fetchData(this.state.filterDate);
 
   }
+  changeFilterDate(e){
+    console.log("changedDate...............",e.target.value );
+    this.fetchData(e.target.value);
+  }
 
+  fetchData(filterDate){
+    let orgId = parseInt(getOrgId());
+    let uri=`/api/action-organization/${orgId}`;
+    if(filterDate){
+      uri+=`/${filterDate}`;
+    }
+    fetch(uri)
+    .then(res => res.json())
+    .then(OrganizationActions => this.setState({
+      OrganizationActions: OrganizationActions,
+      fromOrganization: false,
+      filterDate
+    }));
+  }
   setEditRedirect = actionid => {
     this.setState({
       readyToEdit: true,
@@ -322,21 +343,41 @@ class OrganizationActionTable extends React.Component {
     const { OrganizationActions, order, orderBy, selected, rowsPerPage, page } = this.state;
     const emptyRows =
       rowsPerPage - Math.min(rowsPerPage, OrganizationActions.length - page * rowsPerPage);
-
     return (
       <React.Fragment>
-          
-        <div className={classes.paddingbottom20+' '+classes.root}>
-        <div className="list-cls list-cls-tbody-displaycontents">
-        <Grid container justify="center">
-            <Grid spacing={12} container lg={10} alignItems="center" justify="center">
-              <Grid item xs={12} md={10}>
+        <CssBaseline />
+        <Topbar currentPath={"/organizationactions"}/>
+        <div className={classes.root}>
+        <Grid container justify="center" direction="column" alignItems="center" className="panel-dashboard">
+        <PageTitle pageTitle={"Meeting"} />
+            <Grid xs={12} md={10} alignItems="center" justify="center">
+              
                 <Card className={classes.card}>
                   <CardContent className="list-project-panellist">
-                
-                    <Typography className="h2heading">
+              
+                  <Grid
+                      container
+                      direction="row"
+                      justify="space-between"
+                      alignItems="center"
+                    >
+                    
+                    <Typography className="h2heading"  style={{alignSelf:"flex-start"}} >
                         Additional Actions for {getOrgName()}
                     </Typography>
+
+                    <TextField
+                      id="date"
+                      label=""
+                      type="date"
+                      defaultValue={this.state.filterDate}
+                      className={classes.textField}
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                      onChange={(e) =>this.changeFilterDate(e)}
+                    />
+                  </Grid>
         <div className="padding25px">
         {this.renderEditRedirect()}
         <div className={classes.tableWrapper}>
@@ -465,7 +506,11 @@ class OrganizationActionTable extends React.Component {
           message={<span id="message-id">{this.state.msg}</span>}
         />
       </div>
-      </CardContent></Card></Grid></Grid></Grid></div></div>
+      </CardContent></Card></Grid></Grid>
+      
+   
+      </div>
+    
     </React.Fragment>
     );
   }

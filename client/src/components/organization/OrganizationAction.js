@@ -16,7 +16,7 @@ import InputLabel from "@material-ui/core/InputLabel";
 import FormControl from "@material-ui/core/FormControl";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
-
+import PageTitle from "../PageTitle";
 const styles = theme => ({
   root: {
     flexGrow: 1,
@@ -302,7 +302,7 @@ class OrganizationAction extends React.Component {
         .then((response) => {
           console.log('responseresponseresponseresponse0- on OrganizationActions on OrganizationActions---',response);
           // Redirect to the Project component.
-          var redirectTarget = "/paneldashboard/"
+          var redirectTarget = "/organizationactions/"
           var redirectIdOrgOrProject = this.state.orgId;
          
         
@@ -385,7 +385,7 @@ class OrganizationAction extends React.Component {
             projectName: action.project && action.project.title,
             orgId: orgId,
             buttonText: "Update",
-            redirectTarget: "/paneldashboard"
+            redirectTarget: "/organizationactions"
           });
         });
     } else {
@@ -431,8 +431,10 @@ console.log('this.state==on OrganizationActions',this.state);
     return (
       <React.Fragment>
         <CssBaseline />
-        <Topbar />
+        <Topbar currentPath={"/organizationactions"} />
         <div className={classes.root}>
+        <Grid container justify="center" direction="column" alignItems="center" className="panel-dashboard">
+            <PageTitle pageTitle={"Meeting"} />
           <Grid container alignItems="center" justify="center" spacing={24} sm={12}>
             <Grid item sm={10}>
               <Paper className={classes.paper}>
@@ -544,6 +546,7 @@ console.log('this.state==on OrganizationActions',this.state);
                 </form>
               </Paper>
             </Grid>
+          </Grid>
           </Grid>
         </div>
         <Snackbar

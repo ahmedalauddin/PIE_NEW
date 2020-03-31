@@ -1,1 +1,5 @@
 /var/backupall/bin/core/
+node_modules
+
+*-audit.json
+valueinfinity-mvp.*
