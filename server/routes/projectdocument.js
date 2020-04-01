@@ -10,8 +10,8 @@ let multer = require('multer');
 
 
 const  uuuid = uuidv4();
-const DIR = "/var/www/vi-mvp-test.thoughtive.io/docs";
-const DIRwithu = "/var/www/vi-mvp-test.thoughtive.io/docs/"+uuuid;
+const DIR = "/";
+const DIRwithu = DIR+"/"+uuuid;
 if (!fs.existsSync(DIRwithu)){
   fs.mkdirSync(DIRwithu);
 }

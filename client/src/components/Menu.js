@@ -19,7 +19,7 @@ const Menu = [
     intro: false
   },
   {
-    label: "Meetings",
+    label: "Regrouping",
     pathname: "/organizationactions",
     admin: true,
     intro: false

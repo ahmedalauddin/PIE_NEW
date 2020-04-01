@@ -100,7 +100,7 @@ const AdminMenu = [
     pathname: "/mindmaplist"
   },
   {
-    label: "Meetings",
+    label: "Regrouping",
     pathname: "/organizationactions"
   },
   {
@@ -143,7 +143,7 @@ const StandardMenu = [
     pathname: "/mindmaplist"
   },
   {
-    label: "Meetings",
+    label: "Regrouping",
     pathname: "/organizationactions"
   },
   {

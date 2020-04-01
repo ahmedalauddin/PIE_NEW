@@ -375,7 +375,7 @@ class KpiTable extends React.Component {
               rowCount={data.length}
             />
             <TableBody>
-              {stableSort(data, getSorting(order, orderBy))
+              {data && data.length && stableSort(data, getSorting(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map(kpi => {
                   const isSelected = this.isSelected(kpi.id);

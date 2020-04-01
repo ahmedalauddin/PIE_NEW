@@ -154,7 +154,6 @@ class OrganizationAction extends React.Component {
     this.handleChange = this.handleChange.bind(this);
     this.fetchPersonsOfOrg = this.fetchPersonsOfOrg.bind(this);
    this.handlePersonChange = this.handlePersonChange.bind(this);
-    this.setOrganizationInfo = this.setOrganizationInfo.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
     
   }
@@ -333,18 +332,7 @@ class OrganizationAction extends React.Component {
         console.log("Response: ", response)
   };
 
-  setOrganizationInfo = () => {
-    // Get the organization from the filter.
-    let orgName = getOrgName();
-    let orgId = getOrgId();
-    let departments = getOrgDepartments();
-
-    this.setState({
-      orgName: orgName,
-      orgId: orgId,
-      departments: departments
-    });
-  };
+  
 
   fetchPersonsOfOrg = (orgId) => {
     console.log('fetchPersons--',orgId);
@@ -362,16 +350,19 @@ class OrganizationAction extends React.Component {
   };
 
   componentDidMount() {
-    this.setOrganizationInfo();
+    let orgName = getOrgName();
+    let orgId = getOrgId();
+    let departments = getOrgDepartments();
+
+    this.setState({
+      orgName: orgName,
+      orgId: orgId,
+      departments: departments
+    });
     // Project ID and KPI id (if there is the former, are passed in by location.state).
  
-    let orgId = 0;
-    let actionid = 0;
-   
-    
-      actionid = this.props.location.state.actionid && this.props.location.state.actionid;
-      orgId = this.props.location.state.orgId;
-      this.fetchPersonsOfOrg(orgId);
+    let actionid = this.props.location.state.actionid && this.props.location.state.actionid;
+    this.fetchPersonsOfOrg(orgId);
     if (parseInt(actionid) > 0) {
       fetch(`/api/action-organization-id/${actionid}`)
         .then(res => res.json())

@@ -9,7 +9,7 @@ let multer = require('multer');
     let uuidv4 = require('uuid/v4');
 
 
-const DIR = "/var/www/vi-mvp-test.thoughtive.io/docs";
+const DIR = "/";
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
