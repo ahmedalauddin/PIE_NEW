@@ -17,6 +17,7 @@ import FormControl from "@material-ui/core/FormControl";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
 import PageTitle from "../PageTitle";
+import moment from "moment";
 const styles = theme => ({
   root: {
     flexGrow: 1,
@@ -168,47 +169,7 @@ class OrganizationAction extends React.Component {
     persons: [],
     assigneeId: null,
     project: {},
-    // title: "",
-    // type: "",
-    // level: "",
-    // org: "",
-    // orgId: 0,
-    // orgName: "",
-    // orgId: 0,
-    // projectName: "",
-    // departments: [],
-    // useorgId: false,
-    // useOrganizationId: false,
-    // redirectTarget: "",
-    // deptId: 0,
-    // description: "",
-    // formula: "",
-    // startAt: "",
-    // endAt: "",
-    // msg: "",
-    // kpitype: "",
-    // readyToRedirect: false,
-    // buttonText: "Create",
-    // isEditing: false,
-    // redirect: false,
-    // isNew: false,
-    // expanded: false,
-    // hasError: false,
-    // labelWidth: 0,
-    // focus: false,
-    // message: "",
-    // nextItem: "",
-    // tags: [{id: "", text: ""}],
-    // suggestions: [
-    //   { id: "Cluster analysis", text: "Cluster analysis" },
-    //   { id: "Linear regression", text: "Linear regression" },
-    //   { id: "Monte Carlo simulations", text: "Monte Carlo simulations" },
-    //   { id: "Time-series analysis", text: "Time-series analysis" },
-    //   { id: "Natural language processing", text: "Natural language processing" },
-    //   { id: "Predictive analytics", text: "Predictive analytics" },
-    //   { id: "Logistic regression", text: "Logistic regression" },
-    //   { id: "Machine learning", text: "Machine learning" }
-    // ],
+    createdAt:"",
     openSnackbar: false,
     snackbarMessage: "",
     message: "",
@@ -263,14 +224,6 @@ class OrganizationAction extends React.Component {
     let successMessage = "";
     let method = "";
 
-    var title = this.state.title;
-    var description = this.state.description;
-   
-    if(title == undefined || title == ''){
-      
-      this.setState({ openSnackbar: true,message: "Please Check Required Fields.",});
-      return false;
-    }
 
     this.setState({
       delLoader: true
@@ -359,11 +312,11 @@ class OrganizationAction extends React.Component {
       orgId: orgId,
       departments: departments
     });
-    // Project ID and KPI id (if there is the former, are passed in by location.state).
  
     let actionid = this.props.location.state.actionid && this.props.location.state.actionid;
-    this.fetchPersonsOfOrg(orgId);
-    if (parseInt(actionid) > 0) {
+   // this.fetchPersonsOfOrg(orgId);
+   
+   if (parseInt(actionid) > 0) {
       fetch(`/api/action-organization-id/${actionid}`)
         .then(res => res.json())
         .then(action => {
@@ -376,7 +329,8 @@ class OrganizationAction extends React.Component {
             projectName: action.project && action.project.title,
             orgId: orgId,
             buttonText: "Update",
-            redirectTarget: "/organizationactions"
+            redirectTarget: "/organizationactions",
+            createdAt:moment(action.createdAt).format("YYYY-MM-DD"),
           });
         });
     } else {
@@ -386,13 +340,7 @@ class OrganizationAction extends React.Component {
         buttonText: "Create"
       });
     }
-    // Have to set the state of the individual fields for the handleChange function for the TextFields.
-    // Do this using the project state.
-    // if(orgId > 0){ //Need this codition in case of when creating KPI for organisation and orgId is not in exist - Issue #48
-    // fetch("/api/projects/" + orgId)
-    //   .then(results => results.json())
-    //   .then(project => this.setState({ project }));
-    // }
+    
   }
 
   render() {
@@ -416,16 +364,13 @@ class OrganizationAction extends React.Component {
       }} />;
     }
 
-    console.log('this.props.location.state==on OrganizationActions',this.props.location.state);
-console.log('this.state==on OrganizationActions',this.state);
-// console.log('project==on OrganizationActions',this.state.project);
     return (
       <React.Fragment>
         <CssBaseline />
         <Topbar currentPath={"/organizationactions"} />
         <div className={classes.root}>
         <Grid container justify="center" direction="column" alignItems="center" className="panel-dashboard">
-            <PageTitle pageTitle={"Meeting"} />
+            <PageTitle pageTitle={"Regrouping"} />
           <Grid container alignItems="center" justify="center" spacing={24} sm={12}>
             <Grid item sm={10}>
               <Paper className={classes.paper}>
@@ -435,25 +380,14 @@ console.log('this.state==on OrganizationActions',this.state);
                     color="secondary"
                     gutterBottom
                   >
-                    Action Detail<br/>
+                    TODO List 
+                    
+                    
                   </Typography>
-                  {/* <Typography variant="h7">
-                    Organization: {getOrgName()}
-                  </Typography> */}
+                 
                   
                   <Grid container spacing={24}>
-                    <Grid item sm={10}>
-                      <TextField
-                        required
-                        id="title-required"
-                        label="Title"
-                        fullWidth
-                        onChange={this.handleChange("title")}
-                        value={this.state.title}
-                        className={classes.textFieldWide}
-                        margin="normal"
-                      />
-                    </Grid>
+                    
                     <Grid item sm={10}>
                       <TextField
                         id="description"
@@ -471,51 +405,6 @@ console.log('this.state==on OrganizationActions',this.state);
                       />
                     </Grid>
 
-                    <Grid item xs={12} sm={12}>
-                      <FormControl className={classes.formControl}>
-                        <InputLabel shrink htmlFor="Assignee">Assignee</InputLabel>
-                        <Select
-                          value={this.state.assigneeId && this.state.assigneeId}
-                          onChange={this.handlePersonChange}
-                          inputProps={{
-                            name: "assigneeId",
-                            id: "assigneeId"
-                          }}
-                        >
-                          {this.state.persons && this.state.persons.map(person => {
-                            return (
-                              person.disabled === 1 ? '' : <MenuItem key={person.id} value={person.id}>
-                                {person.fullName}
-                              </MenuItem>
-                            );
-                          })}
-                        </Select>
-                      </FormControl>
-                    </Grid>
-
-                    <Grid item xs={12} sm={12}>
-                      <FormControl className={classes.formControl}>
-                        <InputLabel shrink htmlFor="Status">Status</InputLabel>
-                        <Select
-                          value={this.state.status && this.state.status}
-                          onChange={this.handleStatusChange}
-                          inputProps={{
-                            name: "status",
-                            id: "status"
-                          }}
-                        >
-                          <MenuItem key='Open' value='Open'>
-                                Open
-                              </MenuItem>
-
-                              <MenuItem key='Closed' value='Closed'>
-                              Closed
-                              </MenuItem>
-                            
-                        </Select>
-                      </FormControl>
-                    </Grid>
-                   
                     <Grid item sm={10}>
                       <Typography component="p">
                       {

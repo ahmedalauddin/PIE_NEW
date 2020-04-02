@@ -1,14 +1,14 @@
 {
   "env": "host",
   "db": {
-    "user": "viadmin",
-    "password": "chary-offshoot-which",
+    "user": "root",
+    "password": "VimNanNewTh91",
     "name": "mvp2",
-    "host": "valueinfinity2.cgrq1bgu4ual.us-east-2.rds.amazonaws.com",
+    "host": "localhost",
     "dialect": "mysql"
   },
   "log": {
-    "level": "debug",
+    "level": "info",
     "debugNamespaces": "",
     "outputs": {
       "std": {

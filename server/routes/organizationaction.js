@@ -10,7 +10,7 @@ module.exports = router => {
   logger.debug(`${callerClass} GET -> path: /api/action-organization/:orgId`);
   router.get("/api/action-organization/:orgId", organizationaction.listByOrganization);
 
-  logger.debug(`${callerClass} GET -> path: /api/action-organization/:orgId`);
+  logger.debug(`${callerClass} GET -> path: /api/action-organization/:orgId/:createdAt`);
   router.get("/api/action-organization/:orgId/:createdAt", organizationaction.listByOrganization);
 
 
@@ -31,4 +31,7 @@ module.exports = router => {
   // Deactivate action-organization by ActionId
   logger.debug(`${callerClass} PUT -> path: /api/action-organization-deactivate/:actionId`);
   router.put("/api/action-organization-deactivate/:actionId", organizationaction.deactivateOrganizationAction);
+
+  logger.debug(`${callerClass} copy action -> path: /api/action-organization/:orgId/:assigneeId/:actionId`);
+  router.get("/api/copy-action-organization/:orgId/:assigneeId/:actionId", organizationaction.copyAction);
 };

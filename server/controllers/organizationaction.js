@@ -23,10 +23,14 @@ module.exports = {
       const endDate = new Date(req.params.createdAt);
       endDate.setHours( endDate.getHours() + 24 );
       
-      where.push({createdAt:{
+      const orClause=[];
+      orClause.push({createdAt:{
           $lt: endDate,
           $gt: startDate
-      }})
+      }});
+
+      orClause.push({createdAt:startDate});
+      where.push({'$or':orClause});
     }
     logger.info(`${callerType} Action Organization, findAll where ${JSON.stringify(where)}`);
     return models.OrganizationAction.findAll({
@@ -142,6 +146,7 @@ module.exports = {
     const organizationId = req.params.orgId;
     const status = req.body.status;
     const assigneeId = req.body.assigneeId;
+    const createdAt = new Date(req.body.createdAt);
     logger.debug(`${callerType} create -> New Organization Action for Organization id : ${organizationId}`);
  
       return models.OrganizationAction.create({
@@ -149,7 +154,8 @@ module.exports = {
         description: description,
         orgId: organizationId,
         status: status,
-        assigneeId: assigneeId
+        assigneeId: assigneeId,
+        createdAt: createdAt
       })
         .then(OrganizationAction => {
          logger.debug(`${callerType} created OrganizationAction`);
@@ -255,4 +261,44 @@ module.exports = {
         });
     
   },
+
+  copyAction(req, res) {
+    logger.error(`${callerType} Action Organization, copyAction `);
+    let sql = "select * from OrganizationActions " +
+              "where orgId = " + req.params.orgId + " and assigneeId="+req.params.assigneeId +
+              " and description<>'' and disabled = 0 order by createdAt desc limit 1";
+    logger.debug(`${callerType} Get OrganizationActions by OrgId -> sql: ${sql}`);
+    return models.sequelize
+      .query(sql,
+        {
+          type: models.sequelize.QueryTypes.SELECT
+        }
+      )
+      .then(_k => {
+        logger.debug(`${callerType} Get copyAction by OrgId -> successful, count: ${_k.length}`);
+
+        if(_k && _k.length){
+          models.OrganizationAction.update({
+            description: _k[0].description
+          },
+          {
+            returning: true,
+            where: {
+              id: req.params.actionId
+            }
+          }) .then(_k => {
+            res.status(201).send(_k);
+          }).catch(error => {
+            logger.error(`${callerType} Get copyAction by OrgId -> error: ${error.stack}`);
+            res.status(400).send(error);
+          });
+        }else{
+          res.status(201).send(_k);
+        }
+      })
+      .catch(error => {
+        logger.error(`${callerType} Get copyAction by OrgId -> error: ${error.stack}`);
+        res.status(400).send(error);
+      });
+  }
 };
