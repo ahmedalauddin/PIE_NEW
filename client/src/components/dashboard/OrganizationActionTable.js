@@ -43,10 +43,10 @@ import FormHelperText from "@material-ui/core/FormHelperText";
 import OrganizationMemberAction from "../organization/OrganizationMemberAction";
 
 const rows = [
-  { id: "assignedto", numeric: false, disablePadding: false, label: "Members" },
-  { id: "description", numeric: false, disablePadding: false, label: "Description" },
-  { id: "dateadded", numeric: false, disablePadding: false, label: "Date Added" },
-   { id: "actions", numeric: false, disablePadding: false, label: "Actions" }
+  { id: "assignedto", numeric: false, disablePadding: false, label: "Members",align:"left",width:200 },
+  { id: "description", numeric: false, disablePadding: false, label: "Description",align:"left",width:400 },
+  { id: "dateadded", numeric: false, disablePadding: false, label: "Date Added", align:"left",width:150},
+   { id: "actions", numeric: false, disablePadding: false, label: "Actions" ,align:"left",width:200}
 ];
 
 const statuses = [
@@ -225,7 +225,8 @@ class OrganizationActionTable extends React.Component {
           OrganizationActions:data2
           })
             
-          this.setState({ msg: "Action deleted.", delLoader: 0, openSnackbar: true });
+          this.setState({ message: "deleted.", delLoader: 0, openSnackbar: true });
+          this.fetchData(this.state.filterDate);
         })
         .catch(err => {
           this.setState({ msg: "Error occurred.", delLoader: 0, openSnackbar: true });
@@ -448,12 +449,12 @@ class OrganizationActionTable extends React.Component {
                             className="testingclass"
                           >
 
-                            <TableCell align="left"  className={classes.noTextDecoration} >
+                            <TableCell style={{width:200}}  align="left"  className={classes.noTextDecoration} >
                               <Typography className={classes.heading}>{OrganizationAction.person && OrganizationAction.person.fullName}</Typography>
                             </TableCell>
 
-                            <TableCell align="left"  className={classes.noTextDecoration}>
-                              <Typography className={classes.heading}>
+                            <TableCell style={{width:400}} align="left" className={classes.noTextDecoration}>
+                              <Typography style={{width:380}} className={classes.heading}>
                                 {OrganizationAction.description 
                                     && OrganizationAction.description.split("\n").map((i,key) => {
                                       return <p className="inlineBlock" key={key}>{i.trim()}</p>
@@ -462,21 +463,17 @@ class OrganizationActionTable extends React.Component {
                             </TableCell>
 
 
-                            <TableCell align="left"  className={classes.noTextDecoration}>
+                            <TableCell  style={{width:150}} align="left" className={classes.noTextDecoration}>
                               <Typography className={classes.heading}>{moment(OrganizationAction.createdAt).format("YYYY-MM-DD")}</Typography>
                             </TableCell>
 
 
-                            <TableCell component="th" scope="row" padding="none">
+                            <TableCell  style={{width:200}} align="left" component="th" scope="row" padding="none">
                               {
                                 this.state.delLoader != 0 && this.state.delLoader == OrganizationAction.id ?
                                   <CircularProgress />
                                   :
-                                  <IconButton
-                                    onClick={() => {
-                                      this.deactivate(OrganizationAction.id);
-                                    }}
-                                  >
+                                  <IconButton onClick={() =>  this.deactivate(OrganizationAction.id) } >
                                     <DeleteIcon color="primary" />
                                   </IconButton>
                               }
@@ -518,15 +515,7 @@ class OrganizationActionTable extends React.Component {
                 onChangeRowsPerPage={this.handleChangeRowsPerPage}
               />
 
-              <Snackbar
-                open={this.state.openSnackbar}
-                onClose={this.handleClose}
-                TransitionComponent={this.state.Transition}
-                ContentProps={{
-                  'aria-describedby': 'message-id',
-                }}
-                message={<span id="message-id">{this.state.msg}</span>}
-              />
+         
             </div>
           </CardContent></Card></Grid>
     )
@@ -656,7 +645,8 @@ newstyles = theme => ({
             row => (
               <TableCell
                 key={row.id}
-                align={row.numeric ? "right" : "left"}
+                align={row.align}
+                style={{width:row.width}}
                 padding={row.disablePadding ? "none" : "default"}
                 sortDirection={orderBy === row.id ? order : false}
               >

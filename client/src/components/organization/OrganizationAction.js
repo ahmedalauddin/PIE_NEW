@@ -131,7 +131,8 @@ const styles = theme => ({
   },
   textField: {
     marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit
+    marginRight: theme.spacing.unit,
+    height: 200 
   },
   dense: {
     marginTop: 19
@@ -328,7 +329,7 @@ class OrganizationAction extends React.Component {
             status: action.status,
             projectName: action.project && action.project.title,
             orgId: orgId,
-            buttonText: "Update",
+            buttonText: "Save",
             redirectTarget: "/organizationactions",
             createdAt:moment(action.createdAt).format("YYYY-MM-DD"),
           });
@@ -388,20 +389,18 @@ class OrganizationAction extends React.Component {
                   
                   <Grid container spacing={24}>
                     
-                    <Grid item sm={10}>
+                    <Grid item sm={10}  xs={12}>
                       <TextField
                         id="description"
                         label="Description"
                         multiline
-                        rowsMax="6"
+                        style={{height:400}}
+                        
                         value={this.state.description}
                         onChange={this.handleChange("description")}
                         className={classes.textFieldWide}
                         fullWidth
                         margin="normal"
-                        InputLabelProps={{
-                          shrink: true
-                        }}
                       />
                     </Grid>
 

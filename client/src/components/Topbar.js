@@ -186,13 +186,13 @@ function getMenu(menuType) {
 function getAppbarValue(menuType, currentPath)  {
   var value = 0;
   if (menuType === "admin") {
-    if (!currentPath || currentPath === "/paneldashboard") {
+    if (!currentPath  || currentPath === "/paneldashboard") {
       value = 0;
     }
     if (currentPath === "/mindmaplist") {
       value = 1;
     }
-    if (currentPath === "/organizationactions" || currentPath.includes("/OrganizationAction")) {
+    if (currentPath === "/organizationactions" || (currentPath !==  undefined && currentPath.includes("/OrganizationAction"))) {
       value = 2;
     }
     if (currentPath === "/search") {
@@ -217,14 +217,14 @@ function getAppbarValue(menuType, currentPath)  {
       value = 9;
     }
   } else if (menuType === "standard") {
-    if (!currentPath || currentPath === "/paneldashboard") {
+    if (!currentPath ||  currentPath === "/paneldashboard") {
       value = 0;
     }
     if (currentPath === "/mindmaplist") {
       value = 1;
     }
 
-    if (currentPath === "/organizationactions" || currentPath.includes("/OrganizationAction")) {
+    if (currentPath === "/organizationactions" || (currentPath !==  undefined && currentPath.includes("/OrganizationAction"))) {
       value = 2;
     }
     if (currentPath === "/search") {
@@ -243,7 +243,7 @@ function getAppbarValue(menuType, currentPath)  {
       value = 7;
     }
   } else {
-    if (!currentPath || currentPath === "/login") {
+    if (!currentPath ||  currentPath === "/login") {
       value = 0;
     }
   }
