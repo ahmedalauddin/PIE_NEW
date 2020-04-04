@@ -44,7 +44,7 @@ import OrganizationMemberAction from "../organization/OrganizationMemberAction";
 
 const rows = [
   { id: "assignedto", numeric: false, disablePadding: false, label: "Members",align:"left",width:200 },
-  { id: "description", numeric: false, disablePadding: false, label: "Description",align:"left",width:400 },
+  { id: "description", numeric: false, disablePadding: false, label: "Focus Area",align:"left",width:400 },
   { id: "dateadded", numeric: false, disablePadding: false, label: "Date Added", align:"left",width:150},
    { id: "actions", numeric: false, disablePadding: false, label: "Actions" ,align:"left",width:200}
 ];
@@ -108,9 +108,15 @@ class OrganizationActionTable extends React.Component {
   };
 
   componentDidMount() {
-    
-    this.fetchData(this.state.filterDate);
-
+    if(this.props.location.state && this.props.location.state.createdAt){
+      this.setState({filterDate:null})
+      setTimeout(()=>{
+        const createdAt= moment(this.props.location.state.createdAt).format("YYYY-MM-DD");
+        this.fetchData(createdAt);
+      },100)
+    }else{
+      this.fetchData();
+    }
   }
   changeFilterDate(e){
     console.log("changedDate...............",e.target.value );
@@ -387,7 +393,7 @@ class OrganizationActionTable extends React.Component {
                         </Button>
                       </Grid>
 
-                      <FormControl className={classes.formControl}>
+                      {this.state.filterDate && <FormControl className={classes.formControl}>
                         <TextField
                           id="date"
                           label=""
@@ -401,6 +407,7 @@ class OrganizationActionTable extends React.Component {
                         />
                         <FormHelperText>Filter by date</FormHelperText>
                       </FormControl>
+                      }
                   </Grid>
                         
                 </CardContent>

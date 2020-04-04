@@ -34,11 +34,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // add support for static files and the built react app
-let serverPath = isHosted()
-  ? path.join(__dirname, "client/build")
-  : path.join(__dirname, "server/public");
-logger.debug(`setting static root of express server to ${serverPath}`);
-app.use(express.static(serverPath));
+if(isHosted()){
+  let serverPath =  path.join(__dirname, "client/build")
+  logger.debug(`setting static root of express server to ${serverPath}`);
+  app.use(express.static(serverPath));
+}
+ 
+
 
 // create a router
 var router = express.Router();
@@ -133,6 +135,11 @@ app.use(
 // now set the routes for the app
 app.use(router);
 
+if(isHosted()){
+  app.all('/*', function(req, res) { 
+    res.sendfile(serverPath+'/index.html'); 
+  });
+}
 // now add in the error logger
 // note that the formats defined by the logger should
 // handle the formatting of the logs properly

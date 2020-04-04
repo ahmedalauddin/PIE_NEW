@@ -24,6 +24,9 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
 import { getOrgId, getOrgName, getOrgDepartments, setProject, store } from "../../redux";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import ViewIcon from "@material-ui/icons/Comment";
+import IconButton from "@material-ui/core/IconButton/index";
+
 
 class ProjectDetail extends React.Component {
   constructor(props) {
@@ -72,7 +75,9 @@ class ProjectDetail extends React.Component {
     labelWidth: 0,
     statusList: [],
     loader: false,
-    delLoader: false
+    delLoader: false,
+    projectLastComment:"Design and Deploy the Right Size Project Management Methodology across all fuel types and technologies",
+    readyToProjectComment:false
   };
 
   setOrganizationInfo = () => {
@@ -228,6 +233,23 @@ class ProjectDetail extends React.Component {
   componentDidCatch() {
     return <Redirect to="/Login"/>;
   }
+
+  renderProjectCommentRedirect = () => {
+    if (this.state.readyToProjectComment) {
+      return (
+        <Redirect
+          to={{
+            pathname: "/ProjectComment",
+            state: {
+              projectId: this.state.id,
+              projectTitle: this.state.title,
+              projectDescription: this.state.description,
+            }
+          }}
+        />
+      );
+    }
+  };
 
   render() {
     // console.log('Check')
@@ -405,6 +427,29 @@ class ProjectDetail extends React.Component {
               }}
             />
           </Grid>
+
+
+          <Grid item xs={10} sm={4}>
+            <TextField
+              id="standard-required"
+              label="Comments"
+              fullWidth={true}
+              value={this.state.projectLastComment}
+              
+              className={classes.textFieldWide}
+              inputProps={{
+                readOnly: Boolean(true),
+                disabled: Boolean(true),
+              }}
+            />
+          </Grid>
+          <Grid item xs={2} sm={2}>
+              <IconButton  onClick={()=>this.setState({readyToProjectComment:true})}>
+                  <ViewIcon color="primary" />
+              </IconButton>
+          </Grid>
+
+
           <Grid item xs={12} sm={12}>
             {this.state.loader ?
               <CircularProgress/>
@@ -421,6 +466,7 @@ class ProjectDetail extends React.Component {
             <br/>
           </Grid>
         </Grid>
+        {this.renderProjectCommentRedirect()}
       </form>
     );
   }

@@ -215,13 +215,13 @@ module.exports = {
               // console.log('updateOrganizationAction-----------------userAssigneeuserAssigneeuserAssignee-',respons);
               var to = respons.email;
               var subject = "Valueinfinity - Action Updated.";
-              var text = "Hi "+respons.firstName+", An existing Action '"+title+"' is updated recently that is assigned to you."
+              var text = "Hi "+respons.firstName+", An existing Action is updated recently that is assigned to you."
               mailer.sendMail(to,subject,text);
             })      
           }
           res.status(201).send({
             success: true,
-            message: "Organization Action " + title + " updated successfully"
+            message: "Organization Action updated successfully"
           });
         })
         .catch(error => {

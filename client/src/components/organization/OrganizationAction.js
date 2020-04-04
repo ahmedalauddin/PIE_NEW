@@ -360,6 +360,7 @@ class OrganizationAction extends React.Component {
           message: `${this.state.message}`,
           projId: this.state.redirectIdOrgOrProject,
           orgId:this.state.redirectIdOrgOrProject,
+          createdAt:this.state.createdAt
           
         }
       }} />;
