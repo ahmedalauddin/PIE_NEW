@@ -36,7 +36,6 @@ app.use(cookieParser());
 // add support for static files and the built react app
 if(isHosted()){
   let serverPath =  path.join(__dirname, "client/build")
-  logger.debug(`setting static root of express server to ${serverPath}`);
   app.use(express.static(serverPath));
 }
  
@@ -136,6 +135,7 @@ app.use(
 app.use(router);
 
 if(isHosted()){
+  let serverPath =  path.join(__dirname, "client/build");
   app.all('/*', function(req, res) { 
     res.sendfile(serverPath+'/index.html'); 
   });
