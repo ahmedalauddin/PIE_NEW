@@ -76,7 +76,7 @@ class ProjectDetail extends React.Component {
     statusList: [],
     loader: false,
     delLoader: false,
-    projectLastComment:"Design and Deploy the Right Size Project Management Methodology across all fuel types and technologies",
+    projectLastComment:"",
     readyToProjectComment:false
   };
 
@@ -201,11 +201,22 @@ class ProjectDetail extends React.Component {
           endAt: moment(project.endAt).format("YYYY-MM-DD"),
           buttonText: "Update"
         });
+        this.fetchProjectLastComment(projectid);
         return project;
       })
       .then(project => {
         store.dispatch(setProject(JSON.stringify(project)));
       });
+  }
+
+  fetchProjectLastComment(projectid) {
+    fetch(`/api/projects-comment-recent/${projectid}`)
+    .then(res => res.json())
+    .then(projectComments => {
+      if(projectComments && projectComments.length>0){
+        this.setState({projectLastComment:projectComments[0].description}) ;
+      }
+    });
   }
 
   fetchProjectStatuses() {

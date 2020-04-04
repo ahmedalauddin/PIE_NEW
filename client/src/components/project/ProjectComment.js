@@ -18,6 +18,12 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
 import PageTitle from "../PageTitle";
 import moment from "moment";
+import DeleteIcon from "@material-ui/icons/Delete";
+import IconButton from "@material-ui/core/IconButton/index";
+import { getUser } from "../../redux";
+
+const profileLogo = require("../../images/profile.png");
+
 const styles = theme => ({
   root: {
     flexGrow: 1,
@@ -37,6 +43,13 @@ const styles = theme => ({
     padding: theme.spacing.unit * 3,
     textAlign: "left",
     color: theme.palette.text.secondary
+  },
+  divScrollView: {
+    padding: theme.spacing.unit * 3,
+    textAlign: "left",
+    color: theme.palette.text.secondary,
+    height:400,
+    overflow: "auto"
   },
   rangeLabel: {
     display: "flex",
@@ -127,7 +140,6 @@ const styles = theme => ({
   textFieldWide: {
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit,
-    width: 400
   },
   textField: {
     marginLeft: theme.spacing.unit,
@@ -142,6 +154,11 @@ const styles = theme => ({
   },
   spaceTop: {
     marginTop: 50
+  },
+  profileLogo:{
+    width:40,
+    height:40,
+    margin:10
   }
 });
 
@@ -150,30 +167,198 @@ const styles = theme => ({
 class ProjectComment extends React.Component {
   constructor(props) {
     super(props);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    
   }
   state = {
     projectComments:[],
-    newComment:""
+    newComment:"",
+    projId:0,
+    projectDescription:"",
+    projectTitle:"",
+    openSnackbar: false,
+    message: "",
+    delLoader:false,
   };
 
-  async handleSubmit(event) {
-    event.preventDefault();
- 
-  }
   componentDidMount() {
+    /*
     const defaultVal="Design and Deploy the Right Size Project Management Methodology across all fuel types and technologies";
     const {projectComments} =this.state;
     projectComments.push({description:defaultVal,createdAt:new Date()});
-    this.setState({newComment:"",projectComments})
+    
+    const aa="Design and Deploy the Right Size Project Management Methodology across all fuel types and technologiesDesign and Deploy the Right Size Project Management Methodology across all fuel types and technologiesDesign and Deploy the Right Size Project Management Methodology across all fuel types and technologiesDesign and Deploy the Right Size Project Management Methodology across all fuel types and technologies";
+    projectComments.push({description:aa,createdAt:new Date()});
+
+    this.setState({newComment:"",projectComments})*/
+    const { projectId, projectTitle, projectDescription } = this.props.location.state;
+   
+
+    fetch(`/api/projects-comment/${projectId}`)
+        .then(res => res.json())
+        .then(projectComments => {
+          this.setState({
+            projId:projectId,
+            projectDescription,
+            projectTitle,
+            projectComments
+          }) 
+          setTimeout(()=>this.scrollToBottom(),100);
+        });
+    
   }
 
+  toSentenceCase(string) { 
+    var sentence = string.split(" ");
+    for(var i = 0; i< sentence.length; i++){
+       sentence[i] = sentence[i][0].toUpperCase() + sentence[i].slice(1);
+    }
+    return sentence.join(" ");
+  }
   addComment(){
     const {projectComments} =this.state;
-    projectComments.push({description:this.state.newComment,createdAt:new Date()});
-    this.setState({newComment:"",projectComments})
+    const user = getUser();
+    const newComment = { 
+        personName: this.toSentenceCase(user.fullName), 
+        personId: user.id, 
+        description: this.state.newComment, 
+        createdAt: new Date(),
+        projId: this.state.projId 
+      };
+    console.log("newComment",newComment);
+    
+    
+    this.setState({
+      delLoader: true
+    })
+    let apiPath = "/api/projects-comment";
+
+    fetch(apiPath, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(newComment)
+    })
+      .then((response) => {
+        console.log('comment saved',response);
+        
+        if(response && response.statusText === "Created"){
+          this.setState({ openSnackbar: true,message: "Comment saved"});
+          projectComments.push(newComment);
+        }else{
+          var mssgfale = response.message ? response.message : 'Something went wrong';
+          this.setState({ openSnackbar: true,message: mssgfale,delLoader: false});
+          return false;
+        }
+
+        setTimeout(() => {
+          this.setState({
+            delLoader: false,
+            newComment:"",
+            projectComments
+          });
+          setTimeout(()=>this.scrollToBottom(),100);
+        },1000);
+
+      })
+      .catch(err => {
+        console.log('on OrganizationActions  error',err);
+      });
+
   }
+ 
+  scrollToBottom = () => {
+    if(this.divScrollView){
+      console.log(this.divScrollView);
+      this.divScrollView.scrollTop = this.divScrollView.scrollHeight;
+    }
+  }
+
+  handleClose = () => {
+    this.setState({ openSnackbar: false });
+  };
+
+  handleClick = Transition => () => {
+    this.setState({ openSnackbar: true, Transition });
+  };
+
+  renderEnterComment() {
+    const { classes } = this.props;
+    return (
+      <React.Fragment>
+        <Grid container justify="center" direction="column" alignItems="center" className="panel-dashboard">
+          <Grid container alignItems="center" justify="center" spacing={24} sm={12}>
+            <Grid item sm={10}>
+              <Paper className={classes.paper}>
+
+                <Grid container direction="row" justify="space-between" alignItems="center" className="dash">
+
+                    <Grid item sm={9} xs={11}  >
+                      <TextField
+                        id="comment"
+                        label="Enter Comment"
+                        multiline
+                        className={classes.textFieldWide}
+                        value={this.state.newComment}
+                        onChange={(event) => this.setState({ newComment: event.target.value })}
+                        style={{ width: "100%" }}
+                        margin="normal"
+                      />
+                    </Grid>
+                    <Grid item sm={1} xs={1} >
+                      <Typography component="p">
+                        {
+                          this.state.delLoader ?
+                            <CircularProgress /> :
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              className={classes.secondary}
+                              onClick={() => this.addComment()}
+                            >
+                              Save
+                          </Button>
+                        }
+                      </Typography>
+                      <br />
+                    </Grid>
+
+
+                </Grid>
+              </Paper>
+            </Grid>
+          </Grid>
+        </Grid>
+      </React.Fragment>
+    )
+  }
+
+  renderComment(cc,index) {
+    const { classes } = this.props;
+    return (
+        <Paper key={index} className={classes.paper} style={{marginTop:10}}>
+          <Grid container direction="row" justify="space-between" alignItems="flex-end" className="dash">
+              
+              <Grid container sm={8} xs={10} direction="row" >
+                <img src={profileLogo} alt="" className={classes.profileLogo}/>
+                <Grid item sm={8} xs={10}  >
+                  <Typography  variant="h5" color="primary" gutterBottom >
+                      {cc.personName}
+                  </Typography>
+                  <Typography variant="h7" color="primary" gutterBottom >
+                    {moment(cc.createdAt).format("YYYY-MM-DD hh:mm:ss")}
+                  </Typography>
+                  <Typography variant="h7" color="secondary" gutterBottom >
+                      {cc.description}
+                  </Typography>
+                </Grid>
+              </Grid>
+
+              <IconButton >
+                  <DeleteIcon color="primary" />
+              </IconButton>
+          </Grid>
+        </Paper>
+    )
+  }
+
 
   render() {
     const { classes } = this.props;
@@ -188,7 +373,6 @@ class ProjectComment extends React.Component {
           message: `${this.state.message}`,
           projId: this.state.redirectIdOrgOrProject,
           orgId:this.state.redirectIdOrgOrProject,
-          
         }
       }} />;
     }
@@ -199,63 +383,35 @@ class ProjectComment extends React.Component {
         <Topbar currentPath={"/ProjectComments"} />
         <div className={classes.root} >
         <Grid container justify="center" direction="column" alignItems="center" className="panel-dashboard">
+        <PageTitle pageTitle={"Project Comments"} />
           <Grid container alignItems="center" justify="center" spacing={24} sm={12}>
             <Grid item sm={10}>
-              <Paper className={classes.paper}>
-                <form onSubmit={this.handleSubmit} noValidate>
-                  <Typography variant="h7" color="secondary" gutterBottom >
-                    Comments
-                  </Typography>
+            
+
+              <Paper className={classes.paper} >
+                
                   
-                  <div style={{height:20}}></div> 
-
-                  {this.state.projectComments.map((cc,index)=><Grid key={index} container spacing={24}>
-                    <Grid item sm={9}  xs={11}  >
-                        <Typography variant="h7" color="secondary" gutterBottom >
-                          {cc.description}
-                      </Typography>
-                    </Grid>
-                  </Grid>
-                  )}
-                  <Grid container spacing={24}>
+                  <div className={classes.divScrollView} ref={(el) => { this.divScrollView = el; }}>
+                      {this.state.projectComments.map((cc,index)=>this.renderComment(cc,index))}
+                  </div>
                     
-                    <Grid item sm={9}  xs={11}  >
-                      <TextField
-                        id="comment"
-                        label="Enter Comment"
-                        multiline
-                        className={classes.textFieldWide}
-                        value={this.state.newComment}
-                        onChange={(event)=>this.setState({newComment:event.target.value})}
-                        style={{width:"100%"}}
-                        margin="normal"
-                      />
-                    </Grid>
-                    <Grid item sm={1} xs={1} >
-                      <Typography component="p">
-                      {
-                        this.state.delLoader ?
-                        <CircularProgress /> :
-                          <Button
-                            variant="contained"
-                            color="primary"
-                            className={classes.secondary}
-                            onClick={()=>this.addComment()}
-                          >
-                            Save
-                          </Button>
-                        }
-                      </Typography>
-                      <br />
-                    </Grid>
-
-                  </Grid>
-                </form>
               </Paper>
             </Grid>
           </Grid>
           </Grid>
+
+          {this.renderEnterComment()}
         </div>
+
+        <Snackbar
+          open={this.state.openSnackbar}
+          onClose={this.handleClose}
+          TransitionComponent={this.state.Transition}
+          ContentProps={{
+            "aria-describedby": "message-id"
+          }}
+          message={<span id="message-id">{this.state.message}</span>}
+        />
         
       </React.Fragment>
     );

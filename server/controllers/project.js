@@ -22,6 +22,7 @@ const models = require("../models");
 const logger = require("../util/logger")(__filename);
 const util = require("util");
 const callerType = "controller";
+const ProjectComment = require("../models").ProjectComment;
 
 module.exports = {
   // Creates a project in the Project table, then inserts into ProjectPersons, setting its
@@ -688,5 +689,87 @@ module.exports = {
           res.status(400).send(error);
         });
     }
+  },
+
+  saveProjectComment(req, res) {
+    let _obj = util.inspect(req, { showHidden: false, depth: null });
+    logger.debug(`${callerType} create -> request: ${_obj}`);
+    return ProjectComment.create({
+      personName: req.body.personName,
+      personId: parseInt(req.body.personId),
+      createdAt: req.body.createdAt,
+      description: req.body.description,
+      projId: parseInt(req.body.projId)
+    })
+      .then(p => {
+        logger.info(`${callerType} saveProjectComment -> successful, id: ${p.id}`);
+        res.status(201).send(p);
+      })
+      .catch(error => {
+        logger.error(`${callerType} saveProjectComment -> error: ${error.stack}`);
+        res.status(400).send(error);
+      });
+  },
+
+  getProjectRecentComments(req, res){
+    const where = [
+      {
+        projId: req.params.projId,
+      }
+    ]
+    logger.info(`${callerType} ProjectComment, findAll where ${JSON.stringify(where)}`);
+    return models.ProjectComment.findAll({
+
+      include: [
+        {
+          model: models.Person,
+          as: "person",
+
+        },
+      ],
+      where,
+      limit: 1,
+      order: [["createdAt","DESC"]]
+    })
+      .then(_k => {
+        logger.debug(
+          `${callerType} findById -> successful, title: ${_k.title}`
+        );
+        res.status(201).send(_k);
+      })
+      .catch(error => {
+        logger.error(`${callerType} findById -> error: ${error.stack}`);
+        res.status(400).send(error);
+      });
+  }
+  ,
+  getProjectComments(req, res) {
+    const where = [
+      {
+        projId: req.params.projId,
+      }
+    ]
+    logger.info(`${callerType} ProjectComment, findAll where ${JSON.stringify(where)}`);
+    return models.ProjectComment.findAll({
+
+      include: [
+        {
+          model: models.Person,
+          as: "person",
+
+        },
+      ],
+      where
+    })
+      .then(_k => {
+        logger.debug(
+          `${callerType} findById -> successful, title: ${_k.title}`
+        );
+        res.status(201).send(_k);
+      })
+      .catch(error => {
+        logger.error(`${callerType} findById -> error: ${error.stack}`);
+        res.status(400).send(error);
+      });
   }
 };

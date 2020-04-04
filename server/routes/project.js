@@ -74,4 +74,16 @@ module.exports = router => {
   // deactivate a project with id
   logger.debug(`${callerType} DELETE -> path: /api/project-deactivate/:id`);
   router.put("/api/project-deactivate/:id", projController.deactivate);
+
+  // list most recently updated projects
+  logger.debug(`${callerType} POST -> path: /api/projects-comment`);
+  router.post("/api/projects-comment", projController.saveProjectComment);
+
+  logger.debug(`${callerType} GET -> path: /api/projects-comment/:projId`);
+  router.get("/api/projects-comment/:projId", projController.getProjectComments);
+
+  logger.debug(`${callerType} GET -> path: /api/projects-comment/:projId`);
+  router.get("/api/projects-comment-recent/:projId", projController.getProjectRecentComments);
+
+
 };
