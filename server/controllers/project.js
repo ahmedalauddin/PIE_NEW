@@ -715,6 +715,7 @@ module.exports = {
     const where = [
       {
         projId: req.params.projId,
+        disabled: 0
       }
     ]
     logger.info(`${callerType} ProjectComment, findAll where ${JSON.stringify(where)}`);
@@ -747,6 +748,7 @@ module.exports = {
     const where = [
       {
         projId: req.params.projId,
+        disabled: 0
       }
     ]
     logger.info(`${callerType} ProjectComment, findAll where ${JSON.stringify(where)}`);
@@ -771,5 +773,36 @@ module.exports = {
         logger.error(`${callerType} findById -> error: ${error.stack}`);
         res.status(400).send(error);
       });
+  },
+
+  async deactivateProjectComments(req, res) {
+    const id = req.params.id;
+    logger.debug(`${callerType} Deactivate -> deactivate ProjectComments  for id : ${id}`);
+ 
+      return models.ProjectComment.update({
+        disabled: true,
+        disabledAt:new Date()
+      },
+      {
+        returning: true,
+        where: {
+          id: id
+        }
+      })
+        .then(ProjectComment => {
+         logger.debug(`${callerType} Deactivate ProjectComment ${ProjectComment}`);
+         
+        })
+        .then(() => {
+          res.status(201).send({
+            success: true,
+            message: "Comment deactivated successfully"
+          });
+        })
+        .catch(error => {
+          logger.error(`${callerType} deactivate -> error: ${error.stack}`);
+          res.status(400).send(error);
+        });
+    
   }
 };

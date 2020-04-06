@@ -85,5 +85,8 @@ module.exports = router => {
   logger.debug(`${callerType} GET -> path: /api/projects-comment/:projId`);
   router.get("/api/projects-comment-recent/:projId", projController.getProjectRecentComments);
 
+  logger.debug(`${callerType} GET -> path: /api/projects-comment/:id`);
+  router.delete("/api/projects-comment/:id", projController.deactivateProjectComments);
+
 
 };

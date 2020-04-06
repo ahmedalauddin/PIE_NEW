@@ -29,6 +29,14 @@ module.exports = (sequelize, DataTypes) => {
     updatedAt: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW
+    },
+    disabled: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: 0,
+    },
+    disabledAt: {
+      type: DataTypes.DATE,
+      allowNull: true
     }
   }, {
     tableName: "ProjectComments"

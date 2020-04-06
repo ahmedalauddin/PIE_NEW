@@ -48,7 +48,7 @@ const styles = theme => ({
     padding: theme.spacing.unit * 3,
     textAlign: "left",
     color: theme.palette.text.secondary,
-    height:400,
+    height: 400,
     overflow: "auto"
   },
   rangeLabel: {
@@ -144,7 +144,7 @@ const styles = theme => ({
   textField: {
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit,
-    height: 200 
+    height: 200
   },
   dense: {
     marginTop: 19
@@ -155,10 +155,10 @@ const styles = theme => ({
   spaceTop: {
     marginTop: 50
   },
-  profileLogo:{
-    width:40,
-    height:40,
-    margin:10
+  profileLogo: {
+    width: 40,
+    height: 40,
+    margin: 10
   }
 });
 
@@ -169,63 +169,55 @@ class ProjectComment extends React.Component {
     super(props);
   }
   state = {
-    projectComments:[],
-    newComment:"",
-    projId:0,
-    projectDescription:"",
-    projectTitle:"",
+    projectComments: [],
+    newComment: "",
+    projId: 0,
+    projectDescription: "",
+    projectTitle: "",
     openSnackbar: false,
     message: "",
-    delLoader:false,
+    delLoader: false,
   };
 
   componentDidMount() {
-    /*
-    const defaultVal="Design and Deploy the Right Size Project Management Methodology across all fuel types and technologies";
-    const {projectComments} =this.state;
-    projectComments.push({description:defaultVal,createdAt:new Date()});
-    
-    const aa="Design and Deploy the Right Size Project Management Methodology across all fuel types and technologiesDesign and Deploy the Right Size Project Management Methodology across all fuel types and technologiesDesign and Deploy the Right Size Project Management Methodology across all fuel types and technologiesDesign and Deploy the Right Size Project Management Methodology across all fuel types and technologies";
-    projectComments.push({description:aa,createdAt:new Date()});
 
-    this.setState({newComment:"",projectComments})*/
     const { projectId, projectTitle, projectDescription } = this.props.location.state;
-   
+
 
     fetch(`/api/projects-comment/${projectId}`)
-        .then(res => res.json())
-        .then(projectComments => {
-          this.setState({
-            projId:projectId,
-            projectDescription,
-            projectTitle,
-            projectComments
-          }) 
-          setTimeout(()=>this.scrollToBottom(),100);
-        });
-    
+      .then(res => res.json())
+      .then(projectComments => {
+        this.setState({
+          projId: projectId,
+          projectDescription,
+          projectTitle,
+          projectComments
+        })
+        setTimeout(() => this.scrollToBottom(), 100);
+      });
+
   }
 
-  toSentenceCase(string) { 
+  toSentenceCase(string) {
     var sentence = string.split(" ");
-    for(var i = 0; i< sentence.length; i++){
-       sentence[i] = sentence[i][0].toUpperCase() + sentence[i].slice(1);
+    for (var i = 0; i < sentence.length; i++) {
+      sentence[i] = sentence[i][0].toUpperCase() + sentence[i].slice(1);
     }
     return sentence.join(" ");
   }
-  addComment(){
-    const {projectComments} =this.state;
+  addComment() {
+    const { projectComments } = this.state;
     const user = getUser();
-    const newComment = { 
-        personName: this.toSentenceCase(user.fullName), 
-        personId: user.id, 
-        description: this.state.newComment, 
-        createdAt: new Date(),
-        projId: this.state.projId 
-      };
-    console.log("newComment",newComment);
-    
-    
+    const newComment = {
+      personName: this.toSentenceCase(user.fullName),
+      personId: user.id,
+      description: this.state.newComment,
+      createdAt: new Date(),
+      projId: this.state.projId
+    };
+    console.log("newComment", newComment);
+
+
     this.setState({
       delLoader: true
     })
@@ -233,39 +225,53 @@ class ProjectComment extends React.Component {
 
     fetch(apiPath, {
       method: "POST",
-      headers: {"Content-Type": "application/json"},
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newComment)
     })
       .then((response) => {
-        console.log('comment saved',response);
-        
-        if(response && response.statusText === "Created"){
-          this.setState({ openSnackbar: true,message: "Comment saved"});
-          projectComments.push(newComment);
-        }else{
+        console.log('comment saved', response);
+
+        if (response && response.statusText === "Created") {
+            response.json().then((newComment)=>{
+            this.setState({ openSnackbar: true, message: "Comment saved" });
+            projectComments.push(newComment);
+            setTimeout(() => {
+              this.setState({
+                delLoader: false,
+                newComment: "",
+                projectComments
+              });
+              setTimeout(() => this.scrollToBottom(), 100);
+            }, 1000);
+          })
+          
+        } else {
           var mssgfale = response.message ? response.message : 'Something went wrong';
-          this.setState({ openSnackbar: true,message: mssgfale,delLoader: false});
+          this.setState({ openSnackbar: true, message: mssgfale, delLoader: false });
           return false;
         }
 
-        setTimeout(() => {
-          this.setState({
-            delLoader: false,
-            newComment:"",
-            projectComments
-          });
-          setTimeout(()=>this.scrollToBottom(),100);
-        },1000);
+       
 
       })
       .catch(err => {
-        console.log('on OrganizationActions  error',err);
+        console.log('on OrganizationActions  error', err);
       });
 
   }
- 
+
+  deactivateProjectComment(cId,index){
+    const { projectComments } = this.state;
+    fetch(`/api/projects-comment/${cId}`,{ method: "DELETE"})
+      .then(res => {
+        console.log('on deactivateProjectComment ', res);
+        projectComments.splice(index,1);
+        this.setState({projectComments, openSnackbar: true, message: "Comment deleted"})
+        setTimeout(() => this.scrollToBottom(), 100);
+      });
+  }
   scrollToBottom = () => {
-    if(this.divScrollView){
+    if (this.divScrollView) {
       console.log(this.divScrollView);
       this.divScrollView.scrollTop = this.divScrollView.scrollHeight;
     }
@@ -290,37 +296,32 @@ class ProjectComment extends React.Component {
 
                 <Grid container direction="row" justify="space-between" alignItems="center" className="dash">
 
-                    <Grid item sm={9} xs={11}  >
-                      <TextField
-                        id="comment"
-                        label="Enter Comment"
-                        multiline
-                        className={classes.textFieldWide}
-                        value={this.state.newComment}
-                        onChange={(event) => this.setState({ newComment: event.target.value })}
-                        style={{ width: "100%" }}
-                        margin="normal"
-                      />
-                    </Grid>
-                    <Grid item sm={1} xs={1} >
-                      <Typography component="p">
-                        {
-                          this.state.delLoader ?
-                            <CircularProgress /> :
-                            <Button
-                              variant="contained"
-                              color="primary"
-                              className={classes.secondary}
-                              onClick={() => this.addComment()}
-                            >
-                              Save
+                  <Grid item sm={10} xs={10}  >
+                    <TextField
+                      id="comment"
+                      label="Enter Comment"
+                      multiline
+                      className={classes.textFieldWide}
+                      value={this.state.newComment}
+                      onChange={(event) => this.setState({ newComment: event.target.value })}
+                      style={{ width: "100%" }}
+                      margin="normal"
+                    />
+                  </Grid>
+                  <Typography component="p">
+                    {
+                      this.state.delLoader ?
+                        <CircularProgress /> :
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          className={classes.secondary}
+                          onClick={() => this.addComment()}
+                        >
+                          Post Comment
                           </Button>
-                        }
-                      </Typography>
-                      <br />
-                    </Grid>
-
-
+                    }
+                  </Typography>
                 </Grid>
               </Paper>
             </Grid>
@@ -330,32 +331,40 @@ class ProjectComment extends React.Component {
     )
   }
 
-  renderComment(cc,index) {
+  renderComment(cc, index) {
     const { classes } = this.props;
     return (
-        <Paper key={index} className={classes.paper} style={{marginTop:10}}>
-          <Grid container direction="row" justify="space-between" alignItems="flex-end" className="dash">
-              
-              <Grid container sm={8} xs={10} direction="row" >
-                <img src={profileLogo} alt="" className={classes.profileLogo}/>
-                <Grid item sm={8} xs={10}  >
-                  <Typography  variant="h5" color="primary" gutterBottom >
-                      {cc.personName}
-                  </Typography>
-                  <Typography variant="h7" color="primary" gutterBottom >
-                    {moment(cc.createdAt).format("YYYY-MM-DD hh:mm:ss")}
-                  </Typography>
-                  <Typography variant="h7" color="secondary" gutterBottom >
-                      {cc.description}
-                  </Typography>
-                </Grid>
-              </Grid>
+      <Paper key={index} className={classes.paper} style={{ marginTop: 10 }}>
+        <Grid container direction="row" justify="space-between" alignItems="flex-end" className="dash">
 
-              <IconButton >
-                  <DeleteIcon color="primary" />
-              </IconButton>
+          <Grid container sm={11} xs={11} direction="row" >
+            <img src={profileLogo} alt="" className={classes.profileLogo} />
+
+            <Grid item sm={2} xs={2}  >
+              <Typography variant="h5" color="primary" gutterBottom >
+                {cc.personName}
+              </Typography>
+              <Typography variant="h7" color="primary" gutterBottom >
+                {moment(cc.createdAt).format("YYYY-MM-DD hh:mm:ss")}
+              </Typography>
+            </Grid>
+
+            <Grid item sm={8} xs={10}  >
+              <Typography style={{ width: "100%" }} className={classes.heading}>
+                {cc.description
+                  && cc.description.split("\n").map((i, key) => {
+                    return <p className="inlineBlock" key={key}>{i.trim()}</p>
+                  })}
+              </Typography>
+            </Grid>
+
           </Grid>
-        </Paper>
+
+          <IconButton onClick={()=>this.deactivateProjectComment(cc.id,index)}> 
+            <DeleteIcon color="primary" />
+          </IconButton>
+        </Grid>
+      </Paper>
     )
   }
 
@@ -372,7 +381,7 @@ class ProjectComment extends React.Component {
         state: {
           message: `${this.state.message}`,
           projId: this.state.redirectIdOrgOrProject,
-          orgId:this.state.redirectIdOrgOrProject,
+          orgId: this.state.redirectIdOrgOrProject,
         }
       }} />;
     }
@@ -382,22 +391,17 @@ class ProjectComment extends React.Component {
         <CssBaseline />
         <Topbar currentPath={"/ProjectComments"} />
         <div className={classes.root} >
-        <Grid container justify="center" direction="column" alignItems="center" className="panel-dashboard">
-        <PageTitle pageTitle={"Project Comments"} />
-          <Grid container alignItems="center" justify="center" spacing={24} sm={12}>
-            <Grid item sm={10}>
-            
-
-              <Paper className={classes.paper} >
-                
-                  
+          <Grid container justify="center" direction="column" alignItems="center" className="panel-dashboard">
+            <PageTitle pageTitle={"Project Comments"} />
+            <Grid container alignItems="center" justify="center" spacing={24} sm={12}>
+              <Grid item sm={10}>
+                <Paper className={classes.paper} >
                   <div className={classes.divScrollView} ref={(el) => { this.divScrollView = el; }}>
-                      {this.state.projectComments.map((cc,index)=>this.renderComment(cc,index))}
+                    {this.state.projectComments.map((cc, index) => this.renderComment(cc, index))}
                   </div>
-                    
-              </Paper>
+                </Paper>
+              </Grid>
             </Grid>
-          </Grid>
           </Grid>
 
           {this.renderEnterComment()}
@@ -412,7 +416,7 @@ class ProjectComment extends React.Component {
           }}
           message={<span id="message-id">{this.state.message}</span>}
         />
-        
+
       </React.Fragment>
     );
   }
