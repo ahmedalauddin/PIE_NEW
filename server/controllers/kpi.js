@@ -512,7 +512,7 @@ module.exports = {
 
       let sql = "select * from ( "+
         " SELECT pk.id as pkid,p.title as projectTitle, o.name as orgName,"+
-        " (select group_concat(kt.tag separator ',') from kpitags kt where (kt.kpiId = k.id)) AS tags,"+
+        " (select group_concat(kt.tag separator ',') from KpiTags kt where (kt.kpiId = k.id)) AS tags,"+
         "  k.*"+
         " FROM Kpis k"+
         " left join ProjectKpis pk on pk.kpiId=k.id"+
@@ -552,7 +552,7 @@ module.exports = {
     //let sql = "select * from vw_Kpis  where projectId = " + req.params.projid + " and active = 1";
 
     let sql = "SELECT pk.id as pkid,p.id as projectId,p.title as projectTitle, o.name as orgName,"+
-              "(select group_concat(kt.tag separator ',') from kpitags kt where (kt.kpiId = k.id)) AS tags,"+
+              "(select group_concat(kt.tag separator ',') from KpiTags kt where (kt.kpiId = k.id)) AS tags,"+
               " k.* "+
               "FROM ProjectKpis pk,Projects p,Kpis k,Organizations o "+
               "where pk.projId=p.id and  pk.kpiId=k.id and k.orgId = o.id and p.id="+req.params.projid;
@@ -580,7 +580,7 @@ module.exports = {
    
 
       let sql = " SELECT pk.id as pkid,p.title as projectTitle, o.name as orgName,"+
-                " (select group_concat(kt.tag separator ',') from kpitags kt where (kt.kpiId = k.id)) AS tags,"+
+                " (select group_concat(kt.tag separator ',') from KpiTags kt where (kt.kpiId = k.id)) AS tags,"+
                 "  k.*"+
                 " FROM Kpis k"+
                 " left join ProjectKpis pk on pk.kpiId=k.id"+
@@ -612,7 +612,7 @@ module.exports = {
     //let sql = "select * from vw_GetKpis  where orgId = " + req.params.orgid + " and active = 1";
 
     let sql = " SELECT o.name as orgName,"+
-              " (select group_concat(kt.tag separator ',') from kpitags kt where (kt.kpiId = k.id)) AS tags,"+
+              " (select group_concat(kt.tag separator ',') from KpiTags kt where (kt.kpiId = k.id)) AS tags,"+
               " (select group_concat(p.title separator '\n') from Projects p inner join ProjectKpis pk on pk.projId=p.id where (pk.kpiId=k.id)) AS projectTitles,"+
               "  k.*"+
               " FROM Kpis k"+
@@ -646,7 +646,7 @@ module.exports = {
       "order by orgPriority asc";*/
 
       let sql = " SELECT pk.id as pkid,p.title as projectTitle, o.name as orgName,"+
-      " (select group_concat(kt.tag separator ',') from kpitags kt where (kt.kpiId = k.id)) AS tags,"+
+      " (select group_concat(kt.tag separator ',') from KpiTags kt where (kt.kpiId = k.id)) AS tags,"+
       "  k.*"+
       " FROM Kpis k"+
       " left join ProjectKpis pk on pk.kpiId=k.id"+

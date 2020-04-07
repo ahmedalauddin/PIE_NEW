@@ -4,7 +4,7 @@
     "user": "root",
     "password": "VimNanNewTh91",
     "name": "mvp2",
-    "host": "localhost",
+    "host": "172.31.42.162",
     "dialect": "mysql"
   },
   "log": {
