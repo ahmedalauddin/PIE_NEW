@@ -30,31 +30,21 @@ import Snackbar from "@material-ui/core/Snackbar";
 
 const rows = [
   // { id: "edit", numeric: false, disablePadding: false, label: "" },
-  { id: "title", numeric: false, disablePadding: false, label: "Title" },
-  {
-    id: "description",
-    numeric: false,
-    disablePadding: false,
-    label: "Description"
-  },
-  { id: "type", numeric: false, disablePadding: false, label: "Type" },
-  { id: "tags", numeric: false, disablePadding: false, label: "Tags" },
-  { id: "delete", numeric: false, disablePadding: false, label: "Actions" }
+  { id: "title", numeric: false, disablePadding: false, label: "Title",align:"left",width:200 },
+  { id: "description", numeric: false, disablePadding: false, label: "Description" ,align:"left",width:200 },
+  { id: "type", numeric: false, disablePadding: false, label: "Type" ,align:"left",width:100 },
+  { id: "tags", numeric: false, disablePadding: false, label: "Tags" ,align:"left",width:200 },
+  { id: "delete", numeric: false, disablePadding: false, label: "Actions" ,align:"left",width:200 }
 ];
 
 const rowsWithProject = [
   // { id: "edit", numeric: false, disablePadding: false, label: "" },
-  { id: "title", numeric: false, disablePadding: false, label: "Title" },
-  {
-    id: "description",
-    numeric: false,
-    disablePadding: false,
-    label: "Description"
-  },
-  { id: "project", numeric: false, disablePadding: false, label: "Project" },
-  { id: "type", numeric: false, disablePadding: false, label: "Type" },
-  { id: "tags", numeric: false, disablePadding: false, label: "Tags" },
-  { id: "delete", numeric: false, disablePadding: false, label: "Actions" }
+  { id: "title", numeric: false, disablePadding: false, label: "Title" ,align:"left",width:200 },
+  { id: "description", numeric: false, disablePadding: false, label: "Description" ,align:"left",width:200 },
+  { id: "project", numeric: false, disablePadding: false, label: "Project" ,align:"left",width:200 },
+  { id: "type", numeric: false, disablePadding: false, label: "Type" ,align:"left",width:100 },
+  { id: "tags", numeric: false, disablePadding: false, label: "Tags",align:"left",width:200 },
+  { id: "delete", numeric: false, disablePadding: false, label: "Actions" ,align:"left",width:200 }
 ];
 
 
@@ -74,7 +64,8 @@ class EnhancedTableHead extends React.Component {
             row => (
               <TableCell
                 key={row.id}
-                align={row.numeric ? "right" : "left"}
+                align={row.align}
+                style={{width:row.width}}
                 padding={row.disablePadding ? "none" : "default"}
                 sortDirection={orderBy === row.id ? order : false}
               >
@@ -216,7 +207,7 @@ class KpiTable extends React.Component {
     }
   };
 
-  async deactivateKpi(id) {
+  async deactivateKpi(pkid,id) {
     if (id > 0) {
       // Deactivate a KPI
       this.setState({
@@ -226,8 +217,8 @@ class KpiTable extends React.Component {
     let projectId = parseInt(this.props.projectId);
     let organizationId = parseInt(this.props.organizationId);
     var removePath = '';
-    if (projectId > 0) {
-       removePath = "/api/kpis-deactivate-from-project/" + id;
+    if (projectId > 0) { 
+       removePath = "/api/kpis-deactivate-from-project/" + pkid;
     } else if (organizationId > 0) {
        removePath = "/api/kpis-deactivate/" + id;
     }
@@ -310,45 +301,7 @@ class KpiTable extends React.Component {
     this.setState({ page });
   };
 
-  /*
-  renderRow = (kpi, isMultpleProjectMode) =>  {
-    const cells = (
-      <TableRow
-        hover
-        aria-checked={isSelected}
-        tabIndex={-1}
-        key={kpi.id}
-        selected={isSelected}
-      >
-        <TableCell component="th" scope="row" padding="none">
-          <IconButton
-            onClick={() => {
-              this.setEditRedirect(kpi.id);
-            }}
-          >
-            <EditIcon color="primary" />
-          </IconButton>
-        </TableCell>
-        <TableCell align="left">{kpi.title}</TableCell>
-        <TableCell align="left">{kpi.description}</TableCell>
-        <TableCell align="left">{kpi.type}</TableCell>
-        {this.state.fromOrganization
-          ? <TableCell align="left">{kpi.project}</TableCell>
-          : {}
-        }
-        <TableCell align="left">{kpi.tags}</TableCell>
-        <TableCell padding="none">
-          <IconButton
-            onClick={() => {
-              this.deactivateKpi(kpi.id);
-            }}
-          >
-            <DeleteIcon color="primary" />
-          </IconButton>
-        </TableCell>
-      </TableRow>
-    );
-  }; */
+  
 
   handleChangeRowsPerPage = event => {
     this.setState({ rowsPerPage: event.target.value });
@@ -389,19 +342,13 @@ class KpiTable extends React.Component {
                       selected={isSelected}
                     >
                       
-                      <TableCell align="left" onClick={() => {
-                            this.setEditRedirect(kpi.id);
-                          }}>{kpi.title}</TableCell>
-                      <TableCell align="left" onClick={() => {
-                            this.setEditRedirect(kpi.id);
-                          }}>{kpi.description}</TableCell>
-                      {this.state.fromOrganization
-                        ? <TableCell align="left" onClick={() => {
-                          this.setEditRedirect(kpi.id);
-                        }}>
-                          {kpi.projectTitles &&  
-                          
-                          <ul>
+                      <TableCell style={{width:200}}  align="left"  className={classes.noTextDecoration} >{kpi.title}</TableCell>
+                      <TableCell style={{width:200}}  align="left" className={classes.noTextDecoration}>{kpi.description}</TableCell>
+                      
+                      {this.state.fromOrganization && 
+                        <TableCell style={{width:200}}  align="left" className={classes.noTextDecoration}>
+                          {kpi.projectTitles &&                            
+                          <ul style={{padding:15}}>
                           {
                           kpi.projectTitles.split("\n").map((i,key) => 
                                        <li key={key} >{i.trim()}</li> 
@@ -409,36 +356,27 @@ class KpiTable extends React.Component {
                           }
                           </ul>   
                           }</TableCell>
-                        : null
                       }
-                      <TableCell align="left" onClick={() => {
-                            this.setEditRedirect(kpi.id);
-                          }}>{kpi.type}</TableCell>
-                      <TableCell align="left" onClick={() => {
-                            this.setEditRedirect(kpi.id);
-                          }}>{kpi.tags}</TableCell>
+                      <TableCell style={{width:100}}  align="left" className={classes.noTextDecoration}>{(kpi.type && kpi.type!='null')?kpi.type:''}</TableCell>
+                      <TableCell style={{width:200}}  align="left" className={classes.noTextDecoration}>{kpi.tags}</TableCell>
 
-                      <TableCell component="th" scope="row" padding="none">
+                      <TableCell style={{width:200}} align="left" component="th" scope="row" padding="none">
                       
                      
                         {
-                          this.state.delLoader != 0 && this.state.delLoader == kpi.pkid ?
+                          this.state.delLoader != 0 && this.state.delLoader == kpi.id?
                             <CircularProgress />
                             :
                             <IconButton
                               onClick={() => {
-                                this.deactivateKpi(kpi.pkid);
+                                this.deactivateKpi(kpi.pkid,kpi.id);
                               }}
                             >
                               <DeleteIcon color="primary" />
                             </IconButton>
                         }
 
-                        <IconButton
-                          onClick={() => {
-                            this.setEditRedirect(kpi.id);
-                          }}
-                        >
+                        <IconButton onClick={() =>  this.setEditRedirect(kpi.id) } >
                           <EditIcon color="primary" />
                         </IconButton>
 

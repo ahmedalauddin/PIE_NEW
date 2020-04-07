@@ -54,29 +54,13 @@ function getSorting(order, orderBy) {
 }
 
 const rows = [
-  { id: "edit", numeric: false, disablePadding: false, label: "" },
-  // { id: "id", numeric: false, disablePadding: false, label: "ID" },
-  { id: "title", numeric: false, disablePadding: false, label: "Title" },
-  {
-    id: "description",
-    numeric: false,
-    disablePadding: false,
-    label: "Description"
-  },
-  { id: "type", numeric: false, disablePadding: false, label: "Type" },
-  {
-    id: "project",
-    numeric: false,
-    disablePadding: false,
-    label: "Project Name"
-  },
-  {
-    id: "organization",
-    numeric: false,
-    disablePadding: false,
-    label: "Client"
-  },
-  { id: "tags", numeric: false, disablePadding: false, label: "Tags" }
+  { id: "edit", numeric: false, disablePadding: false, label: "",align:"left",width:100 },
+  { id: "title", numeric: false, disablePadding: false, label: "Title",align:"left",width:200 },
+  { id: "description", numeric: false, disablePadding: false, label: "Description" ,align:"left",width:200},
+  { id: "type", numeric: false, disablePadding: false, label: "Type" ,align:"left",width:100},
+  { id: "project", numeric: false, disablePadding: false, label: "Project Name" ,align:"left",width:200},
+  { id: "organization", numeric: false, disablePadding: false, label: "Client",align:"left",width:200 },
+  { id: "tags", numeric: false, disablePadding: false, label: "Tags",align:"left",width:200 }
 ];
 
 class EnhancedTableHead extends React.Component {
@@ -94,7 +78,8 @@ class EnhancedTableHead extends React.Component {
             row => (
               <TableCell
                 key={row.id}
-                align={row.numeric ? "right" : "left"}
+                align={row.align}
+                style={{width:row.width}}
                 padding={row.disablePadding ? "none" : "default"}
                 sortDirection={orderBy === row.id ? order : false}
               >
@@ -373,7 +358,7 @@ console.log('this.state--',this.state);
                       key={n.id}
                       selected={isSelected}
                     >
-                      <TableCell component="th" scope="row" padding="checkbox">
+                      <TableCell  style={{width:100}} align="left" className={classes.noTextDecoration} component="th" scope="row" padding="checkbox">
                         <Checkbox
                           key={n.id}
                           checked={!!+n.selected}
@@ -381,27 +366,26 @@ console.log('this.state--',this.state);
                           onChange={this.handleToggle(n.id)}
                         />
                       </TableCell>
-                      {/* <TableCell component="th" scope="row" padding="none">
-                        {n.id}
-                      </TableCell> */}
-                      <TableCell align="left">
-                        {/* <Link
-                          to={{
-                            pathname: "/kpi",
-                            state: {
-                              projectId: this.props.projectId,
-                              kpiId: n.id
-                            }
-                          }}
-                        > */}
-                          {n.title}
-                        {/* </Link> */}
+                     
+                      <TableCell style={{width:200}} align="left" className={classes.noTextDecoration} align="left">                       
+                          {n.title}                      
                       </TableCell>
-                      <TableCell align="left">{n.description}</TableCell>
-                      <TableCell align="left">{(n.type && n.type!='null')?n.type:""}</TableCell>
-                      <TableCell align="left">{n.projectTitle}</TableCell>
-                      <TableCell align="left">{n.orgName}</TableCell>
-                      <TableCell align="left">{n.tags}</TableCell>
+                      <TableCell style={{width:200}} align="left" className={classes.noTextDecoration}>{n.description}</TableCell>
+                      <TableCell style={{width:100}} align="left" className={classes.noTextDecoration}>{(n.type && n.type!='null')?n.type:""}</TableCell>
+                      
+                      <TableCell style={{width:200}} align="left" className={classes.noTextDecoration}>{n.projectTitles &&
+
+                        <ul style={{padding:15}}>
+                          {
+                            n.projectTitles.split("\n").map((i, key) =>
+                              <li key={key} >{i.trim()}</li>
+                            )
+                          }
+                        </ul>
+                      }</TableCell>
+                      
+                      <TableCell align="left" style={{width:200}} align="left" className={classes.noTextDecoration} >{n.orgName}</TableCell>
+                      <TableCell align="left" style={{width:200}} align="left" className={classes.noTextDecoration}>{n.tags}</TableCell>
                     </TableRow>
                   );
                 })}

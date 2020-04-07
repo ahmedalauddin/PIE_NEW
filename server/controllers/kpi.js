@@ -512,6 +512,7 @@ module.exports = {
 
       let sql = "select * from ( "+
         " SELECT pk.id as pkid,p.title as projectTitle, o.name as orgName,"+
+        " GROUP_CONCAT(p.title separator '\n') as projectTitles ," +
         " (select group_concat(kt.tag separator ',') from KpiTags kt where (kt.kpiId = k.id)) AS tags,"+
         "  k.*"+
         " FROM Kpis k"+
@@ -519,12 +520,12 @@ module.exports = {
         " left join Projects p on pk.projId=p.id"+
         " left join Organizations o on k.orgId = o.id"+
         " where k.active = 1 and  (p.id<>" + projectId + " or p.id is null) "+orgClause+
-        " ) as viewT";
+        " GROUP BY k.id) as viewT";
 
         sql += " where  (tags like '%" + searchText + "%' or title like '%" + searchText + "%' " +
                "or description like '%" + searchText + "%')"; 
        
-
+       
    /*if (searchOrgOnly == "true") {
       sql += " and (orgId = " + orgId + " or orgId = 1 or orgId is null)";
     }*/
