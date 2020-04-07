@@ -319,7 +319,7 @@ class ProjectDetail extends React.Component {
               }}
             />
           </Grid>
-          <Grid item xs={12}>
+          {/* <Grid item xs={12}>
             <TextField
               id="summary"
               label="Summary"
@@ -333,7 +333,7 @@ class ProjectDetail extends React.Component {
                 shrink: true,
               }}
             />
-          </Grid>
+          </Grid> */}
           <Grid item xs={12}>
             <TextField
               id="businessGoal"

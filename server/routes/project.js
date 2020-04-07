@@ -40,8 +40,8 @@ module.exports = router => {
   router.get("/api/projects-recent", projController.getMostRecent);
 
   // list projects for an org for our dashboard
-  logger.debug(`${callerType} GET -> path: /api/projects-dashboard/:orgId`);
-  router.get("/api/projects-dashboard/:orgId", projController.getProjectDashboard);
+  //logger.debug(`${callerType} GET -> path: /api/projects-dashboard/:orgId`);
+  //router.get("/api/projects-dashboard/:orgId", projController.getProjectDashboard);
 
   // list earliest and latest years associated with projects
   logger.debug(`${callerType} GET -> path: /api/projects-years/:orgId`);

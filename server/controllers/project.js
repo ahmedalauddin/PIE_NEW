@@ -252,17 +252,35 @@ module.exports = {
         {
           model: Milestone,
           as: "milestones"
-        },
-        {
-          model: KPI,
-          as: "kpis"
         }
       ]
     })
       .then(p => {
-        logger.info(`${callerType} findById -> successful, 
-          title: ${p ? p.title : "not found"}`);
-        res.status(200).send(p);
+        logger.info(`${callerType} findById -> successful,  title: ${p  ? p.id : "not found"}`);
+        if(p && p.id){
+          let sql = "SELECT  pk.id as pkid,pk.id as pkid,k.* "+
+          "FROM ProjectKpis pk,Projects p,Kpis k,Organizations o "+
+          "where pk.projId=p.id and  pk.kpiId=k.id and k.orgId = o.id and pk.projId="+p.id;
+          logger.info(`${callerType} project kpis -> SQL: ${sql}`);
+          models.sequelize
+          .query(sql,
+            {
+              type: models.sequelize.QueryTypes.SELECT
+            }
+          )
+          .then(_k => {
+            logger.debug(`${callerType} project kpis -> successful, count: ${_k.length}`);
+            p.dataValues.kpis=_k;
+            res.status(200).send(p);
+          })
+          .catch(error => {
+            logger.error(`${callerType} project kpis -> error: ${error.stack}`);
+            res.status(400).send(error);
+          });
+
+        } else{ 
+          res.status(200).send(p);
+        }
       })
       .catch(error => {
         logger.error(`${callerType} findById -> error: ${error.stack}`);
@@ -347,12 +365,14 @@ module.exports = {
   // Find an org by Id
   findByOrganization(req, res) {
     logger.debug(`${callerType} findByOrganization -> id = ${req.params.id}`);
+
+    let sql="select pk.id as pkid,P.id, P.title, P.description, K.title as mainKpi "+
+            "FROM ProjectKpis pk,Projects p,Kpis k,Organizations o "+
+            "where pk.projId=p.id and  pk.kpiId=k.id and k.orgId = o.id and p.orgId = " + req.params.orgid
+
     return models.sequelize
       .query(
-        "select P.id, P.title, P.description, K.title as mainKpi " +
-          "from Projects P left outer join Kpis K " +
-          "on P.mainKpiId = K.id where P.orgId = " + req.params.orgid + " " +
-          "order by P.title ",
+        sql,
         {
           type: models.sequelize.QueryTypes.SELECT
         }
@@ -399,7 +419,7 @@ module.exports = {
   },
 
   // get projects by organization
-  getProjectDashboard(req, res) {
+ /* getProjectDashboard(req, res) {
     let sql = "select P.id, P.orgId, P.title as `projectTitle`, PS.label as `status`, K.title as `mainKpi`,\
       P.progress, P.startAt, P.endAt, \
       (select group_concat(concat(' ', Per.firstName, ' ', Per.lastName)) from ProjectPersons PP, Persons Per \
@@ -425,7 +445,7 @@ module.exports = {
         logger.error(error.stack);
         res.status(400).send(error);
       });
-  },
+  },*/
 
   // get projects by organization
   getProjectFilteredDashboard(req, res) {

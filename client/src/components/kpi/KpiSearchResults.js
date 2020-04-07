@@ -385,7 +385,7 @@ console.log('this.state--',this.state);
                         {n.id}
                       </TableCell> */}
                       <TableCell align="left">
-                        <Link
+                        {/* <Link
                           to={{
                             pathname: "/kpi",
                             state: {
@@ -393,12 +393,12 @@ console.log('this.state--',this.state);
                               kpiId: n.id
                             }
                           }}
-                        >
+                        > */}
                           {n.title}
-                        </Link>
+                        {/* </Link> */}
                       </TableCell>
                       <TableCell align="left">{n.description}</TableCell>
-                      <TableCell align="left">{n.type}</TableCell>
+                      <TableCell align="left">{(n.type && n.type!='null')?n.type:""}</TableCell>
                       <TableCell align="left">{n.projectTitle}</TableCell>
                       <TableCell align="left">{n.orgName}</TableCell>
                       <TableCell align="left">{n.tags}</TableCell>

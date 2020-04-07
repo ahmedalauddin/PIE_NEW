@@ -373,13 +373,17 @@ class Kpi extends React.Component {
     // Get the organization from the filter.
     let orgName = getOrgName();
     let orgId = getOrgId();
-    let departments = getOrgDepartments();
 
-    this.setState({
-      orgName: orgName,
-      orgId: orgId,
-      departments: departments
+    fetch(`api/departments/org/${orgId}`)
+    .then(res => res.json())
+    .then(departments => {
+      this.setState({
+        orgName: orgName,
+        orgId: orgId,
+        departments: departments
+      });
     });
+    
   };
 
   componentDidMount() {

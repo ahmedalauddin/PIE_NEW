@@ -114,11 +114,12 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: "statusId"
     });
 
+    /*
     logger.debug(`${callerType} Project hasMany KPI`);
     Project.hasMany(models.Kpi, {
       as: "kpis",
       foreignKey: "projectId"
-    });
+    });*/
 
     logger.debug(`${callerType} Project hasMany Task`);
     Project.hasMany(models.Task, {

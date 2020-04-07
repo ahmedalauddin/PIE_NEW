@@ -222,7 +222,8 @@ class KpiTable extends React.Component {
       this.setState({
         delLoader: id
       })
-      let projectId = parseInt(this.props.projectId);
+      
+    let projectId = parseInt(this.props.projectId);
     let organizationId = parseInt(this.props.organizationId);
     var removePath = '';
     if (projectId > 0) {
@@ -411,12 +412,12 @@ class KpiTable extends React.Component {
                       
                      
                         {
-                          this.state.delLoader != 0 && this.state.delLoader == kpi.id ?
+                          this.state.delLoader != 0 && this.state.delLoader == kpi.pkid ?
                             <CircularProgress />
                             :
                             <IconButton
                               onClick={() => {
-                                this.deactivateKpi(kpi.id);
+                                this.deactivateKpi(kpi.pkid);
                               }}
                             >
                               <DeleteIcon color="primary" />

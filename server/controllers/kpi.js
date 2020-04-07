@@ -68,13 +68,25 @@ module.exports = {
         formulaDescription: req.body.formula,
         type: req.body.type,
         active: 1,
-        projectId: req.body.projectId,
+ //       projectId: req.body.projectId,
         mindmapNodeId: nodeId,
         level: req.body.level,
         status: req.body.taskstatus,
-        orgId: req.body.orgId
+        orgId: req.body.orgId,
+        deptId: req.body.deptId
       })
         .then(kpi => {
+          
+          if(req.body.projectId){
+            models.ProjectKpi.create({
+              projId: req.body.projectId,
+              kpiId: kpi.id,
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            })
+          }
+          
+          
           // SQL to insert all tags.  Need to loop through the array of tags to build the strings of values
           // we'll insert.
           let tags = req.body.tags;
@@ -115,6 +127,7 @@ module.exports = {
     }
   },
 
+  /*
   createWithProject(req, res) {
     const projectId = req.body.projectId;
     logger.debug(`kpi createWithProject -> projectId: ${projectId}`);
@@ -149,6 +162,7 @@ module.exports = {
         res.status(400).send(error);
       });
   },
+  */
 
   // Update a Kpi
   update(req, res) {
@@ -161,7 +175,8 @@ module.exports = {
         type: req.body.type,
         level: req.body.level,
         status: req.body.taskstatus,
-        orgId: req.body.orgId
+        orgId: req.body.orgId,
+        deptId: req.body.deptId
       },
       {
         returning: true,
@@ -272,7 +287,7 @@ module.exports = {
         res.status(400).send(error);
       });
   },
-
+/*
   removeFromProject(req, res) {
     const id = req.params.id;
     return models.Kpi.update(
@@ -306,7 +321,7 @@ module.exports = {
         logger.error(`${callerType} KPI deactivate, id ${id} -> error: ${error.stack}`);
         res.status(400).send(error);
       });
-  },
+  },*/
 
   // For KPI search, assign KPIs to the project.
   // TODO: change this so it's a save as new instead of just using the KpiProjects table.
@@ -314,17 +329,10 @@ module.exports = {
     This will need to insert records into the KPI table, just copying the KPIs from other projects.
     Not too many changes: the main diff is we'll insert into the Kpis table instead of KpiProjects.
    */
+  /*
   saveAsNew(req, res) {
     logger.debug(`${callerType} KPI assignToProject -> reg: ${JSON.stringify(req.body)}`);
-    /*
-    Need something like this:
-      INSERT into `Kpis`
-      (kpiId, projectId)
-      VALUES
-        ('69', '118'), ('67', '118'), ('66', '118')
-      ON DUPLICATE KEY
-      UPDATE projectId=projectId, kpiId=kpiId;
-     */
+   
 
     var jsonData = req.body.data;
     let sqlArrays = "";
@@ -385,7 +393,7 @@ module.exports = {
         return "error - no JSON";
       }
     }
-  },
+  },*/
 
   // For KPI search, assign KPIs to the project.
   /*
@@ -464,10 +472,6 @@ module.exports = {
           as: "department"
         },
         {
-          model: models.Project,
-          as: "project"
-        },
-        {
           model: models.KpiTag,
           as: "tags"
         }
@@ -495,13 +499,35 @@ module.exports = {
     let orgId = req.headers.orgid;
     let searchOrgOnly = req.headers.searchorgonly;
     logger.debug(`${callerType} search Kpi -> searchOrgOnly: ${searchOrgOnly}`);
+    /*
     let sql = "select * from vw_GetKpis " +
       "where (tags like '%" + searchText + "%' or title like '%" + searchText + "%' " +
-      "or description like '%" + searchText + "%') " +
-      "and (projectId <> " + projectId + " or projectId is null) and active = 1";
-    if (searchOrgOnly == "true") {
+      "or description like '%" + searchText + "%') and active = 1"; 
+      "and (projectId <> " + projectId + " or projectId is null) ";  */
+     
+      let orgClause="";
+      if (searchOrgOnly == "true") {
+        orgClause= " and (o.id = "+orgId+" or o.id = 1 or o.id is null)";
+      }
+
+      let sql = "select * from ( "+
+        " SELECT pk.id as pkid,p.title as projectTitle, o.name as orgName,"+
+        " (select group_concat(kt.tag separator ',') from kpitags kt where (kt.kpiId = k.id)) AS tags,"+
+        "  k.*"+
+        " FROM Kpis k"+
+        " left join ProjectKpis pk on pk.kpiId=k.id"+
+        " left join Projects p on pk.projId=p.id"+
+        " left join Organizations o on k.orgId = o.id"+
+        " where k.active = 1 and  (p.id<>" + projectId + " or p.id is null) "+orgClause+
+        " ) as viewT";
+
+        sql += " where  (tags like '%" + searchText + "%' or title like '%" + searchText + "%' " +
+               "or description like '%" + searchText + "%')"; 
+       
+
+   /*if (searchOrgOnly == "true") {
       sql += " and (orgId = " + orgId + " or orgId = 1 or orgId is null)";
-    }
+    }*/
     logger.debug(`${callerType} create KpiProject -> sql: ${sql}`);
     return models.sequelize
       .query(sql,
@@ -523,9 +549,16 @@ module.exports = {
 
   // List all KPIs for a single project
   listByProject(req, res) {
-    let sql = "select * from vw_Kpis " +
-      "where projectId = " + req.params.projid + " and active = 1";
+    //let sql = "select * from vw_Kpis  where projectId = " + req.params.projid + " and active = 1";
+
+    let sql = "SELECT pk.id as pkid,p.id as projectId,p.title as projectTitle, o.name as orgName,"+
+              "(select group_concat(kt.tag separator ',') from kpitags kt where (kt.kpiId = k.id)) AS tags,"+
+              " k.* "+
+              "FROM ProjectKpis pk,Projects p,Kpis k,Organizations o "+
+              "where pk.projId=p.id and  pk.kpiId=k.id and k.orgId = o.id and p.id="+req.params.projid;
+
     logger.debug(`${callerType} create Kpi -> sql: ${sql}`);
+
     return models.sequelize
       .query(sql,
         {
@@ -544,8 +577,18 @@ module.exports = {
 
   // Get KPI by matching its mindmap node ID.
   getByMindmapNode(req, res) {
-    let sql = "select K.*, P.title as project, P.description as projectDescription from Kpis K " +
-      "left outer join Projects P on K.projectId = P.id where mindmapNodeId = '" + req.params.mindmapNodeId + "' limit 1;"
+   
+
+      let sql = " SELECT pk.id as pkid,p.title as projectTitle, o.name as orgName,"+
+                " (select group_concat(kt.tag separator ',') from kpitags kt where (kt.kpiId = k.id)) AS tags,"+
+                "  k.*"+
+                " FROM Kpis k"+
+                " left join ProjectKpis pk on pk.kpiId=k.id"+
+                " left join Projects p on pk.projId=p.id"+
+                " left join Organizations o on k.orgId = o.id"+
+                " where k.active = 1 and k.mindmapNodeId = '" + req.params.mindmapNodeId + "' limit 1;";
+      
+    
     logger.debug(`${callerType} getByMindmapNode -> sql: ${sql}`);
     return models.sequelize
       .query(sql,
@@ -566,8 +609,17 @@ module.exports = {
   // List all KPIs for a single organization
   listByOrganization(req, res) {
     // May need to change the view.
-    let sql = "select * from vw_GetKpis " +
-      "where orgId = " + req.params.orgid + " and active = 1";
+    //let sql = "select * from vw_GetKpis  where orgId = " + req.params.orgid + " and active = 1";
+
+    let sql = " SELECT pk.id as pkid,p.title as projectTitle, o.name as orgName,"+
+              " (select group_concat(kt.tag separator ',') from kpitags kt where (kt.kpiId = k.id)) AS tags,"+
+              "  k.*"+
+              " FROM Kpis k"+
+              " left join ProjectKpis pk on pk.kpiId=k.id"+
+              " left join Projects p on pk.projId=p.id"+
+              " left join Organizations o on k.orgId = o.id"+
+              " where k.active = 1 and k.orgId="+req.params.orgid;
+
     logger.debug(`${callerType} create Kpi -> sql: ${sql}`);
    
     return models.sequelize
@@ -589,10 +641,21 @@ module.exports = {
   // List all KPIs for a single organization by priority for the mind map screen.
   listByOrganizationAndPriority(req, res) {
     const orgId = req.params.orgid;
-    const sql = "select K.id, K.title, K.orgPriority, P.id as projId, P.title as projTitle, P.description as projDescription " +
+    /*const sql = "select K.id, K.title, K.orgPriority, P.id as projId, P.title as projTitle, P.description as projDescription " +
       "from Kpis K left outer join Projects P on K.id = P.mainKpiId and K.orgId = P.orgId " +
       "where K.orgId = '" + orgId + "' and K.active = 1 " +
-      "order by orgPriority asc";
+      "order by orgPriority asc";*/
+
+      let sql = " SELECT pk.id as pkid,p.title as projectTitle, o.name as orgName,"+
+      " (select group_concat(kt.tag separator ',') from kpitags kt where (kt.kpiId = k.id)) AS tags,"+
+      "  k.*"+
+      " FROM Kpis k"+
+      " left join ProjectKpis pk on pk.kpiId=k.id"+
+      " left join Projects p on pk.projId=p.id"+
+      " left join Organizations o on k.orgId = o.id"+
+      " where k.active = 1 and  and k.orgId="+orgId +"  order by k.orgPriority asc";
+   
+
     logger.debug(`${callerType} create Kpi -> sql: ${sql}`);
     return models.sequelize
       .query(sql,
@@ -631,6 +694,74 @@ module.exports = {
         logger.error(`${callerType} list -> error: ${error.stack}`);
         res.status(400).send(error);
       });
+  },
+
+  removeFromProject(req, res) {
+
+    logger.debug(`${callerType} removeFromProject-> : ${req.params.id}`);
+    return models.ProjectKpi.destroy({
+      where: {
+        id: req.params.id
+      }
+    }).then(_k => {
+      logger.debug(`${callerType} removeFromProject successful: ${_k}`);
+      res.status(201).send(req.params);
+    })
+    .catch(error => {
+      logger.error(`${callerType} removeFromProject error: ${error.stack}`);
+      res.status(400).send(error);
+    });
+
+  },
+
+  kpisAssign(req, res) {
+
+    var jsonData = req.body.data;
+    let sqlArrays = "";
+    let sql = "";
+    let doInsert = false;
+    let projectId = req.body.projectId;
+    let orgnId = req.params.orgnId;
+    const records=[];
+
+    if (jsonData) {
+      for (var i = 0; i < jsonData.length; i++) {
+        if (jsonData[i].selected === true) {
+          records.push({
+            projId:  projectId,
+            kpiId: jsonData[i].id,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          })
+        }
+      }
+    }
+
+    if(records.length==0){
+      return res.status(201).send({
+        success: true,
+        message: "KPI not selected"
+      });
+    }
+
+    models.ProjectKpi.bulkCreate(records).then(([results, metadata]) => {
+      console.log("KPI assignToProject -> update: successful");
+      if(results > 0){
+        res.status(201).send({
+          success: true,
+          message: "KPI Assigned successfully"
+        });
+      }else{
+        res.status(201).send({
+          success: true,
+          message: "Something went wrong."
+        });
+      }
+    })
+    .catch(error => {
+      logger.error(`${callerType} KPI kpisAssign -> error: ${error.stack}`);
+      res.status(400).send(error);
+    });
   }
 
 };
