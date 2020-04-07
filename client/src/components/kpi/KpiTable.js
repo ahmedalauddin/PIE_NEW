@@ -398,7 +398,17 @@ class KpiTable extends React.Component {
                       {this.state.fromOrganization
                         ? <TableCell align="left" onClick={() => {
                           this.setEditRedirect(kpi.id);
-                        }}>{kpi.projectId > 0 ? kpi.projectTitle : null}</TableCell>
+                        }}>
+                          {kpi.projectTitles &&  
+                          
+                          <ul>
+                          {
+                          kpi.projectTitles.split("\n").map((i,key) => 
+                                       <li key={key} >{i.trim()}</li> 
+                                  )
+                          }
+                          </ul>   
+                          }</TableCell>
                         : null
                       }
                       <TableCell align="left" onClick={() => {

@@ -320,26 +320,8 @@ class Kpi extends React.Component {
       })
         .then(response => response.json())
         .then((response) => {
-          // Redirect to the Project component.
-          var redirectTarget = projectId ? "/project/" : "/organization/"
-          // const redirectIdOrgOrProject = projectId ? projectId : organizationId
-
-          // if(projectId !== undefined){
-          //   var redirectIdOrgOrProject = projectId
-          // }
-          // if(organizationId !== undefined){
-          //   var redirectIdOrgOrProject = organizationId
-          // }
-          if(projectId == undefined && organizationId == undefined){
-            var redirectIdOrgOrProject = this.state.projectId;
-            var redirectTarget = "/project/"
-          }else if(projectId == undefined && organizationId !== undefined){
-            var redirectIdOrgOrProject = organizationId
-          }else if(projectId !== undefined && organizationId == undefined){
-            var redirectIdOrgOrProject = projectId
-          }else if(projectId !== undefined && organizationId !== undefined){
-            var redirectIdOrgOrProject = organizationId
-          }
+          
+         
           
           this.setState({ openSnackbar: true,message: response.message && response.message});
           
@@ -353,21 +335,42 @@ class Kpi extends React.Component {
             return false;
           }
 
-          setTimeout(() => {
-          this.setState({
-            redirectTarget:  redirectTarget,
-            readyToRedirect: true,
-            // message: response.message,
-            redirectIdOrgOrProject: redirectIdOrgOrProject,
-            delLoader: false
-          });
-        },3000);
+          this.redirectBack(3000);
+          
         })
         .catch(err => {
           console.log(err);
         });
         console.log("Response: ", response)
   };
+
+  redirectBack(timeout){
+    const projectId = this.props.location.state.projectId;
+    const organizationId = this.props.location.state.organizationId
+
+    var redirectTarget = projectId ? "/project/" : "/organization/"
+       
+    if(projectId == undefined && organizationId == undefined){
+      var redirectIdOrgOrProject = this.state.projectId;
+      var redirectIdOrgOrProject = this.state.projectId;
+      var redirectTarget = "/project/"
+    }else if(projectId == undefined && organizationId !== undefined){
+      var redirectIdOrgOrProject = organizationId
+    }else if(projectId !== undefined && organizationId == undefined){
+      var redirectIdOrgOrProject = projectId
+    }else if(projectId !== undefined && organizationId !== undefined){
+      var redirectIdOrgOrProject = organizationId
+    }
+
+    setTimeout(() => {
+      this.setState({
+        redirectTarget:  redirectTarget,
+        readyToRedirect: true,
+        redirectIdOrgOrProject: redirectIdOrgOrProject,
+        delLoader: false
+      });
+    },timeout);
+  }
 
   setOrganizationInfo = () => {
     // Get the organization from the filter.
@@ -612,7 +615,7 @@ class Kpi extends React.Component {
                         handleDrag={this.handleDrag}
                         delimiters={delimiters} />
                     </Grid>
-                    <Grid item sm={10}>
+                    <Grid item sm={10} container direction="row">
                       <Typography component="p">
                       {
                         this.state.delLoader ?
@@ -627,7 +630,17 @@ class Kpi extends React.Component {
                           </Button>
                         }
                       </Typography>
-                      <br />
+                      { !this.state.delLoader &&
+                          <Button
+                            style={{marginLeft:10}}
+                            variant="contained"
+                            color="primary"
+                            onClick={()=>this.redirectBack(0)}
+                            className={classes.secondary}
+                          >
+                            Cancel
+                          </Button>
+                      }
                     </Grid>
                   </Grid>
                 </form>

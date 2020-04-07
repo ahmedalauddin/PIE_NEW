@@ -611,12 +611,11 @@ module.exports = {
     // May need to change the view.
     //let sql = "select * from vw_GetKpis  where orgId = " + req.params.orgid + " and active = 1";
 
-    let sql = " SELECT pk.id as pkid,p.title as projectTitle, o.name as orgName,"+
+    let sql = " SELECT o.name as orgName,"+
               " (select group_concat(kt.tag separator ',') from kpitags kt where (kt.kpiId = k.id)) AS tags,"+
+              " (select group_concat(p.title separator '\n') from Projects p inner join ProjectKpis pk on pk.projId=p.id where (pk.kpiId=k.id)) AS projectTitles,"+
               "  k.*"+
               " FROM Kpis k"+
-              " left join ProjectKpis pk on pk.kpiId=k.id"+
-              " left join Projects p on pk.projId=p.id"+
               " left join Organizations o on k.orgId = o.id"+
               " where k.active = 1 and k.orgId="+req.params.orgid;
 
