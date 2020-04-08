@@ -225,6 +225,8 @@ class Kpi extends React.Component {
       snackbarMessage: "",
       message: "",
     delLoader:false,
+    fromOrganization:false,
+    showSaveButton:true
   };
 
   handleChange = name => event => {
@@ -348,18 +350,13 @@ class Kpi extends React.Component {
     const projectId = this.props.location.state.projectId;
     const organizationId = this.props.location.state.organizationId
 
-    var redirectTarget = projectId ? "/project/" : "/organization/"
-       
-    if(projectId == undefined && organizationId == undefined){
-      var redirectIdOrgOrProject = this.state.projectId;
-      var redirectIdOrgOrProject = this.state.projectId;
-      var redirectTarget = "/project/"
-    }else if(projectId == undefined && organizationId !== undefined){
-      var redirectIdOrgOrProject = organizationId
-    }else if(projectId !== undefined && organizationId == undefined){
-      var redirectIdOrgOrProject = projectId
-    }else if(projectId !== undefined && organizationId !== undefined){
-      var redirectIdOrgOrProject = organizationId
+    let redirectTarget = "/project/";
+    let redirectIdOrgOrProject = projectId;
+
+  
+    if(this.state.fromOrganization){
+      redirectTarget =  "/organization/"
+      redirectIdOrgOrProject = organizationId;
     }
 
     setTimeout(() => {
@@ -370,6 +367,22 @@ class Kpi extends React.Component {
         delLoader: false
       });
     },timeout);
+  }
+
+  setPreviousState(){
+    const projectId = this.props.location.state.projectId;
+    const organizationId = this.props.location.state.organizationId
+    
+    let fromOrganization= false;
+    if(projectId == undefined && organizationId !== undefined){
+      fromOrganization=true;
+    }else if(projectId !== undefined && organizationId !== undefined){
+      fromOrganization=true;
+    }
+
+    this.setState({
+      fromOrganization      
+    });
   }
 
   setOrganizationInfo = () => {
@@ -390,7 +403,9 @@ class Kpi extends React.Component {
   };
 
   componentDidMount() {
+    this.setPreviousState();
     this.setOrganizationInfo();
+    
     // Project ID and KPI id (if there is the former, are passed in by location.state).
     const kpiId = this.props.location.state.kpiId;
     let projectId = 0;
@@ -416,6 +431,9 @@ class Kpi extends React.Component {
       fetch(`/api/kpis/${kpiId}`)
         .then(res => res.json())
         .then(kpi => {
+
+          const showSaveButton=(this.state.fromOrganization || kpi.projectId)?true:false;
+
           this.setState({
             id: kpiId,
             title: kpi.title,
@@ -436,7 +454,8 @@ class Kpi extends React.Component {
             buttonText: "Update",
             useProjectId: useProjectId,
             useOrganizationId: useOrganizationId,
-            redirectTarget: redirectTarget
+            redirectTarget: redirectTarget,
+            showSaveButton
           });
           let x = 1;
         });
@@ -616,6 +635,7 @@ class Kpi extends React.Component {
                         delimiters={delimiters} />
                     </Grid>
                     <Grid item sm={10} container direction="row">
+                      {this.state.showSaveButton &&
                       <Typography component="p">
                       {
                         this.state.delLoader ?
@@ -630,6 +650,7 @@ class Kpi extends React.Component {
                           </Button>
                         }
                       </Typography>
+                      }
                       { !this.state.delLoader &&
                           <Button
                             style={{marginLeft:10}}

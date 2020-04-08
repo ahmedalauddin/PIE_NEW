@@ -68,7 +68,7 @@ module.exports = {
         formulaDescription: req.body.formula,
         type: req.body.type,
         active: 1,
- //       projectId: req.body.projectId,
+        projectId: req.body.projectId,
         mindmapNodeId: nodeId,
         level: req.body.level,
         status: req.body.taskstatus,
@@ -509,7 +509,10 @@ module.exports = {
       if (searchOrgOnly == "true") {
         orgClause= " and (o.id = "+orgId+" or o.id = 1 or o.id is null)";
       }
-
+      let projClause="";
+      if (projectId > 0) {
+        projClause=" and k.id not in (select kpiId from ProjectKpis where projId=" + projectId + ") ";
+      }
       let sql = "select * from ( "+
         " SELECT pk.id as pkid,p.title as projectTitle, o.name as orgName,"+
         " GROUP_CONCAT(p.title separator '\n') as projectTitles ," +
@@ -519,7 +522,7 @@ module.exports = {
         " left join ProjectKpis pk on pk.kpiId=k.id"+
         " left join Projects p on pk.projId=p.id"+
         " left join Organizations o on k.orgId = o.id"+
-        " where k.active = 1 and  (p.id<>" + projectId + " or p.id is null) "+orgClause+
+        " where k.active = 1 "+projClause+" and (k.projectId is null or k.projectId = 0) "+orgClause+
         " GROUP BY k.id) as viewT";
 
         sql += " where  (tags like '%" + searchText + "%' or title like '%" + searchText + "%' " +
@@ -618,7 +621,7 @@ module.exports = {
               "  k.*"+
               " FROM Kpis k"+
               " left join Organizations o on k.orgId = o.id"+
-              " where k.active = 1 and k.orgId="+req.params.orgid;
+              " where k.active = 1 and (k.projectId is null or k.projectId=0) and k.orgId="+req.params.orgid;
 
     logger.debug(`${callerType} create Kpi -> sql: ${sql}`);
    
@@ -696,21 +699,47 @@ module.exports = {
       });
   },
 
-  removeFromProject(req, res) {
+   removeFromProject(req, res) {
 
     logger.debug(`${callerType} removeFromProject-> : ${req.params.id}`);
-    return models.ProjectKpi.destroy({
-      where: {
-        id: req.params.id
-      }
-    }).then(_k => {
-      logger.debug(`${callerType} removeFromProject successful: ${_k}`);
-      res.status(201).send(req.params);
-    })
-    .catch(error => {
-      logger.error(`${callerType} removeFromProject error: ${error.stack}`);
-      res.status(400).send(error);
-    });
+
+    let sql = "SELECT k.projectId,k.id FROM ProjectKpis pk,Kpis k "+
+              " where pk.kpiId = k.id and pk.id="+req.params.id;
+
+    return models.sequelize
+      .query(sql,
+        {
+          type: models.sequelize.QueryTypes.SELECT
+        }
+      )
+      .then(async _k => {
+       
+        if(_k.length && _k.length>0 && _k[0].projectId>0){
+          logger.debug(`${callerType} removeFromProject own kpi -> kpiid: ${_k[0].id}`);
+          await models.Kpi.update( { active: 0 }, { where: { id: _k[0].id } } )
+        }
+
+        models.ProjectKpi.destroy({
+          where: {
+            id: req.params.id
+          }
+        }).then(_k => {
+          logger.debug(`${callerType} removeFromProject successful: ${_k}`);
+          res.status(201).send(req.params);
+        })
+        .catch(error => {
+          logger.error(`${callerType} removeFromProject error: ${error.stack}`);
+          res.status(400).send(error);
+        });
+
+
+      })
+      .catch(error => {
+        logger.error(`${callerType} listByProject -> error: ${error.stack}`);
+        res.status(400).send(error);
+      });
+
+
 
   },
 

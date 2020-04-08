@@ -31,19 +31,18 @@ import Snackbar from "@material-ui/core/Snackbar";
 const rows = [
   // { id: "edit", numeric: false, disablePadding: false, label: "" },
   { id: "title", numeric: false, disablePadding: false, label: "Title",align:"left",width:200 },
-  { id: "description", numeric: false, disablePadding: false, label: "Description" ,align:"left",width:200 },
+  { id: "description", numeric: false, disablePadding: false, label: "Description" ,align:"left",width:300 },
   { id: "type", numeric: false, disablePadding: false, label: "Type" ,align:"left",width:100 },
-  { id: "tags", numeric: false, disablePadding: false, label: "Tags" ,align:"left",width:200 },
+  { id: "imported", numeric: false, disablePadding: false, label: "Imported" ,align:"left",width:100 },
   { id: "delete", numeric: false, disablePadding: false, label: "Actions" ,align:"left",width:200 }
 ];
 
 const rowsWithProject = [
   // { id: "edit", numeric: false, disablePadding: false, label: "" },
   { id: "title", numeric: false, disablePadding: false, label: "Title" ,align:"left",width:200 },
-  { id: "description", numeric: false, disablePadding: false, label: "Description" ,align:"left",width:200 },
-  { id: "project", numeric: false, disablePadding: false, label: "Project" ,align:"left",width:200 },
+  { id: "description", numeric: false, disablePadding: false, label: "Description" ,align:"left",width:300 },
+  { id: "project", numeric: false, disablePadding: false, label: "Project" ,align:"left",width:300 },
   { id: "type", numeric: false, disablePadding: false, label: "Type" ,align:"left",width:100 },
-  { id: "tags", numeric: false, disablePadding: false, label: "Tags",align:"left",width:200 },
   { id: "delete", numeric: false, disablePadding: false, label: "Actions" ,align:"left",width:200 }
 ];
 
@@ -207,7 +206,7 @@ class KpiTable extends React.Component {
     }
   };
 
-  async deactivateKpi(pkid,id) {
+  async deactivateKpi(pkid,id,projectTitles) {
     if (id > 0) {
       // Deactivate a KPI
       this.setState({
@@ -220,6 +219,10 @@ class KpiTable extends React.Component {
     if (projectId > 0) { 
        removePath = "/api/kpis-deactivate-from-project/" + pkid;
     } else if (organizationId > 0) {
+      if(this.state.fromOrganization && projectTitles){
+        const msg="KPI cannot be deleted as it is associated with project(s).";
+        return  this.setState({ msg, delLoader: 0, openSnackbar: true });
+      }
        removePath = "/api/kpis-deactivate/" + id;
     }
 
@@ -358,7 +361,11 @@ class KpiTable extends React.Component {
                           }</TableCell>
                       }
                       <TableCell style={{width:100}}  align="left" className={classes.noTextDecoration}>{(kpi.type && kpi.type!='null')?kpi.type:''}</TableCell>
-                      <TableCell style={{width:200}}  align="left" className={classes.noTextDecoration}>{kpi.tags}</TableCell>
+                      
+                      { !this.state.fromOrganization &&
+                        <TableCell style={{width:200}}  align="left" className={classes.noTextDecoration}>{kpi.projectId>0?'No':'Yes'}</TableCell>
+                      
+                      }
 
                       <TableCell style={{width:200}} align="left" component="th" scope="row" padding="none">
                       
@@ -369,7 +376,7 @@ class KpiTable extends React.Component {
                             :
                             <IconButton
                               onClick={() => {
-                                this.deactivateKpi(kpi.pkid,kpi.id);
+                                this.deactivateKpi(kpi.pkid,kpi.id,kpi.projectTitles);
                               }}
                             >
                               <DeleteIcon color="primary" />

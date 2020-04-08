@@ -39,10 +39,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: true
       },
-    /*  projectId: {
+      projectId: {
         type: DataTypes.INTEGER,
         allowNull: true
-      },*/
+      },
       description: {
         type: DataTypes.STRING,
         allowNull: true
@@ -109,11 +109,11 @@ module.exports = (sequelize, DataTypes) => {
       onDelete: "cascade"
     });
 
-    /*logger.debug(`${callerType} Kpi belongsTo Project`);
+    logger.debug(`${callerType} Kpi belongsTo Project`);
     Kpi.belongsTo(models.Project, {
       as: "project",
       foreignKey: "projectId"
-    });*/
+    });
   }
   return Kpi;
 };
