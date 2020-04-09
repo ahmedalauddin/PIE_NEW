@@ -191,7 +191,14 @@ class Person extends React.Component {
     focus: false,
     nextItem: "",
     referrer: "",
-    delLoader:false
+    delLoader:false,
+    roles:[ 'Chief Operating Officer',
+            'VP Operations',
+            'Sr. Director',
+            'Director',
+            'Manager',
+            'Engineer',
+            'Analyst']
   };
 
   handleChange = name => event => {
@@ -392,19 +399,27 @@ class Person extends React.Component {
                       />
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                      <TextField
-                        required
-                        id="role"
-                        label="Role"
-                        fullWidth
-                        onChange={this.handleChange("role")}
-                        value={this.state.role}
-                        className={classes.textField}
-                        margin="normal"
-                      />
+                      <FormControl className={classes.formControl} style={{width:"100%"}}>
+                        <InputLabel shrink htmlFor="department-simple">
+                          Role
+                        </InputLabel>
+                        <Select
+                          value={this.state.role}
+                          onChange={(event)=>this.setState({role: event.target.value })}
+                        >
+                          {this.state.roles.map((r,index) => {
+                            return (
+                              <MenuItem key={index} value={r}>
+                                {r}
+                              </MenuItem>
+                            );
+                          })}
+                        </Select>
+                      </FormControl> 
+
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                      <FormControl className={classes.formControl}>
+                      <FormControl className={classes.formControl} style={{width:"100%"}} >
                         <InputLabel shrink htmlFor="department-simple">
                           Department
                         </InputLabel>

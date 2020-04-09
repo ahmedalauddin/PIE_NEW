@@ -279,20 +279,27 @@ class Kpi extends React.Component {
 
   async handleSubmit(event) {
     event.preventDefault();
-    // Project ID and KPI id (if there is the latter, are passed in by location.state.
-    // console.log('handelsbmit-this.props.location',this.props.location);
-    // console.log('handelsbmit-this.state.projectId',this.state.projectId);
     
-    const projectId = this.props.location.state.projectId;
-    const organizationId = this.props.location.state.organizationId
     const kpiId = this.props.location.state.kpiId;
     let apiPath = "";
     let successMessage = "";
     let method = "";
 
-    let title = this.state.title;
-    let level = this.state.level;
-    if(title == undefined || title == '' || level == '' || level == undefined){
+   console.log(this.state)
+
+   if(this.state.level===''){
+    this.setState({ openSnackbar: true,message: "Please Check Required Fields.",});
+    return false;
+   }
+
+   try{
+
+    this.state.level=Number(this.state.level);
+   }catch(e){}
+   console.log(!this.state.title)
+   console.log(!this.state.level)
+   console.log(!this.state.deptId)
+    if(!this.state.title || !(this.state.level>-1) || !this.state.deptId){
       
       this.setState({ openSnackbar: true,message: "Please Check Required Fields.",});
       return false;
@@ -562,8 +569,8 @@ class Kpi extends React.Component {
                       />
                     </Grid>
                     <Grid item sm={10}>
-                      <FormControl className={classes.formControl}>
-                        <InputLabel htmlFor="dept-simple">
+                      <FormControl className={classes.formControl} style={{width:405}}>
+                        <InputLabel htmlFor="dept-simple" required>
                           Department
                         </InputLabel>
                         <Select
@@ -595,11 +602,12 @@ class Kpi extends React.Component {
                         value={this.state.level}
                         className={classes.textField}
                         margin="normal"
+                        style={{width:405}}
                       />
                     </Grid>
                     <Grid item sm={10}>
                       <InputLabel shrink htmlFor="kpi-type-simple">KPI Type</InputLabel><br/>
-                      <FormControl className={classes.formControl}>
+                      <FormControl className={classes.formControl} style={{width:405}}  >
                         <Select
                           value={this.state.type}
                           onChange={this.handleSelectChange}
