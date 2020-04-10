@@ -360,7 +360,6 @@ export function isAdministrator() {
   let isAdmin = false;
   try {
     isAdmin = JSON.parse(store.getState().user).organization.owningOrg;
-    console.log("isAdministrator: user: " + JSON.parse(store.getState().user).email + ", is admin: " + isAdmin.toString());
   } catch (error) {
     console.log("isAdministrator: error");
   }

@@ -703,7 +703,7 @@ module.exports = {
 
     logger.debug(`${callerType} removeFromProject-> : ${req.params.id}`);
 
-    let sql = "SELECT k.projectId,k.id FROM ProjectKpis pk,Kpis k "+
+    let sql = "SELECT k.projectId,k.id,pk.projId as relationProjectId FROM ProjectKpis pk,Kpis k "+
               " where pk.kpiId = k.id and pk.id="+req.params.id;
 
     return models.sequelize
@@ -714,9 +714,16 @@ module.exports = {
       )
       .then(async _k => {
        
-        if(_k.length && _k.length>0 && _k[0].projectId>0){
-          logger.debug(`${callerType} removeFromProject own kpi -> kpiid: ${_k[0].id}`);
-          await models.Kpi.update( { active: 0 }, { where: { id: _k[0].id } } )
+        if(_k.length && _k.length>0){
+          
+          if(_k[0].projectId>0){
+            logger.debug(`${callerType} removeFromProject own kpi -> kpiid: ${_k[0].id}`);
+            await models.Kpi.update( { active: 0 }, { where: { id: _k[0].id } } )
+          }
+         
+          logger.debug(`${callerType} removeFromProject main kpi -> kpiid: ${_k[0].relationProjectId}`);
+          await models.Project.update(  { mainKpiId: null }, { where: { id: _k[0].relationProjectId ,mainKpiId:_k[0].id }} )
+          
         }
 
         models.ProjectKpi.destroy({

@@ -72,7 +72,8 @@ class Project extends React.Component {
       expanded: null,
       openSnackbar: false,
       snackbarMessage: "",
-      message: ""
+      message: "",
+      show : true
     };
   }
 
@@ -112,29 +113,16 @@ class Project extends React.Component {
   };
 
   componentDidMount() {
-    // console.log('this.props.location--', this.props.location);
+   
     this.setOrganizationInfo();
     let message = "";
-    // if (this.props.location.state && this.props.location.state.message)  {
-    //   message = this.props.location.state.message;
-    //   this.setState({
-    //     openSnackbar: true,
-    //     message: message
-    //   });
-    // this.props.history.replace({
-    //   pathname: this.props.location.pathname,
-    //   state: {}
-    // });
-    // }
+    
   }
 
   componentDidCatch() {
     return <Redirect to="/Login" />;
   }
 
-  // showMessages is currently used to indicate the project or people assigned to the project have changed.  We'll use this function
-  // as an opportunity to refresh the Gantt chart, as the people assigned to the project may have changed.  We'll use our refreshPersonList
-  // state variable for this.
   showMessages = (message) => {
     this.setState( {
       openSnackbar: true,
@@ -142,6 +130,11 @@ class Project extends React.Component {
       message: message
     });
   };
+
+  refeshePage=()=>{
+    this.setState({show:false})
+    setTimeout(()=>this.setState({show:true}),100);
+  }
 
   render() {
     const { classes } = this.props;
@@ -156,6 +149,8 @@ class Project extends React.Component {
       <React.Fragment>
         <CssBaseline />
         <Topbar currentPath={currentPath} />
+
+        {this.state.show && 
         <div className={classes.root}>
           <Grid container alignItems="center" justify="center" spacing={24} lg={12}>
             <Grid item lg={10}>
@@ -191,7 +186,7 @@ class Project extends React.Component {
                           Search and Assign
                         <SearchIcon className={classes.rightIcon} />
                         </Button>
-                        <KpiTable projectId={projId} />
+                        <KpiTable projectId={projId} refeshePage={this.refeshePage} />
                       </Grid>
                     </Grid>
                   </ExpansionPanelDetails>
@@ -266,6 +261,7 @@ class Project extends React.Component {
             }
           </Grid>
         </div>
+        }
         <Snackbar
           open={this.state.openSnackbar}
           onClose={this.handleClose}

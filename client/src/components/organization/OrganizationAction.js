@@ -150,18 +150,10 @@ const styles = theme => ({
 class OrganizationAction extends React.Component {
   constructor(props) {
     super(props);
-    // Make sure to .bind the handleSubmit to the class.  Otherwise the API doesn't receive the
-    // state values.
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleChange = this.handleChange.bind(this);
-    this.fetchPersonsOfOrg = this.fetchPersonsOfOrg.bind(this);
-   this.handlePersonChange = this.handlePersonChange.bind(this);
-    this.handleDelete = this.handleDelete.bind(this);
-    
   }
 
-  // Note that I'll need the individual fields for handleChange.  Use state to manage the inputs for the various
-  // fields.
+
   state = {
     title: "",
     description: "",
@@ -177,34 +169,13 @@ class OrganizationAction extends React.Component {
     delLoader:false,
   };
 
-  handleChange = name => event => {
-    this.setState({ [name]: event.target.value });
-  };
-
-  handleStatusChange = event => {
-    this.setState({status: event.target.value});
-  };
-
-
-
-  handleDelete(i) {
-    const { tags } = this.state;
-    this.setState({
-      tags: tags.filter((tag, index) => index !== i),
-    });
-  }
-
  
-
   handleClose = () => {
     this.setState({ openSnackbar: false });
   };
 
   handleClick = Transition => () => {
     this.setState({ openSnackbar: true, Transition });
-  };
-  handlePersonChange = event => {
-    this.setState({assigneeId: event.target.value});
   };
 
   componentDidCatch(error, info) {
@@ -286,22 +257,7 @@ class OrganizationAction extends React.Component {
         console.log("Response: ", response)
   };
 
-  
-
-  fetchPersonsOfOrg = (orgId) => {
-    console.log('fetchPersons--',orgId);
-    if (parseInt(orgId) > 0) { 
-      console.log()
-      fetch(`/api/organization-action-persons/${orgId}`)
-        .then(res => res.json())
-        .then(response => {
-        
-         this.setState({
-          persons: response
-        });
-        });
-    }
-  };
+   
 
   componentDidMount() {
     let orgName = getOrgName();
@@ -315,7 +271,6 @@ class OrganizationAction extends React.Component {
     });
  
     let actionid = this.props.location.state.actionid && this.props.location.state.actionid;
-   // this.fetchPersonsOfOrg(orgId);
    
    if (parseInt(actionid) > 0) {
       fetch(`/api/action-organization-id/${actionid}`)
@@ -342,6 +297,25 @@ class OrganizationAction extends React.Component {
       });
     }
     
+  }
+
+  descriptionKeyPress=(event)=>{
+    if(event.key === 'Enter'){
+      setTimeout(()=>{
+        const tokens=this.state.description.split("\n");
+        const newTokens=[];
+        let i=0
+        for(i=0;i<tokens.length;i++){
+            if(!tokens[i].startsWith((i+1)+". ")){
+              newTokens.push((i+1)+". "+tokens[i]);
+            }else{
+              newTokens.push(tokens[i]);
+            }
+        }
+        let description=newTokens.join("\n");
+        this.setState({description});
+      },100)
+    }
   }
 
   render() {
@@ -398,7 +372,8 @@ class OrganizationAction extends React.Component {
                         style={{height:400}}
                         
                         value={this.state.description}
-                        onChange={this.handleChange("description")}
+                        onChange={(event)=>this.setState({ description: event.target.value })}
+                        onKeyPress={this.descriptionKeyPress}
                         className={classes.textFieldWide}
                         fullWidth
                         margin="normal"

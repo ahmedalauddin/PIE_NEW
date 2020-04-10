@@ -253,6 +253,10 @@ class KpiTable extends React.Component {
               }));
           }
           this.setState({ msg: "KPI deleted.", delLoader: 0, openSnackbar: true });
+          
+          if(this.props.refeshePage){
+            this.props.refeshePage();
+          }
         })
         .catch(err => {
           this.setState({ msg: "Error occurred.", delLoader: 0, openSnackbar: true });
