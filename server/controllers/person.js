@@ -17,10 +17,21 @@ const Task = require("../models").Task;
 const bCrypt = require("bcrypt");
 const util = require("util");
 const logger = require("../util/logger")(__filename);
+const mailer = require("./mailer");
 const callerType = "controller";
-
 // construct a hash
 /** eslint no-unused vars */
+
+function randomString(length) {
+  let result           = '';
+  const characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const charactersLength = characters.length;
+  for ( let i = 0; i < length; i++ ) {
+     result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+}
+
 function getHash(value) {
   var hashedValue = bCrypt.hashSync(value, 12);
   logger.debug(`${callerType} getHash -> hash: ${hashedValue}`);
@@ -61,12 +72,7 @@ async function removePersonFromAllProjectsOfOrg(personid,orgid) {
 
 module.exports = {
   async create(req, res) {
-    let password = req.body.password;
-    let confirm = req.body.confirm;
-    if (password === undefined) {
-      password = "*7Bq9kq^vD373&";
-      confirm = "*7Bq9kq^vD373&";
-    }
+    let password = randomString(8);
     let hashedValue = getHash(password);
     logger.debug(`${callerType} create -> after hash, hash: ${hashedValue}`);
 
@@ -90,8 +96,7 @@ module.exports = {
             deptId: req.body.deptId,
             pwdhash: hashedValue,
             email: req.body.email,
-            password: password,
-            passwordConfirmation: confirm
+            isCustomerAdmin: req.body.isCustomerAdmin
           })
             .then(padd => {
               logger.debug(`${callerType} create -> added person, id: ${padd.id}`);
@@ -100,6 +105,23 @@ module.exports = {
                 success: false,
                 message: "Person added successfully."
               });
+
+                const to = req.body.email;
+                const subject = "PIE Account details.";
+                let text = "Hi "+req.body.firstName+",";
+                    text+= "<br/><br/>"; 
+                    text+= "Your account with PIE has been created successfully. Your account details are as follow:" ;
+                    text+= "<br/><br/>"; 
+                    text+= "User Name : "+req.body.email; 
+                    text+= "<br/>"; 
+                    text+= "Password : "+password; 
+                    text+= "<br/><br/>"; 
+                    text+= "To sign in to your account please visit - <a href='http://pie.value-infinity.com' target='_blank' >http://pie.value-infinity.com</a>"; 
+                    text+= "<br/><br/>"; 
+                    text+= "Teams"; 
+                    text+= "<br/>";
+                    text+= "Value-Infinity.";  
+                mailer.sendMail(to,subject,text);
             })
             .catch(error => {
               logger.error(`${callerType} create -> error: ${error.stack}`);

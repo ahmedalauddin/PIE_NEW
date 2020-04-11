@@ -20,7 +20,7 @@ import Select from "@material-ui/core/Select";
 import FormControl from "@material-ui/core/FormControl";
 import MenuItem from "@material-ui/core/MenuItem";
 import InputLabel from "@material-ui/core/InputLabel";
-import { getOrgName } from "../../redux";
+import { getOrgName,isAdministrator } from "../../redux";
 import { Redirect } from "react-router-dom";
 import "../styles/ReactTags.css";
 import Paper from "@material-ui/core/Paper";
@@ -205,7 +205,8 @@ class Person extends React.Component {
             'Manager',
             'Engineer',
             'Analyst',
-            'Consultant']
+            'Consultant'],
+    pageTitle:'User'
   };
 
   handleChange = name => event => {
@@ -253,6 +254,7 @@ class Person extends React.Component {
     this.setState({
       delLoader: true
     })
+    const data=JSON.parse(JSON.stringify(this.state));
 
     if (personId > 0) {
       // For updates
@@ -264,8 +266,12 @@ class Person extends React.Component {
       apiPath = "/api/persons";
       successMessage = "User " + this.state.lastName + " created."
       method = "POST";
+
+      if(isAdministrator()){
+        data.isCustomerAdmin=1;
+      }
     }
-    const data=JSON.parse(JSON.stringify(this.state));
+    
     if(data.role=='Select role'){
       data.role=null;
     }
@@ -306,6 +312,9 @@ class Person extends React.Component {
   };
 
   componentDidMount() {
+    if(isAdministrator()){
+      this.setState({pageTitle:'Customer User'})
+    }
     let personId = this.props.location.state.personId;
     let orgId = this.props.location.state.organizationId;
     let referrer = this.props.location.state.referrer;
@@ -345,6 +354,7 @@ class Person extends React.Component {
     const { classes } = this.props;
     const orgId = this.props.location.state.organizationId;
     const currentPath = this.props.location.pathname;
+    const organizationName= this.props.location.state.organizationName || getOrgName();
 
     if (this.state.hasError) {
       return <h1>An error occurred.</h1>;
@@ -352,7 +362,7 @@ class Person extends React.Component {
     if (this.state.readyToRedirect) {
       
       return <Redirect to={{
-        pathname: `/organization`,
+        pathname: isAdministrator() ?`/orgdashboard`:`/organization`,
         state: {
           message: `${this.state.message}`,
           organizationId: orgId
@@ -373,11 +383,10 @@ class Person extends React.Component {
                     variant="h7"
                     color="secondary"
                     gutterBottom
-                  >
-                    User<br/>
+                  >{this.state.pageTitle}<br/>
                   </Typography>
                   <Typography variant="h7">
-                    Organization: {getOrgName()}
+                    Organization: {organizationName}
                   </Typography>
                   <Grid container spacing={24}>
                     <Grid item xs={12} sm={6}>

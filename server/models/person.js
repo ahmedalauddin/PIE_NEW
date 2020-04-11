@@ -93,17 +93,6 @@ module.exports = (sequelize, DataTypes) => {
           notEmpty: true
         }
       },
-      password: {
-        type: DataTypes.VIRTUAL,
-        allowNull: false,
-        validate: {
-          notEmpty: true,
-          len: [6, Infinity]
-        }
-      },
-      passwordConfirmation: {
-        type: DataTypes.VIRTUAL
-      },
       disabled: {
         type: DataTypes.BOOLEAN,
         allowNull: true,
@@ -120,6 +109,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
         onUpdate: DataTypes.NOW
+      },
+      isCustomerAdmin: {
+        type: DataTypes.BOOLEAN,
+        allowNull: true,
       }
     },
     {
@@ -137,7 +130,9 @@ module.exports = (sequelize, DataTypes) => {
           if (bCrypt.compareSync(value, this.pwdhash)) return this;
           else return false;
         }
-      },
+      }
+      
+      /*,
       hooks: {
         beforeCreate: (user, options, callback) => {
           user.email = user.email.toLowerCase();
@@ -149,7 +144,7 @@ module.exports = (sequelize, DataTypes) => {
           if (user.password) return hasSecurePassword(user, options, callback);
           else return callback(null, options);
         }
-      }
+      }*/
     }
   );
   logger.debug(`${callerType} Person end definition`);

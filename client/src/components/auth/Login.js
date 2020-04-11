@@ -165,9 +165,7 @@ class Login extends React.Component {
                       <Typography variant="h5" component="h2" color="secondary" gutterBottom>
                         Please login
                       </Typography>
-                      <Typography component="div">
-                        or signup <Link to={`/signup`}>here</Link>
-                      </Typography>
+                      
                       <Typography variant="h6" component="h2" color="secondary" gutterBottom>
                         {this.state.msgText}
                       </Typography>

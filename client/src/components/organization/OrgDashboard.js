@@ -36,6 +36,7 @@ import { getOrgName } from "../../redux";
 import { connect } from "react-redux";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
+import AddUserIcon from "@material-ui/icons/PersonAdd";
 
 
 const rows = [
@@ -350,6 +351,12 @@ class OrgDashboard extends Component {
                                   {isAdministrator() &&
                                   <IconButton onClick={() => { this.openDialog(organization.id);  }} >
                                       <DeleteIcon color="primary" />
+                                  </IconButton>
+                                    }
+                                  {isAdministrator() &&
+                                  <IconButton variant="contained" color="primary" className={classes.button} component={Link} size="small"
+                                      aria-label="Add" to={{pathname: "/person", state: {organizationId: organization.id,organizationName:organization.name} }} >
+                                      <AddUserIcon color="primary" />
                                   </IconButton>
                                     }
                                 </div>
