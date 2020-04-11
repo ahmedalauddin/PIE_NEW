@@ -644,19 +644,17 @@ module.exports = {
   // List all KPIs for a single organization by priority for the mind map screen.
   listByOrganizationAndPriority(req, res) {
     const orgId = req.params.orgid;
-    /*const sql = "select K.id, K.title, K.orgPriority, P.id as projId, P.title as projTitle, P.description as projDescription " +
+    const sql = "select K.id, K.title, K.orgPriority, P.id as projId, P.title as projTitle, P.description as projDescription " +
       "from Kpis K left outer join Projects P on K.id = P.mainKpiId and K.orgId = P.orgId " +
       "where K.orgId = '" + orgId + "' and K.active = 1 " +
-      "order by orgPriority asc";*/
-
-      let sql = " SELECT pk.id as pkid,p.title as projectTitle, o.name as orgName,"+
+      "order by orgPriority asc";
+     /* let sql = " SELECT o.name as orgName,"+
       " (select group_concat(kt.tag separator ',') from KpiTags kt where (kt.kpiId = k.id)) AS tags,"+
+      " (select group_concat(p.title separator '\n') from Projects p inner join ProjectKpis pk on pk.projId=p.id where (pk.kpiId=k.id)) AS projectTitles,"+
       "  k.*"+
       " FROM Kpis k"+
-      " left join ProjectKpis pk on pk.kpiId=k.id"+
-      " left join Projects p on pk.projId=p.id"+
       " left join Organizations o on k.orgId = o.id"+
-      " where k.active = 1 and  and k.orgId="+orgId +"  order by k.orgPriority asc";
+      " where k.active = 1 and (k.projectId is null or k.projectId=0) and k.orgId="+orgId +"  order by k.orgPriority asc";;*/
    
 
     logger.debug(`${callerType} create Kpi -> sql: ${sql}`);

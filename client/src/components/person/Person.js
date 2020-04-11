@@ -154,6 +154,11 @@ const styles = theme => ({
   },
   spaceTop: {
     marginTop: 50
+  },
+  dropDown:{
+    width: "100%",
+    marginLeft: 8,
+    marginTop:15
   }
 });
 
@@ -173,9 +178,9 @@ class Person extends React.Component {
     firstName: "",
     lastName: "",
     email: "",
-    role: "",
+    role: "Select role",
     departments: [],
-    deptId: null,
+    deptId: 0,
     buttonText: "Create",
     readyToRedirect: false,
     validationError: false,
@@ -192,13 +197,15 @@ class Person extends React.Component {
     nextItem: "",
     referrer: "",
     delLoader:false,
-    roles:[ 'Chief Operating Officer',
+    roles:[ 'Select role',
+            'Chief Operating Officer',
             'VP Operations',
             'Sr. Director',
             'Director',
             'Manager',
             'Engineer',
-            'Analyst']
+            'Analyst',
+            'Consultant']
   };
 
   handleChange = name => event => {
@@ -258,12 +265,21 @@ class Person extends React.Component {
       successMessage = "User " + this.state.lastName + " created."
       method = "POST";
     }
+    const data=JSON.parse(JSON.stringify(this.state));
+    if(data.role=='Select role'){
+      data.role=null;
+    }
+
+    if(data.deptId===0){
+      data.deptId=null;
+    }
+
 
     setTimeout(() => {
       fetch(apiPath, {
         method: method,
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(this.state)
+        body: JSON.stringify(data)
       })
       .then(data => {
        
@@ -322,7 +338,7 @@ class Person extends React.Component {
 
     fetch("/api/departments/org/" + orgId)
       .then(results => results.json())
-      .then(departments => this.setState({ departments: departments }));
+      .then(departments => this.setState({ departments:[{id:0,name:"Select department"}].concat(departments) }));
   }
 
   render() {
@@ -385,21 +401,8 @@ class Person extends React.Component {
                         className={classes.textField}
                         margin="normal"
                       />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <TextField
-                        required
-                        id="email"
-                        label="Email Address"
-                        fullWidth
-                        onChange={this.handleChange("email")}
-                        value={this.state.email}
-                        className={classes.textField}
-                        margin="normal"
-                      />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <FormControl className={classes.formControl} style={{width:"100%"}}>
+
+                      <FormControl className={classes.formControl} className={classes.dropDown}>
                         <InputLabel shrink htmlFor="department-simple">
                           Role
                         </InputLabel>
@@ -419,7 +422,17 @@ class Person extends React.Component {
 
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                      <FormControl className={classes.formControl} style={{width:"100%"}} >
+                      <TextField
+                        required
+                        id="email"
+                        label="Email Address"
+                        fullWidth
+                        onChange={this.handleChange("email")}
+                        value={this.state.email}
+                        className={classes.textField}
+                        margin="normal"
+                      />
+                      <FormControl className={classes.formControl} className={classes.dropDown} >
                         <InputLabel shrink htmlFor="department-simple">
                           Department
                         </InputLabel>
@@ -439,9 +452,12 @@ class Person extends React.Component {
                             );
                           })}
                         </Select>
-                      </FormControl>                      
+                      </FormControl>
+
                     </Grid>
-                    <Grid item xs={12} sm={6}>
+                  
+                    
+                    <Grid item xs={12} sm={12}>
                     {
                     this.state.delLoader ?
                       <CircularProgress /> :

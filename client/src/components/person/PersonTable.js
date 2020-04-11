@@ -347,22 +347,20 @@ class PersonTable extends React.Component {
                     >
                      
                       
-                      <TableCell align="left" onClick={() => { this.setEditRedirect(person.id, person.orgId); }}>
+                      <TableCell align="left" >
                         {person.fullName}
                       </TableCell>
-                      <TableCell align="left" onClick={() => { this.setEditRedirect(person.id, person.orgId); }}>{person.email}</TableCell>
-                      <TableCell align="left" onClick={() => { this.setEditRedirect(person.id, person.orgId); }}>{person.department}</TableCell>
-                      <TableCell align="left" onClick={() => { this.setEditRedirect(person.id, person.orgId); }}>{person.role}</TableCell>
-                      <TableCell align="left" onClick={() => { this.setEditRedirect(person.id, person.orgId); }}>
-                        {
-                          projectsStr && projectsStr.map(pers => {
-                            if(pers){
-                              return(
-                              <p className="inlineBlock">{pers}</p>
-                            )
-                            }
+                      <TableCell align="left" >{person.email}</TableCell>
+                      <TableCell align="left" >{person.department}</TableCell>
+                      <TableCell align="left" >{person.role}</TableCell>
+                      <TableCell align="left" >
+                        <ul style={{padding:15}}>
+                        {                          
+                          projectsStr && projectsStr.map((pers,key) => {
+                            if (pers) return  <li key={key} >{pers}</li> 
                           })
                         }
+                        </ul>
                       </TableCell>
                       <TableCell component="th" scope="row" padding="none" >
                         {
