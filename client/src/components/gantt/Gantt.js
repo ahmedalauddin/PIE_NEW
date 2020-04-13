@@ -11,6 +11,13 @@ import InputLabel from "@material-ui/core/InputLabel";
 import Grid from "@material-ui/core/Grid";
 import FormControl from "@material-ui/core/FormControl";
 import CircularProgress from '@material-ui/core/CircularProgress';
+import TextField from '@material-ui/core/TextField';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import moment from "moment";
 
 function monthScaleTemplate(date){
   let dateToStr = gantt.date.date_to_str("%M");
@@ -38,7 +45,34 @@ class Gantt extends React.Component {
       tasks: null,
       isNewGantt: undefined,
       delLoader:false,
+      openDialog:false,
+      gantTasks:null,
+      selectedGantTask:null,
+      selectedGantTaskProgress:null,
+      taskProgressList:['0%','10%','20%','30%','40%','50%','60%','70%','80%','90%','100%']
     };
+  }
+
+  saveSelectedTask(event){
+    this.setState({
+      delLoader: true
+    })
+
+    let gantTasks = gantt.serialize('json');
+    let data=[];
+    gantTasks.data.forEach(t=>{
+      if(t.id==this.state.selectedGantTask.id){
+        data.push(this.state.selectedGantTask);
+      }else{
+        data.push(t);
+      }
+    });
+    gantTasks.data=data;
+    gantt.clearAll();
+    gantt.parse(gantTasks);
+    gantt.render(); 
+
+    this.handleSave(event);
   }
 
   handleSave(event) {
@@ -80,10 +114,10 @@ class Gantt extends React.Component {
         .then( () => {
           console.log("Going to log message: " + successMessage);
           this.props.messages(successMessage);
-          this.setState({ isNewGantt: false,delLoader: false });
+          this.setState({ isNewGantt: false,delLoader: false,openDialog:false });
         })
         .catch(err => {
-          this.setState({ message: "Error occurred.",delLoader: false });
+          this.setState({ message: "Error occurred.",delLoader: false,openDialog:false });
         });
     }, 2000);
   }
@@ -160,7 +194,7 @@ class Gantt extends React.Component {
     gantt.config.order_branch_free = true;
     
     gantt.config.xml_date = "%Y-%m-%d %H:%i";
-    let myTasks = {
+    let gantTasks = {
       data: [],
       links: []
     };
@@ -225,7 +259,7 @@ class Gantt extends React.Component {
         .then(tasks => {
           if (tasks.length > 0 ){
             // Note that we're not setting state here, at least yet.
-            myTasks = tasks[0].jsonData;
+            gantTasks = tasks[0].jsonData;
             this.setState({
               isNewGantt: false
             });
@@ -237,15 +271,28 @@ class Gantt extends React.Component {
           }
         })
         .then(milestones => {
-          // myTasks.data = this.state.tasks;
+          // gantTasks.data = this.state.tasks;
           /*
           gantt.attachEvent("onGanttRender", function(){
             gantt.message("Gantt chart is completely rendered on the page...")
           }); */
+          console.log("gantTasks --->",gantTasks);
           gantt.init(this.ganttContainer);
+          gantt.selectTask=(task)=>{
+            console.log("selectTask --->",task);
+          }
+
+          gantt.showLightbox=(tid)=>{
+            console.log("showLightbox --->",tid);
+            let selectedGantTask=gantt.getTask(tid);
+            this.setState({selectedGantTask,openDialog:true});
+          }
           gantt.clearAll();
-          gantt.parse(myTasks);
+          gantt.parse(gantTasks);
           gantt.render(); 
+
+          this.setState({gantTasks,selectedGantTask:null});
+      
         });
     }
   }
@@ -297,6 +344,109 @@ class Gantt extends React.Component {
     }
   }
 
+
+
+  handleClose(){
+    this.setState({openDialog:false})
+  }
+
+  renderDialog(){
+    const { classes } = this.props;
+    return(
+      <div >
+        <Dialog   open={this.state.openDialog} onClose={()=>this.handleClose()} aria-labelledby="form-dialog-title">
+
+          <DialogTitle id="form-dialog-title">{this.state.selectedGantTask.text}</DialogTitle>
+          <DialogContent style={{width:550,height:400}}>
+              <Grid container>
+                <Grid item xs={12} sm={2}>
+                  <FormControl className={classes.formControl}>
+                    <InputLabel shrink htmlFor="status-simple">
+                      Progress
+                    </InputLabel>
+                    <Select
+                      value={this.state.selectedGantTaskProgress}
+                      onChange={(event)=>this.setState({selectedGantTaskProgress: event.target.value})}
+                    >
+                      {this.state.taskProgressList.map((status,index) =>  <MenuItem key={index} value={status}> {status} </MenuItem> )}
+                    </Select>
+                  </FormControl>
+                </Grid>
+
+                <Grid item xs={12} sm={4}>
+                    <FormControl className={classes.formControl}>
+                        <TextField
+                          id="startDate"
+                          label="Start Date"
+                          type="date"
+                          defaultValue={moment(new Date(this.state.selectedGantTask.start_date)).format("YYYY-MM-DD")}
+                          className={classes.textField}
+                          InputLabelProps={{
+                            shrink: true,
+                          }}
+                          onChange={(e) =>{this.state.selectedGantTask.start_date=new Date(e.target.value);this.setState({selectedGantTask:this.state.selectedGantTask})}}
+                        />
+                       
+                      </FormControl>
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                    <FormControl className={classes.formControl}>
+                        <TextField
+                          id="endDate"
+                          label="End Date"
+                          type="date"
+                          defaultValue={moment(new Date(this.state.selectedGantTask.end_date)).format("YYYY-MM-DD")}
+                          className={classes.textField}
+                          InputLabelProps={{
+                            shrink: true,
+                          }}
+                          onChange={(e) =>{this.state.selectedGantTask.end_date=new Date(e.target.value);this.setState({selectedGantTask:this.state.selectedGantTask})}}
+                        />
+                       
+                      </FormControl>
+                </Grid>
+                <Grid item xs={12} sm={12}>
+                  <TextField
+                    autoFocus
+                    margin="dense"
+                    id="comments"
+                    label="Enter Comments"
+                    fullWidth
+                    multiline
+                  />
+                </Grid>
+
+              </Grid>
+             
+
+            
+          </DialogContent>
+
+          <DialogActions>
+            {!this.state.delLoader && <Button   variant="contained" onClick={()=>this.handleClose()} color="primary"    className={classes.secondary}>
+              Cancel
+            </Button>
+            }
+            <div>
+              {
+                this.state.delLoader ?
+                <CircularProgress /> :
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={(event)=>this.saveSelectedTask(event)}
+                  className={classes.secondary}
+                >
+              Save
+              </Button>
+              }
+            </div>
+          </DialogActions>
+
+        </Dialog>
+      </div>
+    )
+  }
   render() {
     this.setZoom("Quarters");
     const { classes } = this.props;
@@ -343,6 +493,7 @@ class Gantt extends React.Component {
             </div>
           </Grid>
         </Grid>
+        {this.state.selectedGantTask && this.renderDialog()}
       </div>
     );
   }
