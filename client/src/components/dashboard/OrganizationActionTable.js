@@ -42,6 +42,10 @@ import Chip from "@material-ui/core/Chip";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import OrganizationMemberAction from "../organization/OrganizationMemberAction";
 
+import DatePicker from "react-datepicker";
+
+import "react-datepicker/dist/react-datepicker.css";
+
 const rows = [
   { id: "assignedto", numeric: false, disablePadding: false, label: "Members",align:"left",width:200 },
   { id: "description", numeric: false, disablePadding: false, label: "Focus Area",align:"left",width:400 },
@@ -100,7 +104,8 @@ class OrganizationActionTable extends React.Component {
     snackbarMessage: "",
     message: "",
     selectedMember:false,
-    orgId:0
+    orgId:0,
+    highlightDates:[]
   };
 
   handleClose = () => {
@@ -119,8 +124,10 @@ class OrganizationActionTable extends React.Component {
     }
   }
   changeFilterDate(e){
-    console.log("changedDate...............",e.target.value );
-    this.fetchData(e.target.value);
+    //console.log("changedDate...............",e.target.value );
+   //this.fetchData(e.target.value);
+
+   this.fetchData(moment(e).format("YYYY-MM-DD"));
   }
 
   fetchData(filterDate){
@@ -153,7 +160,7 @@ class OrganizationActionTable extends React.Component {
     });
 
     
-
+    console.log("this.dateInput--->",this.dateInput);
     
   }
 
@@ -178,6 +185,7 @@ class OrganizationActionTable extends React.Component {
       })
      }
      this.setState({persons:_persons.concat(response)});
+     this.meetingsDays();
     });
   }
 
@@ -196,6 +204,19 @@ class OrganizationActionTable extends React.Component {
     });
     
   };
+
+  meetingsDays(){
+    fetch(`/api/action-organization-meeting-days/${this.state.orgId}`)
+    .then(res => res.json())
+    .then(response => {
+      console.log("meetingsDays response",response);
+      const highlightDates=[];
+      response.forEach((data)=>{
+        highlightDates.push(new Date(data.createdAt));
+      })
+      this.setState({highlightDates});
+    });
+  }
 
   renderEditRedirect = () => {
     if (this.state.readyToEdit) {
@@ -362,7 +383,7 @@ class OrganizationActionTable extends React.Component {
     return (
         <Grid container justify="center" direction="column" alignItems="center" className="panel-dashboard">    
           <Grid item xs={12} md={10} className="dashboard-filter-menu">
-                  <Card className={classes.card}>
+                  <Card className={classes.card} style={{overflow:"visible"}}>
                   <CardContent className="list-project-panellist">
                   <Grid
                         container
@@ -394,7 +415,7 @@ class OrganizationActionTable extends React.Component {
                       </Grid>
 
                       {this.state.filterDate && <FormControl className={classes.formControl}>
-                        <TextField
+                        {/* <TextField
                           id="date"
                           label=""
                           type="date"
@@ -404,6 +425,14 @@ class OrganizationActionTable extends React.Component {
                             shrink: true,
                           }}
                           onChange={(e) =>this.changeFilterDate(e)}
+
+                          inputRef={(el)=>this.dateInput=el}
+                        /> */}
+                        <DatePicker
+                          className={classes.dataPickerInput}
+                          selected={new Date(this.state.filterDate)}
+                          onChange={(e) =>this.changeFilterDate(e)}
+                          highlightDates={this.state.highlightDates}
                         />
                         <FormHelperText>Filter by date</FormHelperText>
                       </FormControl>

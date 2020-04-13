@@ -1,32 +1,38 @@
 "use strict";
 const nodemailer = require("nodemailer");
+const logger = require("../util/logger")(__filename);
+const callerType = "controller";
 
 module.exports = {
 async sendMail(to,subject,text) {
+  logger.info(`${callerType} sending mail ${to}`);
   var transporter = nodemailer.createTransport({
-    host: "smtp.mailtrap.io",
-    port: 2525,
+    host: "smtp.office365.com",
+    port: 587,
+    tls: {
+      ciphers:'SSLv3'
+    }, 
+    secureConnection: false,
     auth: {
-      user: "b73e7aaf07f612",
-      pass: "4e9615227806bd"
+      user: "support@value-infinity.com",
+      pass: "RAyman888$"
     }
   });
 
   let info = await transporter.sendMail({
-    from: '"Value Infinity" <notifications@value-infinity.com>', // sender address
-    to:to, // "bar@example.com, baz@xample.com", // list of receivers
-    subject:subject, // "Hello ✔", // Subject line
-    text:text, // "Hello world?", // plain text body
-    html: "<b>"+text+"</b>" // html body
-    // to:"bar@example.com, baz@xample.com", // list of receivers
-    // subject:"Hello ✔", // Subject line
-    // text:"Hello world?", // plain text body
-    // html:"<b>Hello world?</b>" // html body
+    from: '"Innovation Support" <support@value-infinity.com>', 
+    to:to, 
+    subject:subject, 
+    html:text, 
   })
   .then((result) => {
+    logger.info(`${callerType} mail sent  ${JSON.stringify(result)}`);
+    console.log(result)
     return true;
   })
   .catch(error => {
+    logger.error(`${callerType} mail sent fail ${JSON.stringify(error)}`);
+    console.log(error)
     return false;
   });
 }

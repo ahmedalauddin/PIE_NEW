@@ -34,4 +34,7 @@ module.exports = router => {
 
   logger.debug(`${callerClass} copy action -> path: /api/action-organization/:orgId/:assigneeId/:actionId`);
   router.get("/api/copy-action-organization/:orgId/:assigneeId/:actionId", organizationaction.copyAction);
+
+  logger.debug(`${callerClass} meeting days -> path: /api/action-organization-meeting-days/:orgId`);
+  router.get("/api/action-organization-meeting-days/:orgId", organizationaction.meetingDays);
 };

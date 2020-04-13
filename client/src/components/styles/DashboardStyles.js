@@ -104,6 +104,14 @@ export const styles = theme => ({
     "&:hover": {
       textDecoration: "underline",
     }
+  },
+  dataPickerInput: {
+    fontSize: "0.875rem",
+    borderTop: 0,
+    borderLeft: 0,
+    borderRight: 0,
+    borderBottomColor: "grey",
+    borderBottomWidth: "1px"
   }
 });
 

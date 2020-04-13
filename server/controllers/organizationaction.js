@@ -263,7 +263,7 @@ module.exports = {
   },
 
   copyAction(req, res) {
-    logger.error(`${callerType} Action Organization, copyAction `);
+    logger.info(`${callerType} Action Organization, copyAction `);
     let sql = "select * from OrganizationActions " +
               "where orgId = " + req.params.orgId + " and assigneeId="+req.params.assigneeId +
               " and description<>'' and disabled = 0 order by createdAt desc limit 1";
@@ -298,6 +298,26 @@ module.exports = {
       })
       .catch(error => {
         logger.error(`${callerType} Get copyAction by OrgId -> error: ${error.stack}`);
+        res.status(400).send(error);
+      });
+  },
+  meetingDays(req, res) {
+    logger.info(`${callerType} called meetingDays`);
+    let sql = "select distinct createdAt from OrganizationActions where orgId = " + req.params.orgId + " and description<>'' and disabled = 0";
+
+    logger.debug(`${callerType} meetingDays -> sql: ${sql}`);
+    return models.sequelize
+      .query(sql,
+        {
+          type: models.sequelize.QueryTypes.SELECT
+        }
+      )
+      .then(_k => {
+        logger.debug(`${callerType} meetingDays -> successful, count: ${_k.length}`);
+        res.status(201).send(_k);
+      })
+      .catch(error => {
+        logger.error(`${callerType} meetingDays -> error: ${error.stack}`);
         res.status(400).send(error);
       });
   }
