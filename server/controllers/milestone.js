@@ -232,5 +232,45 @@ module.exports = {
         logger.error(`${callerType} Milestone listForGantt -> error: ${error.stack}`);
         res.status(400).send(error);
       });
-  }
+  },
+
+  saveComment(req, res) {
+    logger.debug( `${callerType} saveComment called` );
+    return models.TaskComment.create({
+      description: req.body.description,
+      taskId: req.body.taskId,
+      projectId: req.body.projectId,
+      personName: req.body.personName,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    })
+      .then(t => {
+        logger.debug(`${callerType} saveComment, id: ${t.id}`);
+        res.status(201).send(t);
+      })
+      .catch(error => {
+        logger.error(`${callerType} saveComment -> error: ${error.stack}`);
+        res.status(400).send(error);
+      });
+  },
+
+  getComments(req, res) {
+    const projectId = req.params.projectId;
+    const taskId = req.params.taskId;
+    const sql = "select * from TaskComments where projectId = " + projectId+" and taskId = "+taskId+" order by createdAt desc";
+
+    return models.sequelize.query(
+      sql, {
+        type: models.sequelize.QueryTypes.SELECT
+      })
+      .then(comments => {
+        logger.debug(`${callerType} getComments -> successful, count: ${comments.length}`);
+        res.status(201).send(comments);
+      })
+      .catch(error => {
+        logger.error(`${callerType} getComments -> error: ${error.stack}`);
+        res.status(400).send(error);
+      });
+  },
+
 };

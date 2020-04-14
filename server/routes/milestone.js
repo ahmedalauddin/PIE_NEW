@@ -52,4 +52,10 @@ module.exports = router => {
 
   // TODO add DELETE /api/tasks/:id for deleting (or deactivating) a milestone
 
+  logger.debug(`${callerType} POST -> path: /api/milestones-comments`);
+  router.post("/api/milestones-comments", milestoneController.saveComment);
+
+  logger.debug(`${callerType} GET -> path: /api/milestones-comments`);
+  router.get("/api/milestones-comments/:projectId/:taskId", milestoneController.getComments);
+
 };

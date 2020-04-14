@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { gantt } from "dhtmlx-gantt";
 import "dhtmlx-gantt/codebase/dhtmlxgantt.css";
-import { getOrgId } from "../../redux";
+import { getOrgId,getUser } from "../../redux";
 import Button from "@material-ui/core/Button";
 import { styles } from "../styles/ProjectStyles";
 import withStyles from "@material-ui/core/styles/withStyles";
@@ -18,6 +18,10 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import moment from "moment";
+import Typography from "@material-ui/core/Typography";
+import Paper from "@material-ui/core/Paper";
+
+const profileLogo = require("../../images/profile.png");
 
 function monthScaleTemplate(date){
   let dateToStr = gantt.date.date_to_str("%M");
@@ -48,12 +52,27 @@ class Gantt extends React.Component {
       openDialog:false,
       gantTasks:null,
       selectedGantTask:null,
-      selectedGantTaskProgress:null,
-      taskProgressList:['0%','10%','20%','30%','40%','50%','60%','70%','80%','90%','100%']
+      taskProgressList:['0%','10%','20%','30%','40%','50%','60%','70%','80%','90%','100%'],
+      taskPriorityList:[
+        {key: undefined, label: "Select Priority"},
+        {key: "1", label: "High"},
+        {key: "2", label: "Normal"},
+        {key: "3", label: "Low"}
+      ],
+      taskNewComment:"",
+      taskcomments:[]
     };
   }
 
-  saveSelectedTask(event){
+  toSentenceCase(string) {
+    var sentence = string.split(" ");
+    for (var i = 0; i < sentence.length; i++) {
+      sentence[i] = sentence[i][0].toUpperCase() + sentence[i].slice(1);
+    }
+    return sentence.join(" ");
+  }
+
+  saveSelectedTask=async (event)=>{
     this.setState({
       delLoader: true
     })
@@ -67,6 +86,25 @@ class Gantt extends React.Component {
         data.push(t);
       }
     });
+
+    
+    if(this.state.taskNewComment && this.state.taskNewComment.trim()){
+      const comment={
+        personName:this.toSentenceCase(getUser().fullName),
+        description:this.state.taskNewComment.trim(),
+        taskId: this.state.selectedGantTask.id,
+        projectId: this.props.projectId
+      }
+
+      const response=await fetch("/api/milestones-comments", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(comment)
+      })
+      console.log("milestones-comments",response);
+    }
+    
+
     gantTasks.data=data;
     gantt.clearAll();
     gantt.parse(gantTasks);
@@ -282,11 +320,7 @@ class Gantt extends React.Component {
             console.log("selectTask --->",task);
           }
 
-          gantt.showLightbox=(tid)=>{
-            console.log("showLightbox --->",tid);
-            let selectedGantTask=gantt.getTask(tid);
-            this.setState({selectedGantTask,openDialog:true});
-          }
+          gantt.showLightbox=this.showDialogBox;
           gantt.clearAll();
           gantt.parse(gantTasks);
           gantt.render(); 
@@ -295,6 +329,38 @@ class Gantt extends React.Component {
       
         });
     }
+  }
+
+  showDialogBox=(tid)=>{
+    const projectId = this.props.projectId;
+    let selectedGantTask=JSON.parse(JSON.stringify(gantt.getTask(tid)));
+    selectedGantTask.progressTxt=this.getTaskProgressInText(selectedGantTask.progress);
+    selectedGantTask.start_date=new Date(selectedGantTask.start_date);
+    selectedGantTask.end_date=new Date(selectedGantTask.end_date);
+    
+    this.setState({selectedGantTask,openDialog:true,taskNewComment:"",taskcomments:[]});
+
+    fetch(`/api/milestones-comments/${projectId}/${tid}`)
+    .then(res => res.json())
+    .then(taskcomments => {
+      this.setState({taskcomments})
+    })
+    
+  }
+
+  getTaskProgressInText(progress){
+      let progressToken=(progress+"").split(".");
+      
+      if(progressToken[0] && progressToken[0]==1){
+        return "100%";
+      }else if(progressToken[1]){
+        return progressToken[1].substring(0,1)+"0%";
+      }
+     
+      return "0%";
+  }
+  getTaskTextInProgress(progressTxt){
+    return Number(progressTxt.substring(0,progressTxt.length-1))/100;
   }
 
   componentDidMount() {
@@ -308,6 +374,7 @@ class Gantt extends React.Component {
       fetch(`/api/persons-assigned-and-owned/${projectId}`)
         .then(res => res.json())
         .then(persons => {
+          this.setState({persons})
           jsonItem = JSON.parse('{"key":"", "label": "Not assigned"}');
           assignedMenuItems.push(jsonItem);
           persons.forEach(person => {
@@ -350,71 +417,182 @@ class Gantt extends React.Component {
     this.setState({openDialog:false})
   }
 
+  changeSelectedTaskChange(key,val){
+    console.log(key,val);
+    this.state.selectedGantTask[key]=val;
+    this.state.selectedGantTask.progress=this.getTaskTextInProgress(this.state.selectedGantTask.progressTxt);
+    this.setState({selectedGantTask:this.state.selectedGantTask});
+    
+  }
+
+  renderComment(cc, index) {
+    const { classes } = this.props;
+    return (
+      <Paper key={index} style={{ minWidth:520}} > 
+        <Grid container style={{ marginTop: 5 }} direction="row" justify="space-between" alignItems="flex-end" className="dash">
+
+          <Grid container sm={12} xs={12} direction="row" >
+            <img src={profileLogo} alt="" className={classes.profileLogo} />
+
+            <Grid item sm={4} xs={4}  >
+              <Typography variant="h6" color="primary" gutterBottom >
+                {cc.personName}
+              </Typography>
+              <Typography variant="h7" color="primary" gutterBottom >
+                {moment(cc.createdAt).format("YYYY-MM-DD hh:mm:ss")}
+              </Typography>
+            </Grid>
+
+            <Grid item sm={4} xs={4}  >
+              <Typography style={{ width: "100%" }} className={classes.heading}>
+                {cc.description
+                  && cc.description.split("\n").map((i, key) => {
+                    return <p className="inlineBlock" key={key}>{i.trim()}</p>
+                  })}
+              </Typography>
+            </Grid>
+
+          </Grid>
+
+        </Grid>
+      </Paper>
+    )
+  }
+
   renderDialog(){
     const { classes } = this.props;
     return(
       <div >
         <Dialog   open={this.state.openDialog} onClose={()=>this.handleClose()} aria-labelledby="form-dialog-title">
 
-          <DialogTitle id="form-dialog-title">{this.state.selectedGantTask.text}</DialogTitle>
-          <DialogContent style={{width:550,height:400}}>
+          <DialogTitle id="form-dialog-title">Task Detail</DialogTitle>
+          <DialogContent style={{minWidth:550,minHeight:400}}>
               <Grid container>
-                <Grid item xs={12} sm={2}>
-                  <FormControl className={classes.formControl}>
-                    <InputLabel shrink htmlFor="status-simple">
-                      Progress
-                    </InputLabel>
-                    <Select
-                      value={this.state.selectedGantTaskProgress}
-                      onChange={(event)=>this.setState({selectedGantTaskProgress: event.target.value})}
-                    >
-                      {this.state.taskProgressList.map((status,index) =>  <MenuItem key={index} value={status}> {status} </MenuItem> )}
-                    </Select>
-                  </FormControl>
-                </Grid>
 
-                <Grid item xs={12} sm={4}>
-                    <FormControl className={classes.formControl}>
-                        <TextField
-                          id="startDate"
-                          label="Start Date"
-                          type="date"
-                          defaultValue={moment(new Date(this.state.selectedGantTask.start_date)).format("YYYY-MM-DD")}
-                          className={classes.textField}
-                          InputLabelProps={{
-                            shrink: true,
-                          }}
-                          onChange={(e) =>{this.state.selectedGantTask.start_date=new Date(e.target.value);this.setState({selectedGantTask:this.state.selectedGantTask})}}
-                        />
-                       
-                      </FormControl>
-                </Grid>
-                <Grid item xs={12} sm={4}>
-                    <FormControl className={classes.formControl}>
-                        <TextField
-                          id="endDate"
-                          label="End Date"
-                          type="date"
-                          defaultValue={moment(new Date(this.state.selectedGantTask.end_date)).format("YYYY-MM-DD")}
-                          className={classes.textField}
-                          InputLabelProps={{
-                            shrink: true,
-                          }}
-                          onChange={(e) =>{this.state.selectedGantTask.end_date=new Date(e.target.value);this.setState({selectedGantTask:this.state.selectedGantTask})}}
-                        />
-                       
-                      </FormControl>
-                </Grid>
                 <Grid item xs={12} sm={12}>
                   <TextField
-                    autoFocus
-                    margin="dense"
-                    id="comments"
-                    label="Enter Comments"
+                    required
+                    id="title-required"
+                    label="Description"
+                    onChange={(e) =>this.changeSelectedTaskChange('text',e.target.value)}
+                    value={this.state.selectedGantTask.text}
                     fullWidth
-                    multiline
+                    margin="normal"
                   />
                 </Grid>
+
+                <Grid container className={classes.containerMargin}>
+                  <Grid item xs={12} sm={2}>
+                    <FormControl className={classes.formControl}>
+                      <InputLabel shrink htmlFor="status-simple">
+                        Priority
+                      </InputLabel>
+                      <Select
+                        value={this.state.selectedGantTask.priority}
+                        onChange={(e) =>this.changeSelectedTaskChange('priority',e.target.value)}
+                      >
+                        {this.state.taskPriorityList.map((p,index) => {
+                          return (
+                            <MenuItem key={p.index} value={p.key}>
+                              {p.label}
+                            </MenuItem>
+                          );
+                        })}
+                      </Select>
+                    </FormControl>
+                  </Grid>
+
+                  <Grid item xs={12} sm={4}>
+                    <FormControl className={classes.formControl}>
+                      <InputLabel shrink htmlFor="status-simple">
+                        Assigned
+                      </InputLabel>
+                      <Select
+                        value={this.state.selectedGantTask.assigned}
+                        onChange={(e) =>this.changeSelectedTaskChange('assigned',e.target.value)}
+                      >
+                        {this.state.persons.map((p,index) => {
+                          return (
+                            <MenuItem key={p.index} value={p.fullName}>
+                              {p.fullName}
+                            </MenuItem>
+                          );
+                        })}
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                </Grid>
+
+                <Grid container spacing={24} className={classes.containerMargin}>
+
+                  <Grid item xs={12} sm={2}>
+                    <FormControl className={classes.formControl}>
+                      <InputLabel shrink htmlFor="status-simple">
+                        Progress
+                      </InputLabel>
+                      <Select
+                        value={this.state.selectedGantTask.progressTxt}
+                        onChange={(e) =>this.changeSelectedTaskChange('progressTxt',e.target.value)}
+                      >
+                        {this.state.taskProgressList.map((status,index) =>  <MenuItem key={index} value={status}> {status} </MenuItem> )}
+                      </Select>
+                    </FormControl>
+                  </Grid>
+
+                  <Grid item xs={12} sm={4}>
+                      <FormControl className={classes.formControl}>
+                          <TextField
+                            id="startDate"
+                            label="Start Date"
+                            type="date"
+                            defaultValue={moment(new Date(this.state.selectedGantTask.start_date)).format("YYYY-MM-DD")}
+                            className={classes.textField}
+                            InputLabelProps={{
+                              shrink: true,
+                            }}
+                            onChange={(e) =>this.changeSelectedTaskChange('start_date',new Date(e.target.value))}
+                          />
+                        
+                        </FormControl>
+                  </Grid>
+                  <Grid item xs={12} sm={4}>
+                      <FormControl className={classes.formControl}>
+                          <TextField
+                            id="endDate"
+                            label="End Date"
+                            type="date"
+                            defaultValue={moment(new Date(this.state.selectedGantTask.end_date)).format("YYYY-MM-DD")}
+                            className={classes.textField}
+                            InputLabelProps={{
+                              shrink: true,
+                            }}
+                            onChange={(e) =>{this.state.selectedGantTask.end_date=new Date(e.target.value);this.setState({selectedGantTask:this.state.selectedGantTask})}}
+                          />
+                        
+                        </FormControl>
+                  </Grid>
+                </Grid>
+
+                <Grid container className={classes.containerMargin}>
+                  <Grid item xs={12} sm={12}>
+                    <TextField
+                      autoFocus
+                      margin="dense"
+                      id="comment"
+                      label="Enter Comment"
+                      fullWidth
+                      onChange={(e) =>this.setState({taskNewComment:e.target.value.substring(0,50)})}
+                      value={this.state.taskNewComment}
+                    />
+                  </Grid>
+                </Grid>
+                <Grid container className={classes.containerMargin}>
+                  <div className={classes.taskCommentDivScrollView}  >
+                    {this.state.taskcomments.map((cc, index) => this.renderComment(cc, index))}
+                  </div>
+                </Grid>
+
+
 
               </Grid>
              

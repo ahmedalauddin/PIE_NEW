@@ -126,5 +126,24 @@ export const styles = theme => ({
   },
   spaceTop: {
     marginTop: 50
+  },
+  containerMargin:{
+    marginTop: 5
+  },
+  taskCommentDivScrollView: {
+    padding: theme.spacing.unit * 3,
+    textAlign: "left",
+    color: theme.palette.text.secondary,
+    height: 200,
+    minWidth:540,
+    overflow: "auto",
+    margin: 0,
+    padding: 2
+  },
+  profileLogo: {
+    width: 40,
+    height: 40,
+    margin: 10
   }
+
 });
