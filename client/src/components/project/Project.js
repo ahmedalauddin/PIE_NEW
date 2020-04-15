@@ -73,7 +73,8 @@ class Project extends React.Component {
       openSnackbar: false,
       snackbarMessage: "",
       message: "",
-      show : true
+      show : true,
+      projectProgress:0
     };
   }
 
@@ -136,6 +137,10 @@ class Project extends React.Component {
     setTimeout(()=>this.setState({show:true}),100);
   }
 
+  updateProjectProgress=(projectProgress)=>{
+    this.setState({projectProgress})
+  }
+
   render() {
     const { classes } = this.props;
     const currentPath = this.props.location.pathname;
@@ -164,7 +169,7 @@ class Project extends React.Component {
                 <Typography variant="h7">
                   Organization: {getOrgName()}
                 </Typography>
-                <ProjectDetail projectId={projId} messages={this.showMessages} renderNewProject={(id) => this.renderNewProject(id)} />
+                <ProjectDetail projectId={projId} messages={this.showMessages} progress={this.state.projectProgress} renderNewProject={(id) => this.renderNewProject(id)} />
               </Paper>
             </Grid>
             {projId === 0 || projId === '' ? '' :
@@ -214,7 +219,7 @@ class Project extends React.Component {
                   </ExpansionPanelSummary>
                   <ExpansionPanelDetails>
                     <div className="gantt-container">
-                      <Gantt projectId={projId} messages={this.showMessages} refresh={this.state.updatedTime} />
+                      <Gantt projectId={projId} messages={this.showMessages} refresh={this.state.updatedTime} updateProjectProgress={this.updateProjectProgress} />
                     </div>
                   </ExpansionPanelDetails>
                 </ExpansionPanel>

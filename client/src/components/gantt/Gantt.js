@@ -19,7 +19,8 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import moment from "moment";
 import Typography from "@material-ui/core/Typography";
-import Paper from "@material-ui/core/Paper";
+import IconButton from "@material-ui/core/IconButton/index";
+import DeleteIcon from "@material-ui/icons/Delete";
 
 const profileLogo = require("../../images/profile.png");
 
@@ -72,6 +73,29 @@ class Gantt extends React.Component {
     return sentence.join(" ");
   }
 
+  calculateProgress(){
+
+    if(this.props.updateProjectProgress){
+      
+
+      let gantTasks = gantt.serialize('json');
+      let total=0;
+      let counter=0;
+      gantTasks.data.forEach(t=>{
+        total+=t.progress; 
+        counter++;      
+      });
+      const progress=(total/counter)*100;
+      this.props.updateProjectProgress(progress.toFixed(2));
+    }
+  }
+  deleteSelectedTask=async (event)=>{
+    event.preventDefault();
+    gantt.deleteTask(this.state.selectedGantTask.id);
+    this.setState({selectedGantTask:null,openDialog:false,taskNewComment:"",taskcomments:[]});
+    this.calculateProgress();
+  }
+
   saveSelectedTask=async (event)=>{
     this.setState({
       delLoader: true
@@ -109,7 +133,7 @@ class Gantt extends React.Component {
     gantt.clearAll();
     gantt.parse(gantTasks);
     gantt.render(); 
-
+    this.calculateProgress();
     this.handleSave(event);
   }
 
@@ -324,7 +348,7 @@ class Gantt extends React.Component {
           gantt.clearAll();
           gantt.parse(gantTasks);
           gantt.render(); 
-
+          this.calculateProgress();
           this.setState({gantTasks,selectedGantTask:null});
       
         });
@@ -428,34 +452,43 @@ class Gantt extends React.Component {
   renderComment(cc, index) {
     const { classes } = this.props;
     return (
-      <Paper key={index} style={{ minWidth:520}} > 
-        <Grid container style={{ marginTop: 5 }} direction="row" justify="space-between" alignItems="flex-end" className="dash">
+      <div style={{padding:10, 
+        borderTop: 0,
+        borderLeft: 0,
+        borderRight: 0,
+        borderBottom: 1,
+        borderBottomColor: "black",
+        borderBottomWidth: "1px",
+        borderStyle:"solid"
+        }}>
+        <Grid container style={{ minWidth:520 }} direction="row" justify="space-between" alignItems="flex-end" className="dash">
 
           <Grid container sm={12} xs={12} direction="row" >
             <img src={profileLogo} alt="" className={classes.profileLogo} />
 
-            <Grid item sm={4} xs={4}  >
-              <Typography variant="h6" color="primary" gutterBottom >
-                {cc.personName}
-              </Typography>
-              <Typography variant="h7" color="primary" gutterBottom >
-                {moment(cc.createdAt).format("YYYY-MM-DD hh:mm:ss")}
-              </Typography>
-            </Grid>
+            <Grid item sm={8} xs={8}  >
+            
+              <Grid container sm={12} xs={12} direction="row" >
+                <Typography variant="h7" color="primary" gutterBottom >
+                  {cc.personName}
+                </Typography>
+                <Typography style={{marginLeft:20}}  color="primary" gutterBottom >
+                  {moment(cc.createdAt).format("YYYY-MM-DD hh:mm:ss")}
+                </Typography>
+              </Grid>
 
-            <Grid item sm={4} xs={4}  >
-              <Typography style={{ width: "100%" }} className={classes.heading}>
-                {cc.description
-                  && cc.description.split("\n").map((i, key) => {
-                    return <p className="inlineBlock" key={key}>{i.trim()}</p>
-                  })}
-              </Typography>
+              <Grid container sm={12} xs={12} direction="row" >
+                <Typography gutterBottom>
+                  {cc.description}
+                </Typography>
+              </Grid>
             </Grid>
 
           </Grid>
-
+          
         </Grid>
-      </Paper>
+        
+      </div>
     )
   }
 
@@ -464,8 +497,14 @@ class Gantt extends React.Component {
     return(
       <div >
         <Dialog   open={this.state.openDialog} onClose={()=>this.handleClose()} aria-labelledby="form-dialog-title">
-
-          <DialogTitle id="form-dialog-title">Task Detail</DialogTitle>
+          <Grid container style={{padding:20,justifyContent:"space-between",width:"100%"}}>
+            <Typography variant="h5" color="primary" gutterBottom >
+                Task Detail
+            </Typography>
+            <IconButton onClick={(event)=>this.deleteSelectedTask(event)}>
+              <DeleteIcon color="primary" />
+            </IconButton>
+          </Grid>
           <DialogContent style={{minWidth:550,minHeight:400}}>
               <Grid container>
 
@@ -481,8 +520,8 @@ class Gantt extends React.Component {
                   />
                 </Grid>
 
-                <Grid container className={classes.containerMargin}>
-                  <Grid item xs={12} sm={2}>
+                <Grid container className={classes.containerMargin} >
+                  <Grid item xs={12} sm={4}>
                     <FormControl className={classes.formControl}>
                       <InputLabel shrink htmlFor="status-simple">
                         Priority
@@ -525,7 +564,7 @@ class Gantt extends React.Component {
 
                 <Grid container spacing={24} className={classes.containerMargin}>
 
-                  <Grid item xs={12} sm={2}>
+                  <Grid item xs={12} sm={4}>
                     <FormControl className={classes.formControl}>
                       <InputLabel shrink htmlFor="status-simple">
                         Progress
@@ -539,7 +578,7 @@ class Gantt extends React.Component {
                     </FormControl>
                   </Grid>
 
-                  <Grid item xs={12} sm={4}>
+                  <Grid item xs={12} sm={4} style={{paddingLeft:0}}>
                       <FormControl className={classes.formControl}>
                           <TextField
                             id="startDate"
@@ -587,6 +626,9 @@ class Gantt extends React.Component {
                   </Grid>
                 </Grid>
                 <Grid container className={classes.containerMargin}>
+                    <Typography variant="h6" color="primary" gutterBottom >
+                      Comment History
+                    </Typography>
                   <div className={classes.taskCommentDivScrollView}  >
                     {this.state.taskcomments.map((cc, index) => this.renderComment(cc, index))}
                   </div>

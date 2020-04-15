@@ -412,15 +412,16 @@ class ProjectDetail extends React.Component {
             <TextField
               id="standard-required"
               label="Progress"
-              onChange={this.handleChange("progress")}
-              value={this.state.progress}
+              value={this.props.progress}
               className={classes.textFieldWide}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
                     %
                   </InputAdornment>
-                )
+                ),
+                readOnly: Boolean(true),
+                disabled: Boolean(true)
               }}
             />
           </Grid>
