@@ -44,8 +44,8 @@ import OrganizationMemberAction from "../organization/OrganizationMemberAction";
 
 import DatePicker from "react-datepicker";
 
-import "react-datepicker/dist/react-datepicker.css";
-
+import "../../stylesheets/react-datepicker.css";
+ 
 const rows = [
   { id: "assignedto", numeric: false, disablePadding: false, label: "Members",align:"left",width:200 },
   { id: "description", numeric: false, disablePadding: false, label: "Focus Area",align:"left",width:400 },
