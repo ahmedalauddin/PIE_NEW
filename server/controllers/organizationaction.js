@@ -14,24 +14,12 @@ module.exports = {
     const where= [
       {
         orgId: req.params.orgId,
-        disabled: 0
+        disabled: 0,
+        dateAdded:req.params.dateAdded
       }
     ]
 
-    if(req.params.createdAt){
-      const startDate=new Date(req.params.createdAt);
-      const endDate = new Date(req.params.createdAt);
-      endDate.setHours( endDate.getHours() + 24 );
-      
-      const orClause=[];
-      orClause.push({createdAt:{
-          $lt: endDate,
-          $gt: startDate
-      }});
-
-      orClause.push({createdAt:startDate});
-      where.push({'$or':orClause});
-    }
+    
     logger.info(`${callerType} Action Organization, findAll where ${JSON.stringify(where)}`);
     return models.OrganizationAction.findAll({
       
@@ -146,7 +134,7 @@ module.exports = {
     const organizationId = req.params.orgId;
     const status = req.body.status;
     const assigneeId = req.body.assigneeId;
-    const createdAt = new Date(req.body.createdAt);
+    const dateAdded = req.body.dateAdded;
     logger.debug(`${callerType} create -> New Organization Action for Organization id : ${organizationId}`);
  
       return models.OrganizationAction.create({
@@ -155,7 +143,8 @@ module.exports = {
         orgId: organizationId,
         status: status,
         assigneeId: assigneeId,
-        createdAt: createdAt
+        dateAdded: dateAdded,
+        createdAt:new Date(dateAdded)
       })
         .then(OrganizationAction => {
          logger.debug(`${callerType} created OrganizationAction`);
@@ -303,7 +292,7 @@ module.exports = {
   },
   meetingDays(req, res) {
     logger.info(`${callerType} called meetingDays`);
-    let sql = "select distinct createdAt from OrganizationActions where orgId = " + req.params.orgId + " and description<>'' and disabled = 0";
+    let sql = "select distinct dateAdded from OrganizationActions where orgId = " + req.params.orgId + " and disabled = 0";
 
     logger.debug(`${callerType} meetingDays -> sql: ${sql}`);
     return models.sequelize

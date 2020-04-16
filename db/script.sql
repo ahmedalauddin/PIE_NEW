@@ -59,3 +59,9 @@ CREATE TABLE  `mvp2`.`TaskComments` (
   PRIMARY KEY (`id`),
   KEY `taskId-projectId` (`taskId`,`projectId`)
 );
+
+
+ALTER TABLE `mvp2`.`OrganizationActions` MODIFY COLUMN `description` VARCHAR(1000) ;
+ALTER TABLE `mvp2`.`OrganizationActions` ADD COLUMN `dateAdded` VARCHAR(45) DEFAULT NULL,ADD INDEX dateAddedQuery(`dateAdded`,`orgId`,`disabled`);
+
+update `mvp2`.`OrganizationActions` set dateAdded=date(createdAt)

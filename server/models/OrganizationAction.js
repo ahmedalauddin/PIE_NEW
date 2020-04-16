@@ -38,6 +38,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
       onUpdate: DataTypes.NOW
+    },
+    dateAdded: {
+      type: DataTypes.STRING,
+      allowNull: false
     }
   }, {});
     OrganizationAction.associate = function(models) {

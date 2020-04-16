@@ -7,11 +7,12 @@ const organizationaction = require("../controllers/organizationaction");
 module.exports = router => {
   const callerClass = "router";
   // get Actions by project
-  logger.debug(`${callerClass} GET -> path: /api/action-organization/:orgId`);
+ /* logger.debug(`${callerClass} GET -> path: /api/action-organization/:orgId`);
   router.get("/api/action-organization/:orgId", organizationaction.listByOrganization);
+  */
 
-  logger.debug(`${callerClass} GET -> path: /api/action-organization/:orgId/:createdAt`);
-  router.get("/api/action-organization/:orgId/:createdAt", organizationaction.listByOrganization);
+  logger.debug(`${callerClass} GET -> path: /api/action-organization/:orgId/:dateAdded`);
+  router.get("/api/action-organization/:orgId/:dateAdded", organizationaction.listByOrganization);
 
 
   // Post action-organization by organization

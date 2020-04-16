@@ -113,11 +113,10 @@ class OrganizationActionTable extends React.Component {
   };
 
   componentDidMount() {
-    if(this.props.location.state && this.props.location.state.createdAt){
+    if(this.props.location.state && this.props.location.state.dateAdded){
       this.setState({filterDate:null})
       setTimeout(()=>{
-        const createdAt= moment(this.props.location.state.createdAt).format("YYYY-MM-DD");
-        this.fetchData(createdAt);
+        this.fetchData(this.props.location.state.dateAdded);
       },100)
     }else{
       this.fetchData();
@@ -212,7 +211,7 @@ class OrganizationActionTable extends React.Component {
       console.log("meetingsDays response",response);
       const highlightDates=[];
       response.forEach((data)=>{
-        highlightDates.push(new Date(data.createdAt));
+        highlightDates.push(new Date(data.dateAdded));
       })
       this.setState({highlightDates});
     });
@@ -343,7 +342,7 @@ class OrganizationActionTable extends React.Component {
       description,
       status,
       assigneeId,
-      createdAt:this.state.filterDate
+      dateAdded:this.state.filterDate
     }
 
     fetch(apiPath, {
@@ -500,7 +499,7 @@ class OrganizationActionTable extends React.Component {
 
 
                             <TableCell  style={{width:150}} align="left" className={classes.noTextDecoration}>
-                              <Typography className={classes.heading}>{moment(OrganizationAction.createdAt).format("YYYY-MM-DD")}</Typography>
+                              <Typography className={classes.heading}>{OrganizationAction.dateAdded}</Typography>
                             </TableCell>
 
 

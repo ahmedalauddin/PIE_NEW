@@ -162,7 +162,7 @@ class OrganizationAction extends React.Component {
     persons: [],
     assigneeId: null,
     project: {},
-    createdAt:"",
+    dateAdded:"",
     openSnackbar: false,
     snackbarMessage: "",
     message: "",
@@ -286,7 +286,7 @@ class OrganizationAction extends React.Component {
             orgId: orgId,
             buttonText: "Save",
             redirectTarget: "/organizationactions",
-            createdAt:moment(action.createdAt).format("YYYY-MM-DD"),
+            dateAdded:action.dateAdded
           });
         });
     } else {
@@ -334,7 +334,7 @@ class OrganizationAction extends React.Component {
           message: `${this.state.message}`,
           projId: this.state.redirectIdOrgOrProject,
           orgId:this.state.redirectIdOrgOrProject,
-          createdAt:this.state.createdAt
+          dateAdded:this.state.dateAdded
           
         }
       }} />;
