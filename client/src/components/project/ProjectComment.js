@@ -49,7 +49,8 @@ const styles = theme => ({
     textAlign: "left",
     color: theme.palette.text.secondary,
     height: 400,
-    overflow: "auto"
+    overflow: "auto",
+    marginTop:20
   },
   rangeLabel: {
     display: "flex",
@@ -193,7 +194,7 @@ class ProjectComment extends React.Component {
           projectTitle,
           projectComments
         })
-        setTimeout(() => this.scrollToBottom(), 100);
+        //setTimeout(() => this.scrollToBottom(), 100);
       });
 
   }
@@ -234,14 +235,14 @@ class ProjectComment extends React.Component {
         if (response && response.statusText === "Created") {
             response.json().then((newComment)=>{
             this.setState({ openSnackbar: true, message: "Comment saved" });
-            projectComments.push(newComment);
+            projectComments.unshift(newComment);
             setTimeout(() => {
               this.setState({
                 delLoader: false,
                 newComment: "",
                 projectComments
               });
-              setTimeout(() => this.scrollToBottom(), 100);
+              // setTimeout(() => this.scrollToBottom(), 100);
             }, 1000);
           })
           
@@ -267,7 +268,7 @@ class ProjectComment extends React.Component {
         console.log('on deactivateProjectComment ', res);
         projectComments.splice(index,1);
         this.setState({projectComments, openSnackbar: true, message: "Comment deleted"})
-        setTimeout(() => this.scrollToBottom(), 100);
+        // setTimeout(() => this.scrollToBottom(), 100);
       });
   }
   scrollToBottom = () => {
@@ -288,75 +289,75 @@ class ProjectComment extends React.Component {
   renderEnterComment() {
     const { classes } = this.props;
     return (
-      <React.Fragment>
-        <Grid container justify="center" direction="column" alignItems="center" className="panel-dashboard">
-          <Grid container alignItems="center" justify="center" spacing={24} sm={12}>
-            <Grid item sm={10}>
-              <Paper className={classes.paper}>
+          <Grid container direction="row" justify="space-between" alignItems="center" className="dash">
 
-                <Grid container direction="row" justify="space-between" alignItems="center" className="dash">
-
-                  <Grid item sm={10} xs={10}  >
-                    <TextField
-                      id="comment"
-                      label="Enter Comment"
-                      multiline
-                      className={classes.textFieldWide}
-                      value={this.state.newComment}
-                      onChange={(event) => this.setState({ newComment: event.target.value })}
-                      style={{ width: "100%" }}
-                      margin="normal"
-                    />
-                  </Grid>
-                  <Typography component="p">
-                    {
-                      this.state.delLoader ?
-                        <CircularProgress /> :
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          className={classes.secondary}
-                          onClick={() => this.addComment()}
-                        >
-                          Post Comment
-                          </Button>
-                    }
-                  </Typography>
-                </Grid>
-              </Paper>
-            </Grid>
+          <Grid item sm={10} xs={10}  >
+            <TextField
+              id="comment"
+              label="Enter Comment"
+              multiline
+              className={classes.textFieldWide}
+              value={this.state.newComment}
+              onChange={(event) => this.setState({ newComment: event.target.value })}
+              style={{ width: "100%" }}
+              margin="normal"
+            />
           </Grid>
+          <Typography component="p">
+            {
+              this.state.delLoader ?
+                <CircularProgress /> :
+                <Button
+                  variant="contained"
+                  color="primary"
+                  className={classes.secondary}
+                  onClick={() => this.addComment()}
+                >
+                  Post Comment
+                  </Button>
+            }
+          </Typography>
         </Grid>
-      </React.Fragment>
     )
   }
 
   renderComment(cc, index) {
     const { classes } = this.props;
     return (
-      <Paper key={index} className={classes.paper} style={{ marginTop: 10 }}>
+      <div style={{padding:10, 
+        borderTop: 0,
+        borderLeft: 0,
+        borderRight: 0,
+        borderBottom: 1,
+        borderBottomColor: "black",
+        borderBottomWidth: "1px",
+        borderStyle:"solid"
+        }}>
         <Grid container direction="row" justify="space-between" alignItems="flex-end" className="dash">
 
           <Grid container sm={11} xs={11} direction="row" >
             <img src={profileLogo} alt="" className={classes.profileLogo} />
 
-            <Grid item sm={2} xs={2}  >
-              <Typography variant="h5" color="primary" gutterBottom >
+            <Grid item sm={8} xs={8}  >
+            
+            <Grid container sm={12} xs={12} direction="row" >
+              <Typography variant="h7" color="primary" gutterBottom >
                 {cc.personName}
               </Typography>
-              <Typography variant="h7" color="primary" gutterBottom >
+              <Typography style={{marginLeft:20}}  color="primary" gutterBottom >
                 {moment(cc.createdAt).format("YYYY-MM-DD hh:mm:ss")}
               </Typography>
             </Grid>
 
-            <Grid item sm={8} xs={10}  >
-              <Typography style={{ width: "100%" }} className={classes.heading}>
-                {cc.description
-                  && cc.description.split("\n").map((i, key) => {
-                    return <p className="inlineBlock" key={key}>{i.trim()}</p>
-                  })}
-              </Typography>
+            <Grid container sm={12} xs={12} direction="row" >
+                <Typography style={{ width: "100%" }} className={classes.heading}>
+                    {cc.description
+                      && cc.description.split("\n").map((i, key) => {
+                        return <p className="inlineBlock" key={key}>{i.trim()}</p>
+                      })}
+                  </Typography>
             </Grid>
+          </Grid>
 
           </Grid>
 
@@ -364,7 +365,7 @@ class ProjectComment extends React.Component {
             <DeleteIcon color="primary" />
           </IconButton>
         </Grid>
-      </Paper>
+      </div>
     )
   }
 
@@ -396,6 +397,7 @@ class ProjectComment extends React.Component {
             <Grid container alignItems="center" justify="center" spacing={24} sm={12}>
               <Grid item sm={10}>
                 <Paper className={classes.paper} >
+                  {this.renderEnterComment()}
                   <div className={classes.divScrollView} ref={(el) => { this.divScrollView = el; }}>
                     {this.state.projectComments.map((cc, index) => this.renderComment(cc, index))}
                   </div>
@@ -404,7 +406,7 @@ class ProjectComment extends React.Component {
             </Grid>
           </Grid>
 
-          {this.renderEnterComment()}
+          
         </div>
 
         <Snackbar

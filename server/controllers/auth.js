@@ -18,6 +18,7 @@ const Task = require("../models").Task;
 const mvcType = "controller";
 const cookieName = "token";
 const models = require("../models");
+const mailer = require("./mailer");
 
 function writeJwt(email, organization) {
   let token = jwt.sign(
@@ -29,6 +30,22 @@ function writeJwt(email, organization) {
   );
   return token;
 };
+
+function randomString(length) {
+  let result           = '';
+  const characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const charactersLength = characters.length;
+  for ( let i = 0; i < length; i++ ) {
+     result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+}
+
+function getHash(value) {
+  var hashedValue = bCrypt.hashSync(value, 12);
+  logger.debug(`${mvcType} getHash -> hash: ${hashedValue}`);
+  return hashedValue;
+}
 
 module.exports = {
   authenticate(req, res) {
@@ -159,6 +176,82 @@ module.exports = {
 
     // send the result
     return res.status(_code).json(_body);
+  },
+
+  reset(req, res) {
+    logger.debug(`${mvcType} reset -> start`);
+    // Find a person by email.
+    logger.debug(`${mvcType} reset -> email: ${req.body.email}`);
+    return Person.findOne({
+      where: {
+        email: req.body.email
+      }
+    })
+      .then(p => {
+
+            let password = randomString(8);
+            let hashedValue = getHash(password);
+            logger.debug(`${mvcType} create -> after hash, hash: ${hashedValue} pid ${p}`);
+
+            models.Person.update(
+              {
+                pwdhash: hashedValue
+              },
+              {
+                returning: true,
+                where: {
+                  id: p.id
+                }
+              }
+            ) .then(([d, p]) => {
+              logger.debug(`${mvcType} update -> successful`);
+              if (p === 1) {
+                res.status(200).send({
+                  success: true,
+                  message: "New password email sent."
+                });
+
+                const to = req.body.email;
+                const subject = "PIE Account details.";
+                let text = "Hi "+p.firstName+",";
+                    text+= "<br/><br/>"; 
+                    text+= "Your password has been reset successfully. Your account details are as follow:" ;
+                    text+= "<br/><br/>"; 
+                    text+= "User Name : "+p.email; 
+                    text+= "<br/>"; 
+                    text+= "Password : "+password; 
+                    text+= "<br/><br/>"; 
+                    text+= "To sign in to your account please visit - <a href='http://pie.value-infinity.com' target='_blank' >http://pie.value-infinity.com</a>"; 
+                    text+= "<br/><br/>"; 
+                    text+= "Teams"; 
+                    text+= "<br/>";
+                    text+= "Value-Infinity.";  
+                mailer.sendMail(to,subject,text);
+
+              } else {
+                res.status(200).send({
+                  success: true,
+                  message: "Something went wrong"
+                });
+              }
+            })
+            .catch(error => {
+              logger.error(`${mvcType} update -> error: ${error.stack}`);
+              res.status(400).send(error);
+            });
+
+           
+          
+      })
+      .catch(error => {
+        logger.error(`${mvcType} authenticate -> error: ${error.stack}`);
+        res.status(400).send({
+          auth: false,
+          success: false,
+          token: null,
+          message: "Unknown error occurred"
+        });
+      });
   },
 
   index(req, res) {

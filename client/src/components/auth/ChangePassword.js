@@ -117,7 +117,8 @@ class ChangePassword extends React.Component {
     isEditing: false,
     isNew: false,
     expanded: false,
-    labelWidth: 0
+    labelWidth: 0,
+    passwordSent:false
   };
 
   constructor(props) {
@@ -146,7 +147,7 @@ class ChangePassword extends React.Component {
     let redirectTarget = "";
 
     // Authenticate against the username
-    fetch("/api/auth/authenticate", {
+    fetch("/api/auth/reset", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(this.state)
@@ -163,16 +164,10 @@ class ChangePassword extends React.Component {
         }
       })
       .then(user => {
-        // TODO - call api to change password.
-        console.log("ChangePassword.js, logged in. Status = 200");
       })
       .then(() => {
-        console.log("Ready to redirect");
-        redirectTarget = "/login";
         this.setState({
-          isLoggedIn: false,
-          readyToRedirect: true,
-          redirectTarget: redirectTarget
+          passwordSent: true
         });
       })
       .catch(err => {
@@ -193,6 +188,7 @@ class ChangePassword extends React.Component {
       <React.Fragment>
         <CssBaseline />
         <Topbar />
+       
         <form onSubmit={this.handleSubmit} noValidate>
           <div className={classes.root}>
             <Grid
@@ -206,6 +202,7 @@ class ChangePassword extends React.Component {
                 <SectionHeader title="" subtitle="" />
                 <Card className={classes.card}>
                   <CardContent>
+                  {!this.state.passwordSent ?
                     <Grid spacing={24} alignItems="center" justify="center" container className={classes.grid}>
                       <Grid item xs={8}>
                         <Typography
@@ -228,48 +225,7 @@ class ChangePassword extends React.Component {
                           margin="normal"
                           />
                       </Grid>
-                      <Grid item xs={8}>
-                        <Typography variant="h5" component="h2">
-                          <TextField
-                            required
-                            id="oldpassword"
-                            label="Old Password"
-                            type="password"
-                            onChange={this.handleChange("oldpassword")}
-                            value={this.state.oldpassword}
-                            className={classes.textField}
-                            margin="normal"
-                          />
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={8}>
-                        <Typography variant="h5" component="h2">
-                          <TextField
-                            required
-                            id="password"
-                            label="Password"
-                            type="password"
-                            onChange={this.handleChange("password")}
-                            value={this.state.password}
-                            className={classes.textField}
-                            margin="normal"
-                          />
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={8}>
-                        <Typography variant="h5" component="h2">
-                          <TextField
-                            required
-                            id="confirm"
-                            label="Confirm password"
-                            type="password"
-                            onChange={this.handleChange("confirm")}
-                            value={this.state.confirm}
-                            className={classes.textField}
-                            margin="normal"
-                          />
-                        </Typography>
-                      </Grid>
+                     
                       <Grid item xs={8}>
                         <Typography variant="h5" component="h2">
                           <Button
@@ -283,12 +239,24 @@ class ChangePassword extends React.Component {
                         </Typography>
                       </Grid>
                     </Grid>
+
+:
+                <Typography
+                variant="h7"
+                component="h7"
+                color="secondary"
+                gutterBottom
+              >
+                New password sent in email.
+              </Typography>}
+                    
                   </CardContent>
                 </Card>
               </Grid>
             </Grid>
           </div>
         </form>
+       
       </React.Fragment>
     );
   }

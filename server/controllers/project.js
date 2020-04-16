@@ -765,32 +765,23 @@ module.exports = {
   }
   ,
   getProjectComments(req, res) {
-    const where = [
-      {
-        projId: req.params.projId,
-        disabled: 0
-      }
-    ]
-    logger.info(`${callerType} ProjectComment, findAll where ${JSON.stringify(where)}`);
-    return models.ProjectComment.findAll({
+    
+   
+    
+    const sql = "select * from ProjectComments where projId = " + req.params.projId+" and disabled = 0 order by createdAt desc";
 
-      include: [
-        {
-          model: models.Person,
-          as: "person",
+    logger.debug(`${callerType} ProjectComment, findAll where ${sql}`);
 
-        },
-      ],
-      where
-    })
-      .then(_k => {
-        logger.debug(
-          `${callerType} findById -> successful, title: ${_k.title}`
-        );
-        res.status(201).send(_k);
+    return models.sequelize.query(
+      sql, {
+        type: models.sequelize.QueryTypes.SELECT
+      })
+      .then(comments => {
+        logger.debug(`${callerType} getProjectComments -> successful, count: ${comments.length}`);
+        res.status(201).send(comments);
       })
       .catch(error => {
-        logger.error(`${callerType} findById -> error: ${error.stack}`);
+        logger.error(`${callerType} getProjectComments -> error: ${error.stack}`);
         res.status(400).send(error);
       });
   },
