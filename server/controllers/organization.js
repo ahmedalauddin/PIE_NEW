@@ -75,7 +75,7 @@ module.exports = {
       (select group_concat(CONCAT(firstName,' ' ,lastName)  order by lastName SEPARATOR '; ' ) from Persons Pe where (Pe.orgId = O.id or Pe.id in (select personId from OrganizationPersons OP where OP.organizationId = O.id)) and Pe.disabled = 0) as people,\
       (select group_concat(name order by name SEPARATOR ', ' ) from Departments D where D.orgId = O.id and D.disabled = 0 \
        ) as departments, \
-      (select group_concat(title order by title SEPARATOR ', ' ) from Kpis K where K.active=1 and K.orgId = O.id \
+      (select group_concat(title order by title SEPARATOR ', ' ) from Kpis K where (K.projectId is null or K.projectId=0) and K.active=1 and K.orgId = O.id \
        ) as kpis \
        from Organizations O \
        where O.active = 1 \

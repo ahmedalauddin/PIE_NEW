@@ -143,7 +143,7 @@ export const styles = theme => ({
   profileLogo: {
     width: 40,
     height: 40,
-    margin: 10
+    marginRight: 10
   }
 
 });

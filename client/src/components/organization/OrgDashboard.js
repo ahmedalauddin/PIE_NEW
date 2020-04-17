@@ -317,29 +317,22 @@ class OrgDashboard extends Component {
                                 <div className={classes.wideColumn}>
                                   <Typography className={classes.secondaryHeading}>
                                     
-                                    {
-                                        organization.projects && organization.projects.split(",").map(project => {
-                                        if(project){
-                                          return(
-                                          <p className="inlineBlock">{project}</p>
-                                        )
-                                        }
-                                      })
-                                    }
+                                    <ul style={{paddingLeft:15,margin:0}}>
+                                      {
+                                          organization.projects && organization.projects.split(",").map((project,key) => <li key={key} >{project.trim()}</li> )
+                                      }
+                                    </ul>
                                   </Typography>
                                 </div>
                                 <div className={classes.wideColumn}>
                                   <Typography className={classes.secondaryHeading}>
+
+                                    <ul style={{paddingLeft:15,margin:0}}>
+                                      {
+                                          organization.kpis && organization.kpis.split(",").map((kpi,key) => <li key={key} >{kpi.trim()}</li> )
+                                      }
+                                    </ul>
                                     
-                                    {
-                                        organization.kpis && organization.kpis.split(",").map(kpi => {
-                                        if(kpi){
-                                          return(
-                                          <p className="inlineBlock">{kpi}</p>
-                                        )
-                                        }
-                                      })
-                                    }
                                   </Typography>
                                 </div>
                                 <div className={classes.column}>

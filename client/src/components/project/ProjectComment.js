@@ -48,7 +48,7 @@ const styles = theme => ({
     padding: theme.spacing.unit * 3,
     textAlign: "left",
     color: theme.palette.text.secondary,
-    height: 400,
+    height: 300,
     overflow: "auto",
     marginTop:20
   },
@@ -159,8 +159,12 @@ const styles = theme => ({
   profileLogo: {
     width: 40,
     height: 40,
-    margin: 10
+    marginRight: 10
+  },
+  commentHistoryLabel:{
+    
   }
+
 });
 
 
@@ -194,7 +198,7 @@ class ProjectComment extends React.Component {
           projectTitle,
           projectComments
         })
-        //setTimeout(() => this.scrollToBottom(), 100);
+        setTimeout(() => this.scrollToTop(), 100);
       });
 
   }
@@ -242,7 +246,8 @@ class ProjectComment extends React.Component {
                 newComment: "",
                 projectComments
               });
-              // setTimeout(() => this.scrollToBottom(), 100);
+              
+              setTimeout(() => this.scrollToTop(), 100);
             }, 1000);
           })
           
@@ -268,13 +273,13 @@ class ProjectComment extends React.Component {
         console.log('on deactivateProjectComment ', res);
         projectComments.splice(index,1);
         this.setState({projectComments, openSnackbar: true, message: "Comment deleted"})
-        // setTimeout(() => this.scrollToBottom(), 100);
+        setTimeout(() => this.scrollToTop(), 100);
       });
   }
-  scrollToBottom = () => {
+  scrollToTop = () => {
     if (this.divScrollView) {
       console.log(this.divScrollView);
-      this.divScrollView.scrollTop = this.divScrollView.scrollHeight;
+      this.divScrollView.scrollTop = 0;
     }
   }
 
@@ -285,6 +290,10 @@ class ProjectComment extends React.Component {
   handleClick = Transition => () => {
     this.setState({ openSnackbar: true, Transition });
   };
+
+  backToPreject(){
+      this.setState({ readyToRedirect: true });
+  }
 
   renderEnterComment() {
     const { classes } = this.props;
@@ -333,12 +342,12 @@ class ProjectComment extends React.Component {
         borderBottomWidth: "1px",
         borderStyle:"solid"
         }}>
-        <Grid container direction="row" justify="space-between" alignItems="flex-end" className="dash">
 
-          <Grid container sm={11} xs={11} direction="row" >
-            <img src={profileLogo} alt="" className={classes.profileLogo} />
-
-            <Grid item sm={8} xs={8}  >
+          <Grid container md={12} sm={12} xs={12} direction="row" >
+            <Grid item sm={1} xs={1}  >
+              <img src={profileLogo} alt="" className={classes.profileLogo} />
+            </Grid>
+            <Grid item sm={11} xs={11}  >
             
             <Grid container sm={12} xs={12} direction="row" >
               <Typography variant="h7" color="primary" gutterBottom >
@@ -347,13 +356,18 @@ class ProjectComment extends React.Component {
               <Typography style={{marginLeft:20}}  color="primary" gutterBottom >
                 {moment(cc.createdAt).format("YYYY-MM-DD hh:mm:ss")}
               </Typography>
+              
+             
+              <IconButton onClick={()=>this.deactivateProjectComment(cc.id,index)} style={{paddingTop:0,marginLeft:"auto"}}> 
+                <DeleteIcon color="primary" />
+              </IconButton>
             </Grid>
 
             <Grid container sm={12} xs={12} direction="row" >
                 <Typography style={{ width: "100%" }} className={classes.heading}>
                     {cc.description
                       && cc.description.split("\n").map((i, key) => {
-                        return <p className="inlineBlock" key={key}>{i.trim()}</p>
+                        return <p style={{margin:0}} className="inlineBlock" key={key}>{i.trim()}</p>
                       })}
                   </Typography>
             </Grid>
@@ -361,10 +375,7 @@ class ProjectComment extends React.Component {
 
           </Grid>
 
-          <IconButton onClick={()=>this.deactivateProjectComment(cc.id,index)}> 
-            <DeleteIcon color="primary" />
-          </IconButton>
-        </Grid>
+        
       </div>
     )
   }
@@ -377,14 +388,17 @@ class ProjectComment extends React.Component {
       return <h1>An error occurred.</h1>;
     }
     if (this.state.readyToRedirect) {
-      return <Redirect to={{
-        pathname: `${this.state.redirectTarget}`,
-        state: {
-          message: `${this.state.message}`,
-          projId: this.state.redirectIdOrgOrProject,
-          orgId: this.state.redirectIdOrgOrProject,
-        }
-      }} />;
+      return (
+        <Redirect
+          to={{
+            pathname: "/project/",
+            state: {
+              message: `${this.state.message}`,
+              projId: `${this.state.projId}`
+            }
+          }}
+        />
+      );
     }
 
     return (
@@ -395,12 +409,33 @@ class ProjectComment extends React.Component {
           <Grid container justify="center" direction="column" alignItems="center" className="panel-dashboard">
             <PageTitle pageTitle={"Project Comments"} />
             <Grid container alignItems="center" justify="center" spacing={24} sm={12}>
-              <Grid item sm={10}>
-                <Paper className={classes.paper} >
-                  {this.renderEnterComment()}
-                  <div className={classes.divScrollView} ref={(el) => { this.divScrollView = el; }}>
-                    {this.state.projectComments.map((cc, index) => this.renderComment(cc, index))}
-                  </div>
+              <Grid item sm={10} style={{margin:0}}>
+                <Paper className={classes.paper}  style={{margin:0}}>
+                  <Grid item sm={11} style={{margin:0}}>
+                    {this.renderEnterComment()}
+                  </Grid>
+                 
+
+                  <Grid item sm={10} style={{margin:0}}>
+                    <Typography variant="h6" color="primary" gutterBottom style={{textAlign:"left",padding: 10}} >
+                        Comment History
+                    </Typography>
+                  
+                    <div className={classes.divScrollView} ref={(el) => { this.divScrollView = el; }}>
+                      {this.state.projectComments.map((cc, index) => this.renderComment(cc, index))}
+                    </div>
+                  </Grid>
+
+                  <Grid container sm={12} style={{margin:0,flexDirection:"row",justifyContent:"flex-end"}}>
+                    <Button
+                          variant="contained"
+                          color="primary"
+                          className={classes.secondary}
+                          onClick={() => this.backToPreject()}
+                        >
+                      Cancel
+                    </Button>
+                  </Grid>
                 </Paper>
               </Grid>
             </Grid>

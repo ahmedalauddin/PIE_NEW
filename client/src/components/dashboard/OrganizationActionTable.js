@@ -96,7 +96,7 @@ class OrganizationActionTable extends React.Component {
     page: 0,
     rowsPerPage: 5,
     delLoader: 0,
-    filterDate: moment(new Date()).format("YYYY-MM-DD"),
+    filterDate: new Date(),
     assigneeId: -1,
     persons: [],
     status: [],
@@ -108,6 +108,17 @@ class OrganizationActionTable extends React.Component {
     highlightDates:[]
   };
 
+  getDateFromString(dateString){
+   try{ const tokens=dateString.split("-");
+    const y=Number(tokens[0]);
+    const m=Number(tokens[1])-1;
+    const d=Number(tokens[2].substring(0,2));
+    return new Date(y,m,d);
+    }catch(e){
+      console.log(e);
+      return new Date();
+    }
+  }
   handleClose = () => {
     this.setState({ openSnackbar: false });
   };
@@ -116,7 +127,7 @@ class OrganizationActionTable extends React.Component {
     if(this.props.location.state && this.props.location.state.dateAdded){
       this.setState({filterDate:null})
       setTimeout(()=>{
-        this.fetchData(this.props.location.state.dateAdded);
+        this.fetchData(this.getDateFromString(this.props.location.state.dateAdded));
       },100)
     }else{
       this.fetchData();
@@ -126,12 +137,12 @@ class OrganizationActionTable extends React.Component {
     //console.log("changedDate...............",e.target.value );
    //this.fetchData(e.target.value);
 
-   this.fetchData(moment(e).format("YYYY-MM-DD"));
+   this.fetchData(e);
   }
 
   fetchData(filterDate){
     if(!filterDate){
-      filterDate=moment(new Date()).format("YYYY-MM-DD");
+      filterDate=new Date();
     }
 
     const persons=[];
@@ -142,7 +153,7 @@ class OrganizationActionTable extends React.Component {
     this.setState({persons,filterDate,orgId});
 
     
-    let uri=`/api/action-organization/${orgId}/${filterDate}`;
+    let uri=`/api/action-organization/${orgId}/${moment(filterDate).format("YYYY-MM-DD")}`;
    
     fetch(uri)
     .then(res => res.json())
@@ -208,10 +219,10 @@ class OrganizationActionTable extends React.Component {
     fetch(`/api/action-organization-meeting-days/${this.state.orgId}`)
     .then(res => res.json())
     .then(response => {
-      console.log("meetingsDays response",response);
+     
       const highlightDates=[];
       response.forEach((data)=>{
-        highlightDates.push(new Date(data.dateAdded));
+        highlightDates.push(this.getDateFromString(data.dateAdded));
       })
       this.setState({highlightDates});
     });
@@ -342,7 +353,7 @@ class OrganizationActionTable extends React.Component {
       description,
       status,
       assigneeId,
-      dateAdded:this.state.filterDate
+      dateAdded:moment(this.state.filterDate).format("YYYY-MM-DD")
     }
 
     fetch(apiPath, {
@@ -429,7 +440,7 @@ class OrganizationActionTable extends React.Component {
                         /> */}
                         <DatePicker
                           className={classes.dataPickerInput}
-                          selected={new Date(this.state.filterDate)}
+                          selected={this.state.filterDate}
                           onChange={(e) =>this.changeFilterDate(e)}
                           highlightDates={this.state.highlightDates}
                         />

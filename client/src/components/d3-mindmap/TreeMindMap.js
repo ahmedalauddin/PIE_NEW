@@ -1247,7 +1247,7 @@ class TreeMindMap extends React.Component {
             >
               Add Sibling
             </Button>
-            <Button
+            {/* <Button
               variant="contained"
               color="secondary"
               disabled={this.state.openNoteDisabled}
@@ -1255,8 +1255,8 @@ class TreeMindMap extends React.Component {
               className={classes.outlinedButton}
             >
               Open Note
-            </Button>
-            <Button
+            </Button> */}
+            {/* <Button
               variant="contained"
               color="secondary"
               disabled={this.state.closeNoteDisabled}
@@ -1264,7 +1264,7 @@ class TreeMindMap extends React.Component {
               className={classes.outlinedButton}
             >
               Close Note
-            </Button>
+            </Button> */}
             <Button
               variant="contained"
               color="secondary"
