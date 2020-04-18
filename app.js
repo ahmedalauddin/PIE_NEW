@@ -19,9 +19,9 @@ const models = require("./server/models");
 const logger = require("./server/util/logger")(__filename);
 
 // function to determine environment
-const isHosted = () => {
-  return config.get("env") === "host" || config.get("env") === "prod";
-};
+// const isHosted = () => {
+//   return config.get("env") === "host" || config.get("env") === "prod";
+// };
 
 // create the instance of express
 logger.debug(`constructing express app`);
@@ -34,7 +34,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // add support for static files and the built react app
-if(isHosted()){
+if(config.isHosted()){
   let serverPath =  path.join(__dirname, "client/build")
   app.use(express.static(serverPath));
 }
@@ -134,7 +134,7 @@ app.use(
 // now set the routes for the app
 app.use(router);
 
-if(isHosted()){
+if(config.isHosted()){
   let serverPath =  path.join(__dirname, "client/build");
   app.all('/*', function(req, res) { 
     res.sendfile(serverPath+'/index.html'); 

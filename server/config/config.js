@@ -215,4 +215,8 @@ console.debug(
   `env: ${config.get("env")}, log level: ${config.get("log.level")}`
 );
 
+
+config.isHosted = ()=> {
+  return config.get("env") === "host" || config.get("env") === "prod";
+}
 module.exports = config;

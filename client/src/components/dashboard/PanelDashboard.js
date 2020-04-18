@@ -96,12 +96,7 @@ class PanelDashboard extends Component {
             <Grid item xs={12} md={10} className="panel-dashboard-list">
               <ProjectPanelList allClients={false} />
             </Grid>
-            {/* <Grid item xs={12} md={10} className="panel-dashboard-list">
-              <OrganizationActionTable orgId={getOrgId()} messages={this.showMessages} />
-            </Grid> */}
-            {/* <Grid item xs={12} md={10} className="panel-dashboard-list">
-              <OrganizationDocumentTable orgId={getOrgId()} messages={this.showMessages} />
-            </Grid> */}
+          
           </Grid>
         </div>
       </React.Fragment>

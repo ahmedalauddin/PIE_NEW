@@ -620,7 +620,7 @@ class Gantt extends React.Component {
                       id="comment"
                       label="Enter Comment"
                       fullWidth
-                      onChange={(e) =>this.setState({taskNewComment:e.target.value.substring(0,50)})}
+                      onChange={(e) =>this.setState({taskNewComment:e.target.value.substring(0,100)})}
                       value={this.state.taskNewComment}
                     />
                   </Grid>

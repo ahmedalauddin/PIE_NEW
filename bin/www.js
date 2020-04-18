@@ -18,6 +18,11 @@ var config = require("../server/config/config");
 
 // get the port from the configuration
 var port = normalizePort(config.get("server.port"));
+
+if(config.isHosted()){
+  port=80;
+}
+
 app.set("port", port);
 
 // create http server

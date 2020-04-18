@@ -64,4 +64,7 @@ CREATE TABLE  `mvp2`.`TaskComments` (
 ALTER TABLE `mvp2`.`OrganizationActions` MODIFY COLUMN `description` VARCHAR(1000) ;
 ALTER TABLE `mvp2`.`OrganizationActions` ADD COLUMN `dateAdded` VARCHAR(45) DEFAULT NULL,ADD INDEX dateAddedQuery(`dateAdded`,`orgId`,`disabled`);
 
-update `mvp2`.`OrganizationActions` set dateAdded=date(createdAt)
+update `mvp2`.`OrganizationActions` set dateAdded=date(createdAt);
+
+ALTER TABLE `mvp2`.`TaskComments` MODIFY COLUMN `description` VARCHAR(100)  NOT NULL;
+
