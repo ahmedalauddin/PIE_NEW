@@ -31,4 +31,10 @@ module.exports = router => {
    logger.debug(`${callerClass} POST -> path: /api/auth/reset`);
    router.post("/api/auth/reset", auth.reset);
 
+   logger.debug(`${callerClass} POST -> path: /api/role`);
+   router.post("/api/auth/role", auth.saveAcl);
+
+   logger.debug(`${callerClass} GET -> path: /api/role/:orgId`);
+   router.get("/api/auth/role/:orgId", auth.getAcl);
+
 };

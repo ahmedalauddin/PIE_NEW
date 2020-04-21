@@ -254,6 +254,64 @@ module.exports = {
       });
   },
 
+  async saveAcl(req, res){
+    const orgId = req.body.orgId;
+    const jsonData = req.body.roleAcls;
+    const query = "select * from Acls where orgId = " + orgId;
+
+    return models.sequelize.query(
+      query, 
+      {
+        type: models.sequelize.QueryTypes.SELECT
+      })
+      .then(data => {
+        let sql =null;
+        if(data.length > 0){
+          sql = "update Acls set jsonData = '" + jsonData + "',updatedAt=now() where orgId = " + orgId + ";";
+        }else{
+          sql = "insert into Acls (orgId, jsonData,createdAt,updatedAt) values (" + orgId + ",'"+ jsonData + "',now(),now())";
+        }
+
+        models.sequelize.query(sql, {
+          type: models.sequelize.QueryTypes.RAW
+        }).then(gantt => {
+          logger.debug(`${mvcType}  saveAcl -> successful`);
+          res.status(201).send(gantt);
+        })
+        .catch(error => {
+          logger.error(`${mvcType}  saveAcl -> error: ${error.stack}`);
+          res.status(400).send(error);
+        });
+
+      })
+      .catch(error => {
+        logger.error(`${mvcType} saveAcl -> error: ${error.stack}`);
+        res.status(400).send(error);
+      });
+
+
+    
+
+  },
+  getAcl(req, res){
+    const orgId = req.params.orgId;
+
+    const query = "select * from Acls where orgId = " + orgId;
+
+    return models.sequelize.query(
+      query, 
+      {
+        type: models.sequelize.QueryTypes.SELECT
+      })
+      .then(data => {
+        logger.debug(`${mvcType} getAcl: ${data}`);
+        res.status(201).send(data);
+      })
+      .catch(error => {
+        logger.error(`${mvcType} getAcl -> error: ${error.stack}`);
+        res.status(400).send(error);
+      });
+  },
   index(req, res) {
     res.json({
       success: true,

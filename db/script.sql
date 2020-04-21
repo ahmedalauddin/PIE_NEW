@@ -68,3 +68,14 @@ update `mvp2`.`OrganizationActions` set dateAdded=date(createdAt);
 
 ALTER TABLE `mvp2`.`TaskComments` MODIFY COLUMN `description` VARCHAR(100)  NOT NULL;
 
+DROP TABLE IF EXISTS `mvp2`.`Acls`;
+CREATE TABLE  `mvp2`.`Acls` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `orgId` int NOT NULL,
+  `jsonData` json DEFAULT NULL,
+  `createdAt` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `acls_org_ind` (`orgId`),
+  CONSTRAINT `acls_org_ind_fk` FOREIGN KEY (`orgId`) REFERENCES `Organizations` (`id`) ON DELETE CASCADE
+) ;

@@ -47,6 +47,7 @@ import OrganizationDocument from "./components/dashboard/OrganizationDocument";
 import OrganizationDocumentUpdate from "./components/dashboard/OrganizationDocumentUpdate";
 import OrganizationActionTable from "./components/dashboard/OrganizationActionTable";
 import ProjectComment from "./components/project/ProjectComment";
+import RoleManagment from "./components/role/RoleManagment";
 
 export default props => (
   <BrowserRouter>
@@ -109,6 +110,8 @@ export default props => (
         <Route exact path="/OrganizationAction" component={withAuth(OrganizationAction)} />
 
         <Route exact path="/ProjectComment" component={withAuth(ProjectComment)} />
+
+        <Route exact path="/rolemgt" component={withAuth(RoleManagment)} />
       </Switch>
     </ScrollToTop>
   </BrowserRouter>

@@ -12,7 +12,7 @@
 import React, { Component } from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import { Link, withRouter } from "react-router-dom";
-import { isAdministrator, isLoggedIn, getUser } from "../redux";
+import { isAdministrator, isLoggedIn, getUser,isCustomerAdmin } from "../redux";
 import Grid from "@material-ui/core/Grid";
 import Toolbar from "@material-ui/core/Toolbar";
 import AppBar from "@material-ui/core/AppBar";
@@ -168,6 +168,45 @@ const StandardMenu = [
   }
 ];
 
+const StandardAdminMenu = [
+  {
+    label: "Dashboard",
+    pathname: "/paneldashboard"
+  },
+  {
+    label: "Mind Maps",
+    pathname: "/mindmaplist"
+  },
+  {
+    label: "Regrouping",
+    pathname: "/organizationactions"
+  },
+  {
+    label: "Search",
+    pathname: "/search"
+  },
+  {
+    label: "Analytics",
+    pathname: "/analytics"
+  },
+  {
+    label: "Organization",
+    pathname: "/organization"
+  },
+  {
+    label: "Role Managment",
+    pathname: "/rolemgt"
+  },
+  {
+    label: "Logout",
+    pathname: "/logout"
+  },
+  {
+    label: "About",
+    pathname: "/about"
+  }
+];
+
 function getMenu(menuType) {
   var menu = null;
 
@@ -175,6 +214,8 @@ function getMenu(menuType) {
     menu = LoginMenu;
   } else if (menuType === "standard") {
     menu = StandardMenu;
+  }  else if (menuType === "standard-admin") {
+    menu = StandardAdminMenu;
   } else if (menuType === "admin") {
     menu = AdminMenu;
   } else {
@@ -242,6 +283,35 @@ function getAppbarValue(menuType, currentPath)  {
     if (currentPath === "/about") {
       value = 7;
     }
+  }else if (menuType === "standard-admin") {
+    if (!currentPath ||  currentPath === "/paneldashboard") {
+      value = 0;
+    }
+    if (currentPath === "/mindmaplist") {
+      value = 1;
+    }
+
+    if (currentPath === "/organizationactions" || (currentPath !==  undefined && currentPath.includes("/OrganizationAction"))) {
+      value = 2;
+    }
+    if (currentPath === "/search") {
+      value = 3;
+    }
+    if (currentPath === "/analytics") {
+      value = 4;
+    }
+    if (currentPath === "/clientorg"  || currentPath === "/person" || currentPath === "/department") {
+      value = 5;
+    }
+    if (currentPath === "/rolemgt") {
+      value = 6;
+    }
+    if (currentPath === "/logout") {
+      value = 7;
+    }
+    if (currentPath === "/about") {
+      value = 8;
+    }
   } else {
     if (!currentPath ||  currentPath === "/login") {
       value = 0;
@@ -302,6 +372,8 @@ class Topbar extends Component {
     const username = getUser().email;
     if (isLoggedIn() && !this.props.loggedOut && isAdministrator()) {
       menuType = "admin";
+    }else if (isLoggedIn() && !this.props.loggedOut && !isAdministrator() && isCustomerAdmin()) {
+      menuType = "standard-admin";
     } else if (isLoggedIn() && !this.props.loggedOut && !isAdministrator()) {
       menuType = "standard";
     } else {

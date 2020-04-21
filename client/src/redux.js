@@ -366,6 +366,16 @@ export function isAdministrator() {
   return isAdmin;
 }
 
+export function isCustomerAdmin() {
+  let isAdmin = false;
+  try {
+    isAdmin = JSON.parse(store.getState().user).isCustomerAdmin;
+  } catch (error) {
+    console.log("isAdministrator: error");
+  }
+  return isAdmin;
+}
+
 /**
  * *isLoggedIn*
  * Is the logged in user an administrator
