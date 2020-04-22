@@ -192,6 +192,7 @@ module.exports = {
             let password = randomString(8);
             let hashedValue = getHash(password);
             logger.debug(`${mvcType} create -> after hash, hash: ${hashedValue} pid ${p}`);
+            
 
             models.Person.update(
               {
@@ -203,9 +204,9 @@ module.exports = {
                   id: p.id
                 }
               }
-            ) .then(([d, p]) => {
+            ) .then(([d, updatestatus]) => {
               logger.debug(`${mvcType} update -> successful`);
-              if (p === 1) {
+              if (updatestatus === 1) {
                 res.status(200).send({
                   success: true,
                   message: "New password email sent."

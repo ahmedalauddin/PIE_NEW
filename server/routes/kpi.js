@@ -73,4 +73,9 @@ module.exports = router => {
   // Remove a KPI with id from a Project and from its MainKpiId so that it will remain in Organization
   logger.debug(`${callerClass} PUT -> path: /api/kpis-deactivate/:id`);
   router.put("/api/kpis-deactivate-from-project/:id", kpi.removeFromProject);
+
+   // Deactivate a KPI with id
+   logger.debug(`${callerClass} PUT -> path: /api/export-kpi-to-org/:id`);
+   router.put("/api/export-kpi-to-org/:id", kpi.exportKpiToOrg);
+
 };

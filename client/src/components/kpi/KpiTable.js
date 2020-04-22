@@ -23,6 +23,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import { lighten } from "@material-ui/core/styles/colorManipulator";
 import { Link, Redirect } from "react-router-dom";
 import EditIcon from "@material-ui/icons/Edit";
+import ExportIcon from "@material-ui/icons/MoveToInbox";
 import IconButton from "@material-ui/core/IconButton/index";
 import { stableSort, getSorting, desc } from "../common/TableFunctions";
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -263,7 +264,37 @@ class KpiTable extends React.Component {
         });
     }
   }
-
+  
+  async exportKpi(id) {
+    if (id > 0) {
+      // Deactivate a KPI
+      this.setState({
+        delLoader: id
+      })
+      
+      await fetch("/api/export-kpi-to-org/"+id, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(this.state)
+      })
+        .then(data => {
+          let projectId = parseInt(this.props.projectId);
+          if (projectId > 0) {
+            fetch(`/api/kpis-project/${projectId}`)
+              .then(res => res.json())
+              .then(kpis => this.setState({
+                data: kpis,
+                fromOrganization: false
+              }));
+          } 
+          this.setState({ msg: "KPI exported to organization.", delLoader: 0, openSnackbar: true });
+          
+        })
+        .catch(err => {
+          this.setState({ msg: "Error occurred.", delLoader: 0, openSnackbar: true });
+        });
+    }
+  }
   handleRequestSort = (event, property) => {
     const orderBy = property;
     let order = "desc";
@@ -390,6 +421,13 @@ class KpiTable extends React.Component {
                         <IconButton onClick={() =>  this.setEditRedirect(kpi.id) } >
                           <EditIcon color="primary" />
                         </IconButton>
+
+                        { !this.state.fromOrganization && kpi.projectId>0 &&
+                        
+                          <IconButton onClick={() =>  this.exportKpi(kpi.id) } >
+                            <ExportIcon color="primary" />
+                        </IconButton>
+                      }
 
                       </TableCell>
                     </TableRow>

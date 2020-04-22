@@ -796,6 +796,30 @@ module.exports = {
       logger.error(`${callerType} KPI kpisAssign -> error: ${error.stack}`);
       res.status(400).send(error);
     });
+  },
+
+  exportKpiToOrg(req, res) {
+    const id = req.params.id;
+    return models.Kpi.update(
+      {
+        projectId: 0
+      },
+      {
+        returning: true,
+        where: {
+          id: id
+        }
+      }
+    )
+      .then(_k => {
+       
+        logger.debug(`${callerType} KPI exportKpiToOrg, id ${id} -> successful`);
+        res.status(201).send(_k);
+      })
+      .catch(error => {
+        logger.error(`${callerType} KPI exportKpiToOrg, id ${id} -> error: ${error.stack}`);
+        res.status(400).send(error);
+      });
   }
 
 };

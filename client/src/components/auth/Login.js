@@ -210,7 +210,7 @@ class Login extends React.Component {
                       </Typography>
                       <Typography component="div">
                         <br /><br />
-                        Click <Link to={`/password`}>here</Link> to change your password.
+                         <Link to={`/password`}>Forget password.</Link> 
                       </Typography>
                     </CardContent>
                   </Card>

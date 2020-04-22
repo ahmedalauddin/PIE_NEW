@@ -211,7 +211,7 @@ class ChangePassword extends React.Component {
                           color="secondary"
                           gutterBottom
                         >
-                          Change Password
+                          Request new password.
                         </Typography>
                       </Grid>
                       <Grid item xs={8}>
