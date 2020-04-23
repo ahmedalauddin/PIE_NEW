@@ -92,8 +92,28 @@ module.exports = {
             logger.debug(`auth.js, setLastLogin -> sql: ${sql}`);
             models.sequelize.query(sql);
 
-            res.cookie(cookieName, token, { httpOnly: true }).status(200).json(p);
+            const orgId = req.params.orgId;
 
+            const aclsQuery = "select * from Acls where orgId = " + p.orgId;
+
+            models.sequelize.query(
+              aclsQuery, 
+            {
+              type: models.sequelize.QueryTypes.SELECT
+            })
+            .then(data => {
+              logger.debug(`${mvcType} getAcl: ${data}`);
+              if(data && data.length>0){
+                p.dataValues.acls=data[0].jsonData[p.role];
+              }
+              res.cookie(cookieName, token, { httpOnly: true }).status(200).json(p);
+            })
+            .catch(error => {
+              logger.error(`${mvcType} getAcl -> error: ${error.stack}`);
+              res.status(400).send(error);
+            });
+
+            
           } else {
             // Login failed
             let _m = "Username or password is incorrect";

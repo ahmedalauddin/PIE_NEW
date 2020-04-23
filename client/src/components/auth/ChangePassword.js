@@ -35,7 +35,7 @@ const styles = theme => ({
   textField: {
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit,
-    width: 200,
+    width: 300,
   },
   menuButton: {
     marginLeft: -12,
@@ -166,9 +166,12 @@ class ChangePassword extends React.Component {
       .then(user => {
       })
       .then(() => {
+        
         this.setState({
           passwordSent: true
         });
+        setTimeout(()=>window.history.back(),500);
+
       })
       .catch(err => {
         this.setState({
@@ -200,11 +203,11 @@ class ChangePassword extends React.Component {
             >
               <Grid item xs={12} md={4}>
                 <SectionHeader title="" subtitle="" />
-                <Card className={classes.card}>
+                <Card className={classes.card} style={{minHeight:300}}>
                   <CardContent>
                   {!this.state.passwordSent ?
                     <Grid spacing={24} alignItems="center" justify="center" container className={classes.grid}>
-                      <Grid item xs={8}>
+                      <Grid item xs={12}>
                         <Typography
                           variant="h5"
                           component="h2"
@@ -214,7 +217,7 @@ class ChangePassword extends React.Component {
                           Request new password.
                         </Typography>
                       </Grid>
-                      <Grid item xs={8}>
+                      <Grid item xs={12}>
                         <TextField
                           required
                           id="email"
@@ -226,8 +229,8 @@ class ChangePassword extends React.Component {
                           />
                       </Grid>
                      
-                      <Grid item xs={8}>
-                        <Typography variant="h5" component="h2">
+                      <Grid container xs={12} style={{flexDirection:"row"}}>
+                      <Typography variant="h5" component="h2" style={{marginLeft:20}}>
                           <Button
                             variant="contained"
                             color="primary"
@@ -237,8 +240,22 @@ class ChangePassword extends React.Component {
                             Submit
                           </Button>
                         </Typography>
+
+                        <Typography variant="h5" component="h2" style={{marginLeft:20}}>
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={()=>window.history.back()}
+                            className={classes.secondary}
+                          >
+                            Cancel
+                          </Button>
+                        </Typography>
+
+                        
                       </Grid>
-                    </Grid>
+
+                      </Grid>
 
 :
                 <Typography
