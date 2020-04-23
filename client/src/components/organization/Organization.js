@@ -30,7 +30,7 @@ import Slide from "@material-ui/core/Slide";
 import PersonTable from "../person/PersonTable";
 import DepartmentTable from "../department/DepartmentTable";
 import KpiTable from "../kpi/KpiTable";
-import {getOrg, isAdministrator} from "../../redux";
+import {getOrg, isAdministrator, checkPermision} from "../../redux";
 
 const styles = theme => ({
   root: {
@@ -265,6 +265,8 @@ class Organization extends React.Component {
               </Paper>
             </Grid>
             <Grid item lg={10} className="page-org">
+              
+            {checkPermision('Organization Department','read') && 
               <ExpansionPanel expanded={expanded === "panelDepartments"} onChange={this.handlePanelChange("panelDepartments")}>
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                   <Typography className={classes.heading}>Departments</Typography>
@@ -282,6 +284,9 @@ class Organization extends React.Component {
                   </Grid>
                 </ExpansionPanelDetails>
               </ExpansionPanel>
+            }
+
+          {checkPermision('Organization KPI','read') && 
               <ExpansionPanel expanded={expanded === "panelKpis"} onChange={this.handlePanelChange("panelKpis")}>
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                 <Typography className={classes.heading}>KPIs</Typography>
@@ -299,6 +304,9 @@ class Organization extends React.Component {
                 </Grid>
               </ExpansionPanelDetails>
               </ExpansionPanel>
+              }
+
+          {checkPermision('Organization People','read') && 
               <ExpansionPanel expanded={expanded === "panelPersons"} onChange={this.handlePanelChange("panelPersons")}>
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                   <Typography className={classes.heading}>People</Typography>
@@ -316,6 +324,7 @@ class Organization extends React.Component {
                   </Grid>
                 </ExpansionPanelDetails>
               </ExpansionPanel>
+              }
             </Grid>
           </Grid>
         </div>

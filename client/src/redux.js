@@ -397,3 +397,26 @@ export function isLoggedIn() {
   }
   return loggedIn;
 }
+
+
+export function checkPermision(module,permission) {
+  try {
+    console.log(module,permission)
+    const user= JSON.parse(store.getState().user);
+    
+    if(user.organization.owningOrg || user.isCustomerAdmin){
+      return true;
+    }
+    const acls=user.acls;
+
+    if(!acls || !acls[module]){
+      return true;
+    }
+
+    return acls[module][permission];
+
+  } catch (error) {
+    console.log(error)
+  }
+  return true;
+}

@@ -114,12 +114,24 @@ class RoleManagment extends React.Component {
             'Analyst',
             'Consultant'],
     acls : [
-              'Dashboard',
-              'Project',
-              'Kpi',
-              'Milestones',
-              'People',
-              'Regrouping'
+            'Dashboard',
+            'Dashboard Expand Projects',
+            'Projects', 
+            'Projects KPIs',
+            'Projects People',
+            'Projects Milestones',
+            'Projects Additional Actions',
+            'Projects Documents',            
+            'Mind Map',
+            'Mind Map Prioritized KPI',
+            'Regrouping',
+            'Search',
+            'Analytics',
+            'Organization',
+            'Organization Department',
+            'Organization KPI',
+            'Organization People',
+            'About'
             ],
     roleAcls:{}
       

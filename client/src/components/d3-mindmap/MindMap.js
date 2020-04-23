@@ -20,7 +20,7 @@ import { red, grey } from "@material-ui/core/colors";
 import "./tree-styles.scss";
 import Grid from "@material-ui/core/Grid";
 import Paper from '@material-ui/core/Paper';
-import { getOrgId, getOrgName } from "../../redux";
+import { getOrgId, getOrgName, checkPermision } from "../../redux";
 import Snackbar from "@material-ui/core/Snackbar";
 import TreeMindMap from "./TreeMindMap";
 import NodeDetail from "./NodeDetail";
@@ -262,7 +262,7 @@ class MindMap extends React.Component {
                 <AppBar position="static" elevation={0}>
                   <Tabs value={this.state.tabValue} onChange={this.handleTabChange}>
                     <Tab label="Node" />
-                    <Tab label="Prioritized KPIs" />
+                    {checkPermision('Mind Map Prioritized KPI','read') && <Tab label="Prioritized KPIs" />}
                   </Tabs>
                 </AppBar>
                 {this.state.tabValue === 0 && (

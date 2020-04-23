@@ -22,7 +22,7 @@ import Grid from "@material-ui/core/Grid/index";
 import SectionHeader from "../typo/SectionHeader";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-import { store, setUser, setOrg, isAdministrator, setProjectListFilter, isLoggedIn } from "../../redux";
+import { store, setUser, setOrg, isAdministrator, setProjectListFilter, isLoggedIn,checkPermision } from "../../redux";
 
 class Login extends React.Component {
   // Note that I'll need the individual fields for handleChange.  Use state to manage the inputs for the various
@@ -108,7 +108,21 @@ class Login extends React.Component {
       .then(() => {
         console.log("Ready to redirect");
         if (!isAdministrator()) {
-          redirectTarget = "/paneldashboard";
+          if(checkPermision('Dashboard','read')){
+            redirectTarget = "/paneldashboard";
+          }else if(checkPermision('Mind Map','read')){
+            redirectTarget = "/mindmaplist";
+          }else if(checkPermision('Regrouping','read')){
+            redirectTarget = "/organizationactions";
+          }else if(checkPermision('Search','read')){
+            redirectTarget = "/search";
+          }else if(checkPermision('Analytics','read')){
+            redirectTarget = "/analytics";
+          }else if(checkPermision('Organization','read')){
+            redirectTarget = "/organization";
+          }else if(checkPermision('About','read')){
+            redirectTarget = "/about";
+          }
         } else {
           redirectTarget = "/clientorg";
         }
@@ -139,7 +153,22 @@ class Login extends React.Component {
     if (isLoggedIn()) {
       let redirectTarget = "";
       if (!isAdministrator()) {
-        redirectTarget = "/paneldashboard";
+          
+        if(checkPermision('Dashboard','read')){
+          redirectTarget = "/paneldashboard";
+        }else if(checkPermision('Mind Map','read')){
+          redirectTarget = "/mindmaplist";
+        }else if(checkPermision('Regrouping','read')){
+          redirectTarget = "/organizationactions";
+        }else if(checkPermision('Search','read')){
+          redirectTarget = "/search";
+        }else if(checkPermision('Analytics','read')){
+          redirectTarget = "/analytics";
+        }else if(checkPermision('Organization','read')){
+          redirectTarget = "/organization";
+        }else if(checkPermision('About','read')){
+          redirectTarget = "/about";
+        }
       } else {
         redirectTarget = "/clientorg";
       }

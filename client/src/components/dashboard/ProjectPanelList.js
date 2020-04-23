@@ -14,7 +14,7 @@ import Grid from "@material-ui/core/Grid";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Typography from "@material-ui/core/Typography";
 import { Link, Redirect } from "react-router-dom";
-import { getOrgId, isAdministrator } from "../../redux";
+import { getOrgId, isAdministrator,checkPermision } from "../../redux";
 import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
@@ -358,7 +358,7 @@ class ProjectPanelList extends Component {
                     // console.log('tasksString-',tasksString)
             return (
               <ExpansionPanel key={project.id}>
-                <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                <ExpansionPanelSummary  expandIcon={ checkPermision ('Dashboard Expand Projects','read') ? <ExpandMoreIcon />: null}>
                   
                        
                   <div className={classes.columntitle}>
@@ -389,9 +389,11 @@ class ProjectPanelList extends Component {
                   </div>
 
                   <div className={classes.columnactions}>
+                    {checkPermision ('Projects','read') &&
                     <IconButton onClick={() => {this.setEditRedirect(project.id);}}>
                       <EditIcon color="primary" />
                     </IconButton>
+                    }
                     {isAdministrator() &&
                     <IconButton onClick={() => { this.openDialog(project.id);  }} >
                         <DeleteIcon color="primary" />
@@ -400,6 +402,7 @@ class ProjectPanelList extends Component {
                   </div>
 
                 </ExpansionPanelSummary>
+                { checkPermision ('Dashboard Expand Projects','read') &&
                 <ExpansionPanelDetails className={classes.details}>
                   <Grid container spacing={3}>
                     <Grid item xs={3}>
@@ -438,6 +441,7 @@ class ProjectPanelList extends Component {
                     </Grid>
                   </Grid>
                 </ExpansionPanelDetails>
+                  }
               </ExpansionPanel>
             );
           })}
@@ -460,9 +464,13 @@ class ProjectPanelList extends Component {
             onChangePage={this.handleChangePage}
             onChangeRowsPerPage={this.handleChangeRowsPerPage}
           />
-          <Fab component={Link} color="primary" aria-label="Add" to={`/project`} className={classes.fab}>
-            <AddIcon />
-          </Fab>
+          
+          {checkPermision ('Projects','read') &&
+            <Fab component={Link} color="primary" aria-label="Add" to={`/project`} className={classes.fab}>
+              <AddIcon />
+            </Fab>
+          }
+
           </CardContent>
                 </Card>
               </Grid>

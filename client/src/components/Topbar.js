@@ -12,7 +12,7 @@
 import React, { Component } from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import { Link, withRouter } from "react-router-dom";
-import { isAdministrator, isLoggedIn, getUser,isCustomerAdmin } from "../redux";
+import { isAdministrator, isLoggedIn, getUser,isCustomerAdmin,checkPermision } from "../redux";
 import Grid from "@material-ui/core/Grid";
 import Toolbar from "@material-ui/core/Toolbar";
 import AppBar from "@material-ui/core/AppBar";
@@ -133,40 +133,6 @@ const AdminMenu = [
   }
 ];
 
-const StandardMenu = [
-  {
-    label: "Dashboard",
-    pathname: "/paneldashboard"
-  },
-  {
-    label: "Mind Maps",
-    pathname: "/mindmaplist"
-  },
-  {
-    label: "Regrouping",
-    pathname: "/organizationactions"
-  },
-  {
-    label: "Search",
-    pathname: "/search"
-  },
-  {
-    label: "Analytics",
-    pathname: "/analytics"
-  },
-  {
-    label: "Organization",
-    pathname: "/organization"
-  },
-  {
-    label: "Logout",
-    pathname: "/logout"
-  },
-  {
-    label: "About",
-    pathname: "/about"
-  }
-];
 
 const StandardAdminMenu = [
   {
@@ -207,13 +173,76 @@ const StandardAdminMenu = [
   }
 ];
 
+
+function getStandardMenu(){
+
+  const StandardMenu = [];
+  
+
+  
+  if(checkPermision('Dashboard','read')){
+      StandardMenu.push({
+        label: "Dashboard",
+        pathname: "/paneldashboard"
+      })
+  }
+  if(checkPermision('Mind Map','read')){
+      StandardMenu.push({
+        label: "Mind Maps",
+        pathname: "/mindmaplist"
+      })
+  }
+  if(checkPermision('Regrouping','read')){
+        StandardMenu.push({
+          label: "Regrouping",
+          pathname: "/organizationactions"
+        })
+    }
+
+  if(checkPermision('Search','read')){
+      StandardMenu.push({
+        label: "Search",
+        pathname: "/search"
+      })
+  }
+
+  if(checkPermision('Analytics','read')){
+      StandardMenu.push({
+        label: "Analytics",
+        pathname: "/analytics"
+      })
+  }
+  if(checkPermision('Organization','read')){
+      StandardMenu.push({
+        label: "Organization",
+        pathname: "/organization"
+      })
+  }
+
+  StandardMenu.push(
+    {
+      label: "Logout",
+      pathname: "/logout"
+    }
+  )
+
+  if(checkPermision('About','read')){
+    StandardMenu.push({
+      label: "About",
+      pathname: "/about"
+    })
+}
+  
+  
+  return StandardMenu;
+}
 function getMenu(menuType) {
   var menu = null;
 
   if (menuType === "notLoggedIn") {
     menu = LoginMenu;
   } else if (menuType === "standard") {
-    menu = StandardMenu;
+    menu = getStandardMenu();
   }  else if (menuType === "standard-admin") {
     menu = StandardAdminMenu;
   } else if (menuType === "admin") {
@@ -258,30 +287,31 @@ function getAppbarValue(menuType, currentPath)  {
       value = 9;
     }
   } else if (menuType === "standard") {
-    if (!currentPath ||  currentPath === "/paneldashboard") {
-      value = 0;
+    let counter=0;
+    if (checkPermision('Dashboard','read') && (!currentPath ||  currentPath === "/paneldashboard")) {
+      value = counter++;
     }
-    if (currentPath === "/mindmaplist") {
-      value = 1;
+    if (checkPermision('Mind Map','read') && currentPath === "/mindmaplist") {
+      value = counter++;
     }
 
-    if (currentPath === "/organizationactions" || (currentPath !==  undefined && currentPath.includes("/OrganizationAction"))) {
-      value = 2;
+    if (checkPermision('Regrouping','read') && (currentPath === "/organizationactions" || (currentPath !==  undefined && currentPath.includes("/OrganizationAction")))) {
+      value = counter++;
     }
-    if (currentPath === "/search") {
-      value = 3;
+    if (checkPermision('Search','read') && currentPath === "/search") {
+      value = counter++;
     }
-    if (currentPath === "/analytics") {
-      value = 4;
+    if (checkPermision('Analytics','read') && currentPath === "/analytics") {
+      value = counter++;
     }
-    if (currentPath === "/clientorg"  || currentPath === "/person" || currentPath === "/department") {
-      value = 5;
+    if (checkPermision('Organization','read') && (currentPath === "/clientorg"  || currentPath === "/person" || currentPath === "/department")) {
+      value = counter++;
     }
     if (currentPath === "/logout") {
-      value = 6;
+      value = counter++;
     }
-    if (currentPath === "/about") {
-      value = 7;
+    if (checkPermision('About','read') && currentPath === "/about") {
+      value = counter++;
     }
   }else if (menuType === "standard-admin") {
     if (!currentPath ||  currentPath === "/paneldashboard") {

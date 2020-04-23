@@ -4,7 +4,7 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import Typography from "@material-ui/core/Typography";
 import Topbar from "../Topbar";
 import { Link, Redirect } from "react-router-dom";
-import { getOrgId, getOrgName, getOrgDepartments } from "../../redux";
+import { getOrgId, getOrgName, getOrgDepartments,checkPermision } from "../../redux";
 import "../../stylesheets/Draft.css";
 import ProjectPersons from "./ProjectPersons";
 import ProjectDetail from "./ProjectDetail";
@@ -174,6 +174,7 @@ class Project extends React.Component {
             </Grid>
             {projId === 0 || projId === '' ? '' :
               <Grid item lg={10} className="page-project">
+                {checkPermision('Projects KPIs','read') &&
                 <ExpansionPanel expanded={expanded === "panelKpis"} onChange={this.handlePanelChange("panelKpis")}>
                   <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                     <Typography className={classes.heading}>KPIs</Typography>
@@ -196,7 +197,9 @@ class Project extends React.Component {
                     </Grid>
                   </ExpansionPanelDetails>
                 </ExpansionPanel>
+                }
 
+                {checkPermision('Projects People','read') &&
                 <ExpansionPanel expanded={expanded === "panelPersons"} onChange={this.handlePanelChange("panelPersons")}>
                   <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                     <Typography className={classes.heading}>People</Typography>
@@ -212,7 +215,9 @@ class Project extends React.Component {
                     </Grid>
                   </ExpansionPanelDetails>
                 </ExpansionPanel>
+              }
 
+                {checkPermision('Projects Milestones','read') &&
                 <ExpansionPanel expanded={expanded === "panelMilestones"} onChange={this.handlePanelChange("panelMilestones")}>
                   <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                     <Typography className={classes.heading}>Milestones and Actions</Typography>
@@ -223,7 +228,9 @@ class Project extends React.Component {
                     </div>
                   </ExpansionPanelDetails>
                 </ExpansionPanel>
+                  }
 
+              {checkPermision('Projects Additional Actions','read') &&  
                 <ExpansionPanel expanded={expanded === "projectAction"} onChange={this.handlePanelChange("projectAction")}>
                   <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                     <Typography className={classes.heading}>Additional Actions</Typography>
@@ -242,8 +249,9 @@ class Project extends React.Component {
                     </Grid>
                   </ExpansionPanelDetails>
                 </ExpansionPanel>
+                }
 
-
+                {checkPermision('Projects Documents','read') &&  
                 <ExpansionPanel expanded={expanded === "projectDocument"} onChange={this.handlePanelChange("projectDocument")}>
                   <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                     <Typography className={classes.heading}>Document(s)</Typography>
@@ -262,6 +270,8 @@ class Project extends React.Component {
                     </Grid>
                   </ExpansionPanelDetails>
                 </ExpansionPanel>
+                  }
+
               </Grid>
             }
           </Grid>
