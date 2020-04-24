@@ -20,6 +20,7 @@ const TaskPriority = require("../models").TaskPriority;
 const util = require("util");
 const logger = require("../util/logger")(__filename);
 const callerType = "controller";
+const mailer = require("./mailer");
 
 module.exports = {
   create(req, res) {
@@ -160,25 +161,175 @@ module.exports = {
   },
 
   // Save a Gantt chart
-  saveGantt(req, res) {
+  async saveGantt(req, res) {
     const projectId = req.body.projectId;
     const jsonData = req.body.jsonData;
+    
+    const fetchSql = "select jsonData from Gantt where projectId = " + projectId;
+    let newTaskOrReAssigned=null;
+    try{
+      const result =await models.sequelize.query( fetchSql, { type: models.sequelize.QueryTypes.SELECT })
+      const existingJsonData=result[0].jsonData.data;
+      const data=JSON.parse(jsonData).data;
+      const newData=data.filter((reqData)=>{
+        for(let i=0;i<existingJsonData.length;i++){
+          if(existingJsonData[i].id==reqData.id && existingJsonData[i].assignedId==reqData.assignedId){
+            return false;
+          }
+        }
+        return true;
+      })
+     
+      if(newData.length>0 && newData[0].assignedId){
+        newTaskOrReAssigned=newData[0];
+      }
+    }catch(e){
+      logger.debug(`${callerType} existingJsonData fetch error `);
+      console.log(e);
+    }
+    
     const sql = "update Gantt set jsonData = '" + jsonData + "' where projectId = " + projectId + ";";
-    logger.debug(
-      `${callerType} saveGantt -> body: ${util.inspect(req.body, {
-        showHidden: false,
-        depth: null
-      })}`
-    );
-    logger.debug(
-      `${callerType} saveGantt -> sql: ${sql}`
-    );
+    
+  
     return models.sequelize.query(sql, {
       type: models.sequelize.QueryTypes.RAW
     })
-      .then(gantt => {
+      .then(async gantt => {
         logger.debug(`${callerType} Milestone saveGantt -> successful`);
         res.status(201).send(gantt);
+
+        if(newTaskOrReAssigned){
+          const person= await models.Person.findByPk(newTaskOrReAssigned.assignedId,{raw:true});
+          const project= await models.Project.findByPk(projectId,{raw:true});
+          console.log("newTaskOrReAssigned",newTaskOrReAssigned);
+
+          const startDate=newTaskOrReAssigned.start_date.split(" ")[0];
+          const endDate=newTaskOrReAssigned.end_date.split(" ")[0];
+
+            var to = person.email;
+            var subject = "Notification of task assignment";
+           
+            var text =`<!doctype html>
+            <html>
+            <head>
+            <meta charset="utf-8">
+            <title>::::</title>
+            <style>
+            body {
+              margin: 0;
+              padding: 0;
+            }
+            </style>
+            </head>
+            
+            <body>
+            <table border="0" width="600" style="padding:0; margin:20px auto;">
+              <tr>
+                <td style="font:17px Arial, Helvetica, sans-serif; color:#333;">Hello ${person.firstName}, </td>
+              </tr>
+              <tr>
+                <td height="20"></td>
+              </tr>
+              <tr>
+                <td  style="font:17px Arial, Helvetica, sans-serif; color:#333;">The following task(s) has been assigned to you. The details of the task has been mentioned below.</td>
+              </tr>
+              <tr>
+                <td height="20"></td>
+              </tr>
+              <tr>
+                <td  style="font:16px/30px Arial, Helvetica, sans-serif; color:#333; font-weight:bold;"><span style="height: 8px;
+            width: 8px;
+            border-radius: 50%;
+            border: 0;
+            background: #333;
+            display: inline-block;
+            position: relative;
+            top: -2px;
+            margin-right: 10px;"></span> <em style="width:150px;font-style:normal;display:inline-block;"> Project Title </em> : ${project.title}</td>
+              </tr>
+              <tr>
+                <td  style="font:16px/30px Arial, Helvetica, sans-serif; color:#333; font-weight:bold;"><span style="height: 8px;
+            width: 8px;
+            border-radius: 50%;
+            border: 0;
+            background: #333;
+            display: inline-block;
+            position: relative;
+            top: -2px;
+            margin-right: 10px;"></span> <em style="width:150px;font-style:normal;display:inline-block;"> Task Description </em> : ${newTaskOrReAssigned.text}</td>
+              </tr>
+              <tr>
+                <td style="font:16px/30px Arial, Helvetica, sans-serif; color:#333; font-weight:bold;"><span style="height: 8px;
+            width: 8px;
+            border-radius: 50%;
+            border: 0;
+            background: #333;
+            display: inline-block;
+            position: relative;
+            top: -2px;
+            margin-right: 10px;"></span> <em style="width:150px;font-style:normal;display:inline-block;"> Assigned </em> : ${newTaskOrReAssigned.assigned}</td>
+              </tr>
+              <tr>
+                <td style="font:16px/30px Arial, Helvetica, sans-serif; color:#333; font-weight:bold;"><span style="height: 8px;
+            width: 8px;
+            border-radius: 50%;
+            border: 0;
+            background: #333;
+            display: inline-block;
+            position: relative;
+            top: -2px;
+            margin-right: 10px;"></span> <em style="width:150px;font-style:normal;display:inline-block;"> Current Progress </em> : ${newTaskOrReAssigned.progressTxt}</td>
+              </tr>
+              <tr>
+                <td style="font:16px/30px Arial, Helvetica, sans-serif; color:#333; font-weight:bold;"><span style="height: 8px;
+            width: 8px;
+            border-radius: 50%;
+            border: 0;
+            background: #333;
+            display: inline-block;
+            position: relative;
+            top: -2px;
+            margin-right: 10px;"></span> <em style="width:150px;font-style:normal;display:inline-block;"> Start Date </em> : ${startDate} </td>
+              </tr>
+              <tr>
+                <td style="font:16px/30px Arial, Helvetica, sans-serif; color:#333; font-weight:bold;"><span style="height: 8px;
+            width: 8px;
+            border-radius: 50%;
+            border: 0;
+            background: #333;
+            display: inline-block;
+            position: relative;
+            top: -2px;
+            margin-right: 10px;"></span> <em style="width:150px;font-style:normal;display:inline-block;"> End Date </em> : ${endDate} </td>
+              </tr>
+              <tr>
+                <td height="20"></td>
+              </tr>
+              <tr>
+                <td style="font:17px Arial, Helvetica, sans-serif; color:#333;">Open Task Link <a href="http://pie.value-infinity.com/project/" target="_blank" style="color:#0B6CDA; text-decoration:underline;">http://pie.value-infinity.com/project/</td>
+              </tr>
+              <tr>
+                <td height="20"></td>
+              </tr>
+              <tr>
+                <td style="font:italic 17px Arial, Helvetica, sans-serif; color:#333;">This is an system generated email, please do not reply to this email</td>
+              </tr>
+              <tr>
+                <td height="20"></td>
+              </tr>
+              <tr>
+                <td style="font:17px Arial, Helvetica, sans-serif; color:#333;">Thanks</td>
+              </tr>
+              <tr>
+                <td style="font:17px Arial, Helvetica, sans-serif; color:#333;">Team Value-Infinity.</td>
+              </tr>
+            </table>
+            </body>
+            </html>
+            `
+            mailer.sendMail(to,subject,text);
+          
+        }
       })
       .catch(error => {
         logger.error(`${callerType} Milestone saveGantt -> error: ${error.stack}`);

@@ -392,22 +392,13 @@ class Gantt extends React.Component {
     let assignedMenuItems = [];
     let menuItem = "";
     // let i = 1;
-    let jsonItem = undefined;
     if (parseInt(projectId) > 0) {
       // Use fetch to get the list of persons assigned to a project as select items for our Gantt chart.
       fetch(`/api/persons-assigned-and-owned/${projectId}`)
         .then(res => res.json())
         .then(persons => {
           this.setState({persons})
-          jsonItem = JSON.parse('{"key":"", "label": "Not assigned"}');
-          assignedMenuItems.push(jsonItem);
-          persons.forEach(person => {
-            menuItem = '{"key":"' + person.fullName + '", "label": "' + person.fullName + '"}';
-            jsonItem = JSON.parse(menuItem);
-            assignedMenuItems.push(jsonItem);
-            }
-          );
-          console.log("menu items: " + assignedMenuItems);
+          console.log("persons" , persons);
         })
         .then(gantt => {
           this.renderGantt(projectId, assignedMenuItems);
@@ -442,11 +433,21 @@ class Gantt extends React.Component {
   }
 
   changeSelectedTaskChange(key,val){
-    console.log(key,val);
-    this.state.selectedGantTask[key]=val;
-    this.state.selectedGantTask.progress=this.getTaskTextInProgress(this.state.selectedGantTask.progressTxt);
-    this.setState({selectedGantTask:this.state.selectedGantTask});
-    
+    const {selectedGantTask } =this.state;
+    selectedGantTask[key]=val;
+    selectedGantTask.progress=this.getTaskTextInProgress(selectedGantTask.progressTxt);
+    this.setState({selectedGantTask});
+  }
+
+  changeSelectedTaskAssginee(val){
+    const {selectedGantTask,persons } =this.state;
+    selectedGantTask['assigned']=val;
+    persons.forEach(p=>{
+      if(p.fullName == val){
+        selectedGantTask['assignedId']=p.id;
+      }
+    })
+    this.setState({selectedGantTask});
   }
 
   renderComment(cc, index) {
@@ -548,7 +549,7 @@ class Gantt extends React.Component {
                       </InputLabel>
                       <Select
                         value={this.state.selectedGantTask.assigned}
-                        onChange={(e) =>this.changeSelectedTaskChange('assigned',e.target.value)}
+                        onChange={(e) =>this.changeSelectedTaskAssginee(e.target.value)}
                       >
                         {this.state.persons.map((p,index) => {
                           return (
