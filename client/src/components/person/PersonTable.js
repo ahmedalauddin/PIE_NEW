@@ -30,6 +30,7 @@ import EditIcon from "@material-ui/icons/Edit";
 import CircularProgress from '@material-ui/core/CircularProgress';
 import ccss from "../custom.css";
 import Snackbar from "@material-ui/core/Snackbar";
+import { checkPermision } from "../../redux";
 
 // TODO - convert rows into tasks data.
 const rows = [
@@ -363,6 +364,7 @@ class PersonTable extends React.Component {
                         </ul>
                       </TableCell>
                       <TableCell component="th" scope="row" padding="none" >
+                      {checkPermision('Organization People','delete') &&<>
                         {
                           this.state.delLoader != 0 && this.state.delLoader == person.id ?
                             <CircularProgress />
@@ -383,7 +385,7 @@ class PersonTable extends React.Component {
                               <DeleteIcon color="primary" />
                             </IconButton>
                         }
-                    
+                      </>}
                         <IconButton onClick={() => { this.setEditRedirect(person.id, person.orgId); }}>
                           <EditIcon color="primary" />
                         </IconButton>

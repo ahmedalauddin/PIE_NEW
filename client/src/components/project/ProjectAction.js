@@ -6,7 +6,7 @@ import Topbar from "../Topbar";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-import { getOrgId, getOrgName, getOrgDepartments } from "../../redux";
+import { getOrgId, getOrgName, getOrgDepartments, checkPermision } from "../../redux";
 import { Redirect } from "react-router-dom";
 import "../styles/ReactTags.css";
 import Paper from "@material-ui/core/Paper";
@@ -525,6 +525,7 @@ class ProjectAction extends React.Component {
                     </Grid>
                    
                     <Grid item sm={10}>
+                    {checkPermision('Projects Additional Actions','modify') &&
                       <Typography component="p">
                       {
                         this.state.delLoader ?
@@ -539,6 +540,7 @@ class ProjectAction extends React.Component {
                           </Button>
                         }
                       </Typography>
+                        }
                       <br />
                     </Grid>
                   </Grid>

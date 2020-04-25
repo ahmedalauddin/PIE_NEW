@@ -16,7 +16,7 @@ import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { Redirect } from "react-router-dom";
-import { getOrgId, getMindmapNode, getMindmap, setMindmapNode, store } from "../../redux";
+import { getOrgId, getMindmapNode, getMindmap, setMindmapNode, store, checkPermision } from "../../redux";
 import { red } from "@material-ui/core/colors";
 import * as jsonq from "jsonq";
 
@@ -438,6 +438,8 @@ class NodeDetail extends React.Component {
                   shrink: true
                 }}
               /><br /><br /><br />
+
+            {checkPermision('Mind Map KPI','read') &&<>
               <Typography variant="h6" gutterBottom>
                 KPI
               </Typography>
@@ -478,7 +480,7 @@ class NodeDetail extends React.Component {
                 }}
               /><br /><br />
               <br /><br />
-              <Typography component="p">
+              {checkPermision('Mind Map KPI','write') &&<Typography component="p">
                 <Button
                   variant="contained"
                   color="primary"
@@ -489,6 +491,8 @@ class NodeDetail extends React.Component {
                   {this.state.buttonText}
                 </Button>
               </Typography>
+              }
+              </>}
               <br />
             </Grid>
           </Grid>

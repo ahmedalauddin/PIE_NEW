@@ -28,6 +28,7 @@ import IconButton from "@material-ui/core/IconButton/index";
 import { stableSort, getSorting, desc } from "../common/TableFunctions";
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Snackbar from "@material-ui/core/Snackbar";
+import { checkPermision } from "../../redux";
 
 const rows = [
   // { id: "edit", numeric: false, disablePadding: false, label: "" },
@@ -405,8 +406,7 @@ class KpiTable extends React.Component {
                       <TableCell style={{width:200}} align="left" component="th" scope="row" padding="none">
                       
                      
-                        {
-                          this.state.delLoader != 0 && this.state.delLoader == kpi.id?
+                        {checkPermision('Projects KPIs','delete') && this.state.delLoader != 0 && this.state.delLoader == kpi.id?
                             <CircularProgress />
                             :
                             <IconButton
@@ -418,11 +418,15 @@ class KpiTable extends React.Component {
                             </IconButton>
                         }
 
-                        <IconButton onClick={() =>  this.setEditRedirect(kpi.id) } >
-                          <EditIcon color="primary" />
-                        </IconButton>
+                       
+                            <IconButton onClick={() =>  this.setEditRedirect(kpi.id) } >
+                              <EditIcon color="primary" />
+                            </IconButton>
+                          
 
-                        { !this.state.fromOrganization && kpi.projectId>0 &&
+                        { checkPermision('Projects KPIs','modify') 
+                          && !this.state.fromOrganization 
+                          && kpi.projectId>0 &&
                         
                           <IconButton onClick={() =>  this.exportKpi(kpi.id) } >
                             <ExportIcon color="primary" />

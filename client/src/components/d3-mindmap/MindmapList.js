@@ -20,7 +20,7 @@ import { Link, Redirect } from "react-router-dom";
 import moment from "moment/moment";
 import Fab from "@material-ui/core/Fab/index";
 import AddIcon from "@material-ui/icons/Add";
-import { getOrgId, getOrgName } from "../../redux";
+import { getOrgId, getOrgName, checkPermision } from "../../redux";
 import Snackbar from "@material-ui/core/Snackbar";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -396,13 +396,14 @@ class MindmapList extends Component {
                                   component={Link}
                                   className={classes.noTextDecoration}><Typography className={classes.heading}>{formatDate(mindmap.updatedAt)}</Typography></TableCell>
                                   <TableCell padding="none">
+                                  {checkPermision('Mind Map','delete') && 
                                     <IconButton
                                       onClick={() => {
                                         this.openDialog(mindmap.id);
                                       }}
                                     >
                                       <DeleteIcon color="primary" />
-                                    </IconButton>
+                                    </IconButton>}
                                   
                                     {/* <IconButton
                                       onClick={() => {
@@ -452,9 +453,12 @@ class MindmapList extends Component {
                     }
                     <br />
                     <br />
+
+                    {checkPermision('Mind Map','write') && 
                     <Fab component={Link} color="primary" aria-label="Add" to={`/mindmap`} className={classes.fab}>
                       <AddIcon />
                     </Fab>
+                    }
                   </CardContent>
                 </Card>
               </Grid>

@@ -23,7 +23,7 @@ import Snackbar from "@material-ui/core/Snackbar";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
-import { getOrgName, getOrgId } from "../../redux";
+import { getOrgName, getOrgId, checkPermision } from "../../redux";
 import AddIcon from "@material-ui/icons/Add";
 import Button from "@material-ui/core/Button";
 import Fab from "@material-ui/core/Fab/index";
@@ -402,6 +402,8 @@ class OrganizationActionTable extends React.Component {
                         alignItems="center"
                       >
                       <Grid xs={3} md={3} container direction="row" alignItems="center" justify="flex-start">
+                      {checkPermision('Regrouping','write') &&
+                          <>
                           <Select
                               style={{width:200}}
                               value={this.state.assigneeId && this.state.assigneeId}
@@ -419,9 +421,12 @@ class OrganizationActionTable extends React.Component {
                                 );
                               })}
                         </Select>
+                        
                         <Button style={{marginLeft:10}} variant="contained" color="primary" className={classes.secondary} onClick={()=>this.addAction(0)} >
                           Add
                         </Button>
+                        </>}
+
                       </Grid>
 
                       {this.state.filterDate && <FormControl className={classes.formControl}>
@@ -515,7 +520,7 @@ class OrganizationActionTable extends React.Component {
 
 
                             <TableCell  style={{width:200}} align="left" component="th" scope="row" padding="none">
-                              {
+                            {checkPermision('Regrouping','delete') &&<>{
                                 this.state.delLoader != 0 && this.state.delLoader == OrganizationAction.id ?
                                   <CircularProgress />
                                   :
@@ -523,7 +528,9 @@ class OrganizationActionTable extends React.Component {
                                     <DeleteIcon color="primary" />
                                   </IconButton>
                               }
+                              </>}
 
+                              {checkPermision('Regrouping','modify') &&<>
                               <IconButton onClick={() => this.setEditRedirect(OrganizationAction.id)} >
                                 <EditIcon color="primary" />
                               </IconButton>
@@ -533,6 +540,7 @@ class OrganizationActionTable extends React.Component {
                                   <RestoreIcon color="primary" />
                                 </IconButton>
                               }
+                              </>}
                             </TableCell>
                           </TableRow>
                         );

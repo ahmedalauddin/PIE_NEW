@@ -132,15 +132,125 @@ module.exports = {
          logger.debug(`${callerType} created ProjectAction`);
          
         })
-        .then(() => {
+        .then(async () => {
           if(assigneeId){
-            var userAssignee = models.Person.findByPk(assigneeId,{raw:true}).then((respons)=>{
+            var person = await models.Person.findByPk(assigneeId,{raw:true});
+            const project= await models.Project.findByPk(projectId,{raw:true});
               // console.log('createProjectAction-----------------------userAssigneeuserAssigneeuserAssignee-',respons);
-              var to = respons.email;
-              var subject = "Valueinfinity - New Action assigned.";
-              var text = "Hi "+respons.firstName+", A new action '"+title+"' is assigned to you."
+              var to = person.email;
+              var subject = "Notification of action assignment";
+              //var text = "Hi "+respons.firstName+", A new action '"+title+"' is assigned to you."
+              var text =`<!doctype html>
+              <html>
+              <head>
+              <meta charset="utf-8">
+              <title>::::</title>
+              <style>
+              body {
+                margin: 0;
+                padding: 0;
+              }
+              </style>
+              </head>
+              
+              <body>
+              <table border="0" width="750" style="padding:0; margin:0;">
+                <tr>
+                  <td style="font:17px Arial, Helvetica, sans-serif; color:#333;">Hello ${person.firstName}, </td>
+                </tr>
+                <tr>
+                  <td height="20"></td>
+                </tr>
+                <tr>
+                  <td  style="font:17px Arial, Helvetica, sans-serif; color:#333;">The following action has been assigned to you. The details of the action has been mentioned below.</td>
+                </tr>
+                <tr>
+                  <td height="20"></td>
+                </tr>
+                <tr>
+                  <td  style="font:16px/30px Arial, Helvetica, sans-serif; color:#333; font-weight:bold; padding-left:30px;"><span style="height: 8px;
+              width: 8px;
+              border-radius: 50%;
+              border: 0;
+              background: #333;
+              display: inline-block;
+              position: relative;
+              top: -2px;
+              margin-right: 10px;"></span> <em style="width:150px;font-style:normal;display:inline-block;"> Project Title </em> : ${project.title}</td>
+                </tr>
+                <tr>
+                  <td  style="font:16px/30px Arial, Helvetica, sans-serif; color:#333; font-weight:bold;padding-left:30px;"><span style="height: 8px;
+              width: 8px;
+              border-radius: 50%;
+              border: 0;
+              background: #333;
+              display: inline-block;
+              position: relative;
+              top: -2px;
+              margin-right: 10px;"></span> <em style="width:150px;font-style:normal;display:inline-block;"> Action Title </em> : ${title}</td>
+                </tr>
+                <tr>
+                  <td style="font:16px/30px Arial, Helvetica, sans-serif; color:#333; font-weight:bold;padding-left:30px;"><span style="height: 8px;
+              width: 8px;
+              border-radius: 50%;
+              border: 0;
+              background: #333;
+              display: inline-block;
+              position: relative;
+              top: -2px;
+              margin-right: 10px;"></span> <em style="width:150px;font-style:normal;display:inline-block;"> Action Description </em> : ${description}</td>
+                </tr>
+                <tr>
+                  <td style="font:16px/30px Arial, Helvetica, sans-serif; color:#333; font-weight:bold;padding-left:30px;"><span style="height: 8px;
+              width: 8px;
+              border-radius: 50%;
+              border: 0;
+              background: #333;
+              display: inline-block;
+              position: relative;
+              top: -2px;
+              margin-right: 10px;"></span> <em style="width:150px;font-style:normal;display:inline-block;"> Assigned to </em> : ${person.firstName +'' +person.lastName}</td>
+                </tr>
+                <tr>
+                  <td style="font:16px/30px Arial, Helvetica, sans-serif; color:#333; font-weight:bold;padding-left:30px;"><span style="height: 8px;
+              width: 8px;
+              border-radius: 50%;
+              border: 0;
+              background: #333;
+              display: inline-block;
+              position: relative;
+              top: -2px;
+              margin-right: 10px;"></span> <em style="width:150px;font-style:normal;display:inline-block;"> Status </em> : ${status} </td>
+                </tr>
+                
+                <tr>
+                  <td height="20"></td>
+                </tr>
+                <tr>
+                  <td style="font:17px Arial, Helvetica, sans-serif; color:#333;">Open Task Link <a href="http://pie.value-infinity.com/project/" target="_blank" style="color:#0B6CDA; text-decoration:underline;">http://pie.value-infinity.com/project/</td>
+                </tr>
+                <tr>
+                  <td height="20"></td>
+                </tr>
+                <tr>
+                  <td style="font:italic 15px Arial, Helvetica, sans-serif; color:#333;">This is an system generated email, please do not reply to this email</td>
+                </tr>
+                <tr>
+                  <td height="20"></td>
+                </tr>
+                <tr>
+                  <td style="font:17px Arial, Helvetica, sans-serif; color:#333;">Thanks</td>
+                </tr>
+                <tr>
+                  <td style="font:17px Arial, Helvetica, sans-serif; color:#333;">Team Value-Infinity.</td>
+                </tr>
+              </table>
+              </body>
+              </html>
+              `;
+              
               mailer.sendMail(to,subject,text);
-            })
+            
 
             
           }

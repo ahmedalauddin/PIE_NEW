@@ -182,16 +182,20 @@ class Project extends React.Component {
                   <ExpansionPanelDetails>
                     <Grid container>
                       <Grid item lg={12}>
+                        {checkPermision('Projects KPIs','write') &&
                         <Button variant="contained" color="primary" className={classes.button} component={Link} size="small"
                           aria-label="Add" to={{ pathname: "/kpi", state: { projectId: projId } }} >
                           Add New
                         <AddIcon className={classes.rightIcon} />
                         </Button>
+                          }
+                           {checkPermision('Projects KPIs','write') &&
                         <Button variant="contained" color="primary" className={classes.button} component={Link} size="small"
                           aria-label="Search KPIs" to={{ pathname: "/kpisearch", state: { projectId: projId } }} >
                           Search and Assign
                         <SearchIcon className={classes.rightIcon} />
                         </Button>
+                          }
                         <KpiTable projectId={projId} refeshePage={this.refeshePage} />
                       </Grid>
                     </Grid>
@@ -238,11 +242,15 @@ class Project extends React.Component {
                   <ExpansionPanelDetails>
                   <Grid container>
                       <Grid item lg={12}>
-                  <Button variant="contained" color="primary" className={classes.button} component={Link} size="small"
+
+                      {checkPermision('Projects Additional Actions','write') && 
+                        <Button variant="contained" color="primary" className={classes.button} component={Link} size="small"
                           aria-label="Add" to={{ pathname: "/ProjectAction", state: { projectId: projId } }} >
                           Add New
                         <AddIcon className={classes.rightIcon} />
-                        </Button>
+                        </Button>}
+
+
                     
                       <ProjectActionTable projectId={projId} messages={this.showMessages} />
                       </Grid>
@@ -259,12 +267,13 @@ class Project extends React.Component {
                   <ExpansionPanelDetails>
                   <Grid container>
                       <Grid item lg={12}>
-                  <Button variant="contained" color="primary" className={classes.button} component={Link} size="small"
+                      {checkPermision('Projects Documents','write') &&  
+                        <Button variant="contained" color="primary" className={classes.button} component={Link} size="small"
                           aria-label="Add" to={{ pathname: "/ProjectDocument", state: { projectId: projId } }} >
                           Add New
                         <AddIcon className={classes.rightIcon} />
                         </Button>
-                    
+                        }
                       <ProjectDocumentTable projectId={projId} messages={this.showMessages} />
                       </Grid>
                     </Grid>

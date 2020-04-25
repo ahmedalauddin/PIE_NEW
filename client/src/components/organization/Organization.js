@@ -274,11 +274,13 @@ class Organization extends React.Component {
                 <ExpansionPanelDetails>
                   <Grid container>
                     <Grid item lg={10} className="org-people-search">
+                      {checkPermision('Organization Department','write') && 
                       <Button variant="contained" color="primary" className={classes.button} component={Link} size="small"
                         aria-label="Add" to={{pathname: "/department", state: {organizationId: orgId} }} >
                         Add New
                         <AddIcon className={classes.rightIcon} />
                       </Button>
+                        }
                       <DepartmentTable organizationId={orgId}/>
                     </Grid>
                   </Grid>
@@ -294,11 +296,13 @@ class Organization extends React.Component {
               <ExpansionPanelDetails>
                 <Grid container>
                   <Grid item lg={10} className="org-people-search">
+                  {checkPermision('Organization KPI','write') &&
                     <Button variant="contained" color="primary" className={classes.button} component={Link} size="small"
                       aria-label="Add" to={{pathname: "/kpi", state: {organizationId: orgId} }} >
                       Add New
                       <AddIcon className={classes.rightIcon} />
                     </Button>
+                   }
                     <KpiTable organizationId={orgId}/>
                   </Grid>
                 </Grid>
@@ -314,11 +318,12 @@ class Organization extends React.Component {
                 <ExpansionPanelDetails>
                   <Grid container>
                     <Grid item lg={10} className="org-people-search">
+                    {checkPermision('Organization People','write') &&
                       <Button variant="contained" color="primary" className={classes.button} component={Link} size="small"
                         aria-label="Add" to={{pathname: "/person", state: {organizationId: orgId} }} >
                         Add New
                         <AddIcon className={classes.rightIcon} />
-                      </Button>
+                      </Button>}
                       <PersonTable organizationId={orgId} />
                     </Grid>
                   </Grid>

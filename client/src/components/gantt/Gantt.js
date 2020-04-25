@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { gantt } from "dhtmlx-gantt";
 import "dhtmlx-gantt/codebase/dhtmlxgantt.css";
-import { getOrgId,getUser } from "../../redux";
+import { getOrgId,getUser, checkPermision } from "../../redux";
 import Button from "@material-ui/core/Button";
 import { styles } from "../styles/ProjectStyles";
 import withStyles from "@material-ui/core/styles/withStyles";
@@ -502,9 +502,11 @@ class Gantt extends React.Component {
             <Typography variant="h5" color="primary" gutterBottom >
                 Task Detail
             </Typography>
+            {checkPermision('Projects Milestones','delete') &&
             <IconButton onClick={(event)=>this.deleteSelectedTask(event)}>
               <DeleteIcon color="primary" />
             </IconButton>
+            }
           </Grid>
           <DialogContent style={{minWidth:550,minHeight:400}}>
               <Grid container>
@@ -648,7 +650,7 @@ class Gantt extends React.Component {
               Cancel
             </Button>
             }
-            <div>
+            {checkPermision('Projects Milestones','modify') && <div>
               {
                 this.state.delLoader ?
                 <CircularProgress /> :
@@ -661,7 +663,7 @@ class Gantt extends React.Component {
               Save
               </Button>
               }
-            </div>
+            </div>} 
           </DialogActions>
 
         </Dialog>
@@ -698,7 +700,7 @@ class Gantt extends React.Component {
               style={ { width: 1400, height: 500 } }
             >
             </div>
-            <div>
+            {checkPermision('Projects Milestones','modify') && <div>
               {
                 this.state.delLoader ?
                 <CircularProgress /> :
@@ -712,6 +714,7 @@ class Gantt extends React.Component {
               </Button>
               }
             </div>
+            }
           </Grid>
         </Grid>
         {this.state.selectedGantTask && this.renderDialog()}

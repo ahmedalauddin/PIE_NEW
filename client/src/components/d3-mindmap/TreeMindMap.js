@@ -15,7 +15,7 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import * as d3 from "d3";
 import "./tree-styles.scss";
 import Grid from "@material-ui/core/Grid/index";
-import { store, getOrgId, getOrgName, setMindmap, setMindmapNode, getMindmap } from "../../redux";
+import { store, getOrgId, getOrgName, setMindmap, setMindmapNode, getMindmap, checkPermision } from "../../redux";
 import Snackbar from "@material-ui/core/Snackbar";
 import "./mindmap.scss";
 import Button from "@material-ui/core/Button";
@@ -1220,6 +1220,7 @@ class TreeMindMap extends React.Component {
               }}
             />
           </Grid>
+          {checkPermision('Mind Map','modify') &&
           <Grid item sm={12}>
             <Button
               variant="contained"
@@ -1283,7 +1284,8 @@ class TreeMindMap extends React.Component {
             >
               Undo Delete
             </Button>
-            <Button
+
+             <Button
               variant="contained"
               color="secondary"
               onClick={this.saveMindmap}
@@ -1291,7 +1293,8 @@ class TreeMindMap extends React.Component {
             >
               Save Mind Map
             </Button>
-          </Grid>
+            
+          </Grid>}
           {
             this.state.scrollable ?
             <Grid item sm={12} className="scrollable">

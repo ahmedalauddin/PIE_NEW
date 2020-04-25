@@ -18,6 +18,7 @@ import { stableSort, getSorting, desc } from "../common/TableFunctions";
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Snackbar from "@material-ui/core/Snackbar";
 import moment from "moment";
+import { checkPermision } from "../../redux";
 
 const rows = [
   // { id: "edit", numeric: false, disablePadding: false, label: "" },
@@ -352,7 +353,7 @@ class ProjectActionTable extends React.Component {
 
                        <TableCell component="th" scope="row" padding="none">
                       
-                     
+                       {checkPermision('Projects Additional Actions','delete') &&  <span>
                         {
                           this.state.delLoader != 0 && this.state.delLoader == ProjectAction.id ?
                             <CircularProgress />
@@ -365,6 +366,7 @@ class ProjectActionTable extends React.Component {
                               <DeleteIcon color="primary" />
                             </IconButton>
                         }
+                        </span>}
 
                         <IconButton
                           onClick={() => {

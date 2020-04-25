@@ -115,6 +115,7 @@ class RoleManagment extends React.Component {
             'Projects Additional Actions',
             'Projects Documents',            
             'Mind Map',
+            'Mind Map KPI',
             'Mind Map Prioritized KPI',
             'Regrouping',
             'Search',
@@ -128,6 +129,11 @@ class RoleManagment extends React.Component {
     roleAcls:{}
       
   };
+
+  // roleAcl[acl]["read"]=true;
+  // roleAcl[acl]["write"]=true;
+  // roleAcl[acl]["modify"]=true;
+  // roleAcl[acl]["delete"]=true;
 
   handleClose = () => {
     this.setState({ openSnackbar: false });

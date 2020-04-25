@@ -20,6 +20,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Snackbar from "@material-ui/core/Snackbar";
 import moment from "moment";
 import filesize from "filesize";
+import { checkPermision } from "../../redux";
 
 const rows = [
   // { id: "edit", numeric: false, disablePadding: false, label: "" },
@@ -363,11 +364,7 @@ class ProjectActionTable extends React.Component {
                       
 
                        {ProjectAction.fileName === '' ? '' :
-                        <IconButton
-                        // onClick={() => {
-                        //   this.deactivate(ProjectAction.id);
-                        // }}
-                      >
+                        <IconButton >
                          <a target='_blank' href={`/docs/${ProjectAction.fileName}`} >
                               <GetAppIcon color="primary" />
                         </a> 
@@ -379,6 +376,7 @@ class ProjectActionTable extends React.Component {
                             <CircularProgress />
                             :
                             <>
+                          {checkPermision('Projects Documents','delete') && 
                             <IconButton
                               onClick={() => {
                                 this.deactivate(ProjectAction.id);
@@ -386,6 +384,9 @@ class ProjectActionTable extends React.Component {
                             >
                               <DeleteIcon color="primary" />
                             </IconButton>
+                            }
+
+
                             <IconButton
                               onClick={() => {
                                 this.setEditRedirect(ProjectAction.id);
@@ -393,6 +394,7 @@ class ProjectActionTable extends React.Component {
                             >
                               <EditIcon color="primary" />
                             </IconButton>
+
                             </>
                         }
 

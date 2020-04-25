@@ -20,7 +20,7 @@ import Select from "@material-ui/core/Select";
 import FormControl from "@material-ui/core/FormControl";
 import MenuItem from "@material-ui/core/MenuItem";
 import InputLabel from "@material-ui/core/InputLabel";
-import { getOrgName,isAdministrator } from "../../redux";
+import { getOrgName,isAdministrator, getOrgId, checkPermision } from "../../redux";
 import { Redirect } from "react-router-dom";
 import "../styles/ReactTags.css";
 import Paper from "@material-ui/core/Paper";
@@ -311,6 +311,10 @@ class Person extends React.Component {
     let orgId = this.props.location.state.organizationId;
     let referrer = this.props.location.state.referrer;
 
+    if(!orgId){
+      orgId=getOrgId();
+    }
+
     if (parseInt(personId) > 0) {
       fetch(`/api/persons/${personId}`)
         .then(res => res.json())
@@ -469,7 +473,7 @@ class Person extends React.Component {
                   
                     
                     <Grid item xs={12} sm={12}>
-                    {
+                    {checkPermision('Organization People','modify') &&<>{
                     this.state.delLoader ?
                       <CircularProgress /> :
                       <Button
@@ -480,7 +484,7 @@ class Person extends React.Component {
                       >
                         {this.state.buttonText}
                       </Button>
-                    }
+                    }</>}
                     </Grid>
                     <br />
                   </Grid>

@@ -21,7 +21,7 @@ import Checkbox from "@material-ui/core/Checkbox";
 import Typography from "@material-ui/core/Typography";
 import { Redirect } from "react-router-dom";
 import { styles } from "../styles/MaterialSense";
-import { getOrgId, setProject, store } from "../../redux";
+import { getOrgId, setProject, store, checkPermision } from "../../redux";
 import Button from "@material-ui/core/Button/index";
 import DeleteIcon from "@material-ui/icons/Delete";
 import IconButton from "@material-ui/core/IconButton";
@@ -414,6 +414,7 @@ class ProjectPersons extends React.Component {
           </Typography>
         </div>
         <div className={classes.spaceTop}>
+        {checkPermision('Projects People','modify') &&
           <Button
             variant="contained"
             color="primary"
@@ -422,6 +423,7 @@ class ProjectPersons extends React.Component {
           >
             Update People
           </Button>
+          }
         </div>
         <br/>
 

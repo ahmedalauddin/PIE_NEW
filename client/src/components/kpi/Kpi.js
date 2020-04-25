@@ -21,7 +21,7 @@ import Select from "@material-ui/core/Select";
 import FormControl from "@material-ui/core/FormControl";
 import MenuItem from "@material-ui/core/MenuItem";
 import InputLabel from "@material-ui/core/InputLabel";
-import { getOrgId, getOrgName, getOrgDepartments } from "../../redux";
+import { getOrgId, getOrgName, getOrgDepartments, checkPermision } from "../../redux";
 import { Redirect } from "react-router-dom";
 import { WithContext as ReactTags } from "react-tag-input";
 import "../styles/ReactTags.css";
@@ -517,9 +517,7 @@ class Kpi extends React.Component {
                   >
                     KPI Detail<br/>
                   </Typography>
-                  <Typography variant="h7">
-                    Project: {this.state.projectName}
-                  </Typography>
+                  
                   <Typography variant="h7">
                     Organization: {getOrgName()}
                   </Typography>
@@ -607,21 +605,21 @@ class Kpi extends React.Component {
                     </Grid>
                     
                     <Grid item sm={10} container direction="row">
-                      {this.state.showSaveButton &&
-                      <Typography component="p">
-                      {
-                        this.state.delLoader ?
-                        <CircularProgress /> :
-                          <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={this.handleSubmit}
-                            className={classes.secondary}
-                          >
-                            {this.state.buttonText}
-                          </Button>
-                        }
-                      </Typography>
+                      {this.state.showSaveButton &&  checkPermision('Projects KPIs','modify')  &&
+                          <Typography component="p">
+                          {
+                            this.state.delLoader ?
+                            <CircularProgress /> :
+                              <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={this.handleSubmit}
+                                className={classes.secondary}
+                              >
+                                {this.state.buttonText}
+                              </Button>
+                            }
+                          </Typography>
                       }
                       { !this.state.delLoader &&
                           <Button

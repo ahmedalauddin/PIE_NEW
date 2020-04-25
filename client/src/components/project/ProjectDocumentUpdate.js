@@ -6,7 +6,7 @@ import Topbar from "../Topbar";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-import { getOrgId, getOrgName, getOrgDepartments,getUser } from "../../redux";
+import { getOrgId, getOrgName, getOrgDepartments,getUser, checkPermision } from "../../redux";
 import { Redirect } from "react-router-dom";
 import "../styles/ReactTags.css";
 import Paper from "@material-ui/core/Paper";
@@ -524,6 +524,7 @@ console.log('thisstattetet--',JSON.stringify(this.state));
 
                  
                     <Grid item sm={10}>
+                    {checkPermision('Projects Documents','modify') && 
                       <Typography component="p">
                         {
                           this.state.delLoader ?
@@ -538,6 +539,8 @@ console.log('thisstattetet--',JSON.stringify(this.state));
                             </Button>
                         }
                       </Typography>
+                      }
+
                       <br />
                     </Grid>
                   </Grid>

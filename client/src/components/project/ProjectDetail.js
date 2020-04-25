@@ -22,7 +22,7 @@ import InputLabel from "@material-ui/core/InputLabel";
 import FormControl from "@material-ui/core/FormControl";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
-import { getOrgId, getOrgName, getOrgDepartments, setProject, store } from "../../redux";
+import { getOrgId, getOrgName, getOrgDepartments, setProject, store,checkPermision } from "../../redux";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import ViewIcon from "@material-ui/icons/Comment";
 import IconButton from "@material-ui/core/IconButton/index";
@@ -463,7 +463,7 @@ class ProjectDetail extends React.Component {
           
 
 
-          <Grid item xs={12} sm={12}>
+         {checkPermision('Projects','modify') && <Grid item xs={12} sm={12}>
             {this.state.loader ?
               <CircularProgress/>
               :
@@ -478,6 +478,7 @@ class ProjectDetail extends React.Component {
             }
             <br/>
           </Grid>
+          }
         </Grid>
         {this.renderProjectCommentRedirect()}
       </form>

@@ -24,6 +24,7 @@ import { lighten } from "@material-ui/core/styles/colorManipulator";
 import {Link, Redirect} from "react-router-dom";
 import EditIcon from "@material-ui/icons/Edit";
 import IconButton from "@material-ui/core/IconButton/index";
+import { checkPermision } from "../../redux";
 
 function desc(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -305,13 +306,16 @@ class DepartmentTable extends React.Component {
                         {department.description}
                       </TableCell>
                       <TableCell component="th" scope="row" padding="none">
+                        
+                      {checkPermision('Organization Department','delete') && 
                         <IconButton onClick={() => {this.deactivateDepartment(department.id);}}>
                           <DeleteIcon color="primary" />
                         </IconButton>
-                      
+                        }
+                      {checkPermision('Organization Department','modify') && 
                         <IconButton onClick={() => {this.setEditRedirect(department.id);}}>
                           <EditIcon color="primary" />
-                        </IconButton>
+                        </IconButton>}
                       </TableCell>
                     </TableRow>
                   );
