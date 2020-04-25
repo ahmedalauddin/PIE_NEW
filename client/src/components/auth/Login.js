@@ -195,7 +195,7 @@ class Login extends React.Component {
                         Please login
                       </Typography>
                       
-                      <Typography variant="h6" component="h2" color="secondary" gutterBottom>
+                      <Typography variant="h7" component="h6" style={{color:'red'}} gutterBottom>
                         {this.state.msgText}
                       </Typography>
                       <Typography variant="h5" component="h2">
@@ -239,7 +239,7 @@ class Login extends React.Component {
                       </Typography>
                       <Typography component="div">
                         <br /><br />
-                         <Link to={`/password`}>Forgot password?</Link> 
+                         <Link to={`/resetpassword`}>Forgot password?</Link> 
                       </Typography>
                     </CardContent>
                   </Card>

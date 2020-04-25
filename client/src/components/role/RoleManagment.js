@@ -104,15 +104,7 @@ class RoleManagment extends React.Component {
     selectedMember:false,
     orgId:0,
     role: "Select role",
-    roles:[ 'Select role',
-            'Chief Operating Officer',
-            'VP Operations',
-            'Sr. Director',
-            'Director',
-            'Manager',
-            'Engineer',
-            'Analyst',
-            'Consultant'],
+    roles:[ 'Select role'],
     acls : [
             'Dashboard',
             'Dashboard Expand Projects',
@@ -147,16 +139,24 @@ class RoleManagment extends React.Component {
 
 
   fetchData(){
-    console.log("called fetchData")
     let orgId = parseInt(getOrgId());
-    let uri=`/api/auth/role/${orgId}`;
    
-    fetch(uri)
+    fetch(`/api/auth/role/${orgId}`)
     .then(res => res.json())
     .then(response => {
       if(response && response.length>0 && response[0].jsonData){
         this.setState({roleAcls:response[0].jsonData})
       }
+    });
+
+    fetch("/api/auth/roletypes/" + orgId)
+    .then(results => results.json())
+    .then(response => {
+      const roles=['Select role'];
+      if(response){
+        response.forEach((r)=>roles.push(r.description))
+      }
+      this.setState({ roles})
     });
 
   }

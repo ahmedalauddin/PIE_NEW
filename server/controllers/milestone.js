@@ -223,7 +223,7 @@ module.exports = {
             </head>
             
             <body>
-            <table border="0" width="600" style="padding:0; margin:20px auto;">
+            <table border="0" width="750" style="padding:0; margin:0;">
               <tr>
                 <td style="font:17px Arial, Helvetica, sans-serif; color:#333;">Hello ${person.firstName}, </td>
               </tr>
@@ -237,7 +237,7 @@ module.exports = {
                 <td height="20"></td>
               </tr>
               <tr>
-                <td  style="font:16px/30px Arial, Helvetica, sans-serif; color:#333; font-weight:bold;"><span style="height: 8px;
+                <td  style="font:16px/30px Arial, Helvetica, sans-serif; color:#333; font-weight:bold; padding-left:30px;"><span style="height: 8px;
             width: 8px;
             border-radius: 50%;
             border: 0;
@@ -248,7 +248,7 @@ module.exports = {
             margin-right: 10px;"></span> <em style="width:150px;font-style:normal;display:inline-block;"> Project Title </em> : ${project.title}</td>
               </tr>
               <tr>
-                <td  style="font:16px/30px Arial, Helvetica, sans-serif; color:#333; font-weight:bold;"><span style="height: 8px;
+                <td  style="font:16px/30px Arial, Helvetica, sans-serif; color:#333; font-weight:bold;padding-left:30px;"><span style="height: 8px;
             width: 8px;
             border-radius: 50%;
             border: 0;
@@ -259,7 +259,7 @@ module.exports = {
             margin-right: 10px;"></span> <em style="width:150px;font-style:normal;display:inline-block;"> Task Description </em> : ${newTaskOrReAssigned.text}</td>
               </tr>
               <tr>
-                <td style="font:16px/30px Arial, Helvetica, sans-serif; color:#333; font-weight:bold;"><span style="height: 8px;
+                <td style="font:16px/30px Arial, Helvetica, sans-serif; color:#333; font-weight:bold;padding-left:30px;"><span style="height: 8px;
             width: 8px;
             border-radius: 50%;
             border: 0;
@@ -270,7 +270,7 @@ module.exports = {
             margin-right: 10px;"></span> <em style="width:150px;font-style:normal;display:inline-block;"> Assigned </em> : ${newTaskOrReAssigned.assigned}</td>
               </tr>
               <tr>
-                <td style="font:16px/30px Arial, Helvetica, sans-serif; color:#333; font-weight:bold;"><span style="height: 8px;
+                <td style="font:16px/30px Arial, Helvetica, sans-serif; color:#333; font-weight:bold;padding-left:30px;"><span style="height: 8px;
             width: 8px;
             border-radius: 50%;
             border: 0;
@@ -281,7 +281,7 @@ module.exports = {
             margin-right: 10px;"></span> <em style="width:150px;font-style:normal;display:inline-block;"> Current Progress </em> : ${newTaskOrReAssigned.progressTxt}</td>
               </tr>
               <tr>
-                <td style="font:16px/30px Arial, Helvetica, sans-serif; color:#333; font-weight:bold;"><span style="height: 8px;
+                <td style="font:16px/30px Arial, Helvetica, sans-serif; color:#333; font-weight:bold;padding-left:30px;"><span style="height: 8px;
             width: 8px;
             border-radius: 50%;
             border: 0;
@@ -292,7 +292,7 @@ module.exports = {
             margin-right: 10px;"></span> <em style="width:150px;font-style:normal;display:inline-block;"> Start Date </em> : ${startDate} </td>
               </tr>
               <tr>
-                <td style="font:16px/30px Arial, Helvetica, sans-serif; color:#333; font-weight:bold;"><span style="height: 8px;
+                <td style="font:16px/30px Arial, Helvetica, sans-serif; color:#333; font-weight:bold;padding-left:30px;"><span style="height: 8px;
             width: 8px;
             border-radius: 50%;
             border: 0;
@@ -312,7 +312,7 @@ module.exports = {
                 <td height="20"></td>
               </tr>
               <tr>
-                <td style="font:italic 17px Arial, Helvetica, sans-serif; color:#333;">This is an system generated email, please do not reply to this email</td>
+                <td style="font:italic 15px Arial, Helvetica, sans-serif; color:#333;">This is an system generated email, please do not reply to this email</td>
               </tr>
               <tr>
                 <td height="20"></td>
@@ -326,7 +326,8 @@ module.exports = {
             </table>
             </body>
             </html>
-            `
+            `;
+            
             mailer.sendMail(to,subject,text);
           
         }

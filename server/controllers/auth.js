@@ -54,7 +54,8 @@ module.exports = {
     logger.debug(`${mvcType} authenticate -> email: ${req.body.email}`);
     return Person.findOne({
       where: {
-        email: req.body.email
+        email: req.body.email,
+        disabled: 0
       },
       include: [
         {
@@ -333,6 +334,88 @@ module.exports = {
         res.status(400).send(error);
       });
   },
+
+  changePassword(req, res) {
+    logger.debug(`${mvcType} changePassword -> email: ${req.body.email}`);
+    return Person.findOne({
+      where: {
+        email: req.body.email
+      }
+    })
+      .then(async p => {
+        const result = await bCrypt.compare(req.body.oldpassword, p.pwdhash);
+        if (result === true) {
+          let hashedValue = getHash(req.body.password);
+          models.Person.update(
+            {
+              pwdhash: hashedValue
+            },
+            {
+              returning: true,
+              where: {
+                id: p.id
+              }
+            }
+          ) .then(([d, updatestatus]) => {
+            logger.debug(`${mvcType} update -> successful`);
+            if (updatestatus === 1) {
+              res.status(200).send({
+                success: true,
+                message: "Password Changed."
+              });
+
+            } else {
+              res.status(200).send({
+                success: false,
+                message: "Something went wrong"
+              });
+            }
+          })
+          .catch(error => {
+            logger.error(`${mvcType} update -> error: ${error.stack}`);
+            res.status(400).send(error);
+          });
+
+        } else {
+          res.status(200).send({
+            success: false,
+            message: "incorrect password"
+          });
+        }
+           
+
+      })
+      .catch(error => {
+        logger.error(`${mvcType} authenticate -> error: ${error.stack}`);
+        res.status(400).send({
+          auth: false,
+          success: false,
+          token: null,
+          message: "Unknown error occurred"
+        });
+      });
+  },
+
+  getRoletypes(req, res){
+    const orgId = req.params.orgId;
+
+    const query = "select description from Roles where orgId = " + orgId;
+
+    return models.sequelize.query(
+      query, 
+      {
+        type: models.sequelize.QueryTypes.SELECT
+      })
+      .then(data => {
+        logger.debug(`${mvcType} getAcl: ${data}`);
+        res.status(201).send(data);
+      })
+      .catch(error => {
+        logger.error(`${mvcType} getAcl -> error: ${error.stack}`);
+        res.status(400).send(error);
+      });
+  },
+
   index(req, res) {
     res.json({
       success: true,

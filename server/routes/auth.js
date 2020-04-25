@@ -37,4 +37,10 @@ module.exports = router => {
    logger.debug(`${callerClass} GET -> path: /api/role/:orgId`);
    router.get("/api/auth/role/:orgId", auth.getAcl);
 
+   logger.debug(`${callerClass} POST -> path: /api/auth/changepassword`);
+   router.post("/api/auth/changepassword", auth.changePassword);
+
+   logger.debug(`${callerClass} GET -> path: /api/roletypes/:orgId`);
+   router.get("/api/auth/roletypes/:orgId", auth.getRoletypes);
+
 };

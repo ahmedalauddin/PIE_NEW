@@ -13,6 +13,7 @@ import ListOrgs from "./components/organization/ListOrgs";
 import Main from "./components/Main";
 import Signup from "./components/auth/Signup";
 import ChangePassword from "./components/auth/ChangePassword";
+import RestPassword from "./components/auth/RestPassword";
 import Logout from "./components/auth/Logout";
 import Login from "./components/auth/Login";
 import UserInfo from "./components/person/UserInfo";
@@ -61,7 +62,8 @@ export default props => (
         <Route exact path="/login" component={Login} />
         <Route exact path="/signup" component={Signup} />
         <Route exact path="/mindmap" component={MindMap} />
-        <Route exact path="/password" component={ChangePassword} />
+        <Route exact path="/resetpassword" component={RestPassword} />
+        <Route exact path="/password" component={withAuth(ChangePassword)} />
         <Route exact path="/search" component={withAuth(Search)} />
         <Route exact path="/gantt" component={Gantt} />
         <Route exact path="/about" component={About} />

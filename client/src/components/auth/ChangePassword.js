@@ -20,6 +20,9 @@ import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { fade } from "@material-ui/core/styles/colorManipulator";
 import SectionHeader from "../typo/SectionHeader";
+import { getUser } from "../../redux";
+import Snackbar from "@material-ui/core/Snackbar";
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const styles = theme => ({
   root: {
@@ -118,7 +121,10 @@ class ChangePassword extends React.Component {
     isNew: false,
     expanded: false,
     labelWidth: 0,
-    passwordSent:false
+    passwordSent:false,
+    openSnackbar: false,
+    message: "",
+    delLoader: false
   };
 
   constructor(props) {
@@ -142,46 +148,32 @@ class ChangePassword extends React.Component {
     this.setState(state => ({ expanded: !state.expanded }));
   };
 
-  handleSubmit(event) {
-    event.preventDefault();
-    let redirectTarget = "";
-
-    // Authenticate against the username
-    fetch("/api/auth/reset", {
+  async handleSubmit(event) {
+   event.preventDefault();
+   this.setState({
+    delLoader: true
+  })
+   const response = await fetch("/api/auth/changepassword", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(this.state)
     })
-      .then(response => {
-        if (!response.ok) {
-          // here, we get out of the then handlers and
-          // over to the catch handler
-          throw new Error("Network response was not ok.");
-        } else {
-          // status code 200 is success.
-          console.log("ChangePassword.js, logged in. Status = 200");
-          return response.json();
-        }
-      })
-      .then(user => {
-      })
-      .then(() => {
-        
-        this.setState({
-          passwordSent: true
-        });
-        setTimeout(()=>window.history.back(),500);
-
-      })
-      .catch(err => {
-        this.setState({
-          isFailedLogin: true,
-          msgText: "Login failed, please try again."
-        });
-      });
+    
+    if(response.ok){
+      const mgs=await response.json();
+      if(mgs.success){
+        this.setState({ openSnackbar: true, message: mgs.message, delLoader: false , password: "",  oldpassword: "", confirm: "",});
+      }else{
+        this.setState({ openSnackbar: true, message: mgs.message, delLoader: false });
+      }
+    }else{
+      this.setState({ openSnackbar: true, message: "something went wrong", delLoader: false });
+    }
+    
   }
 
   componentDidMount() {
+    this.setState({email:getUser().email})
   }
 
   render() {
@@ -189,59 +181,80 @@ class ChangePassword extends React.Component {
 
     return (
       <React.Fragment>
-        <CssBaseline />
-        <Topbar />
-       
-        <form onSubmit={this.handleSubmit} noValidate>
-          <div className={classes.root}>
-            <Grid
-              spacing={24}
-              alignItems="center"
-              justify="center"
-              container
-              className={classes.grid}
-            >
-              <Grid item xs={12} md={4}>
-                <SectionHeader title="" subtitle="" />
-                <Card className={classes.card} style={{minHeight:300}}>
-                  <CardContent>
-                  {!this.state.passwordSent ?
-                    <Grid spacing={24} alignItems="center" justify="center" container className={classes.grid}>
-                      <Grid item xs={12}>
-                        <Typography
-                          variant="h5"
-                          component="h2"
-                          color="secondary"
-                          gutterBottom
-                        >
-                          Request new password.
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={12}>
+      <CssBaseline />
+      <Topbar />
+      <form onSubmit={this.handleSubmit} noValidate>
+        <div className={classes.root}>
+          <Grid
+            spacing={24}
+            alignItems="center"
+            justify="center"
+            container
+            className={classes.grid}
+          >
+            <Grid item xs={12} md={4}>
+              <SectionHeader title="" subtitle="" />
+              <Card className={classes.card}>
+                <CardContent>
+                  <Grid spacing={24} alignItems="center" justify="center" container className={classes.grid}>
+                    <Grid item xs={12}>
+                      <Typography
+                        variant="h5"
+                        component="h2"
+                        color="secondary"
+                        gutterBottom
+                      >
+                        Change Password
+                      </Typography>
+                      <Typography variant="h7" component="h6" style={this.state.success?{color:'green'}:{color:'red'}} gutterBottom>
+                        {this.state.msgText}
+                      </Typography>
+                    </Grid>
+                   
+                    <Grid item xs={12}>
+                      <Typography variant="h5" component="h2">
                         <TextField
                           required
-                          id="email"
-                          label="Email Address"
-                          onChange={this.handleChange("email")}
-                          value={this.state.email}
+                          id="oldpassword"
+                          label="Old Password"
+                          type="password"
+                          onChange={this.handleChange("oldpassword")}
+                          value={this.state.oldpassword}
                           className={classes.textField}
                           margin="normal"
-                          />
-                      </Grid>
-                     
-                      <Grid container xs={12} style={{flexDirection:"row"}}>
+                        />
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Typography variant="h5" component="h2">
+                        <TextField
+                          required
+                          id="password"
+                          label="Password"
+                          type="password"
+                          onChange={this.handleChange("password")}
+                          value={this.state.password}
+                          className={classes.textField}
+                          margin="normal"
+                        />
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Typography variant="h5" component="h2">
+                        <TextField
+                          required
+                          id="confirm"
+                          label="Confirm password"
+                          type="password"
+                          onChange={this.handleChange("confirm")}
+                          value={this.state.confirm}
+                          className={classes.textField}
+                          margin="normal"
+                        />
+                      </Typography>
+                    </Grid>
+                    <Grid container xs={12} style={{flexDirection:"row",marginTop:20}}>
                       <Typography variant="h5" component="h2" style={{marginLeft:20}}>
-                          <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={this.handleSubmit}
-                            className={classes.secondary}
-                          >
-                            Submit
-                          </Button>
-                        </Typography>
-
-                        <Typography variant="h5" component="h2" style={{marginLeft:20}}>
                           <Button
                             variant="contained"
                             color="primary"
@@ -252,29 +265,44 @@ class ChangePassword extends React.Component {
                           </Button>
                         </Typography>
 
+                      <Typography variant="h5" component="h2" style={{marginLeft:20}}>
+                      {
+                       this.state.delLoader ?
+                        <CircularProgress /> :
+                          
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={this.handleSubmit}
+                            className={classes.secondary}
+                            disabled={this.state.oldpassword=='' || this.state.password=='' || this.state.password!=this.state.confirm}
+                          >
+                            Submit
+                          </Button>
+                            }
+                        </Typography>
+
+                        
+
                         
                       </Grid>
-
-                      </Grid>
-
-:
-                <Typography
-                variant="h7"
-                component="h7"
-                color="secondary"
-                gutterBottom
-              >
-                New password sent in email.
-              </Typography>}
-                    
-                  </CardContent>
-                </Card>
-              </Grid>
+                  </Grid>
+                </CardContent>
+              </Card>
             </Grid>
-          </div>
-        </form>
-       
-      </React.Fragment>
+          </Grid>
+        </div>
+      </form>
+      <Snackbar
+          open={this.state.openSnackbar}
+          onClose={this.handleClose}
+          TransitionComponent={this.state.Transition}
+          ContentProps={{
+            "aria-describedby": "message-id"
+          }}
+          message={<span id="message-id">{this.state.message}</span>}
+        />
+    </React.Fragment>
     );
   }
 }

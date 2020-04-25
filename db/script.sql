@@ -79,3 +79,85 @@ CREATE TABLE  `mvp2`.`Acls` (
   KEY `acls_org_ind` (`orgId`),
   CONSTRAINT `acls_org_ind_fk` FOREIGN KEY (`orgId`) REFERENCES `Organizations` (`id`) ON DELETE CASCADE
 ) ;
+
+
+DROP TABLE IF EXISTS `mvp2`.`Roles`;
+CREATE TABLE  `mvp2`.`Roles` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `orgId` int NOT NULL,
+  `description` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `roles_org_ind` (`orgId`),
+  CONSTRAINT `roles_org_ind_fk` FOREIGN KEY (`orgId`) REFERENCES `Organizations` (`id`) ON DELETE CASCADE
+) ;
+
+insert into `mvp2`.`Roles` 
+(`orgId`,`description`) values
+( 1,  'Chief Operating Officer'),
+( 1,  'VP Operations'),
+( 1,  'Sr. Director'),
+( 1,  'Director'),
+( 1,  'Manager'),
+( 1,  'Engineer'),
+( 1,  'Analyst'),
+( 1,  'Consultant'),
+( 2,  'Chief Operating Officer'),
+( 2,  'VP Operations'),
+( 2,  'Sr. Director'),
+( 2,  'Director'),
+( 2,  'Manager'),
+( 2,  'Engineer'),
+( 2,  'Analyst'),
+( 2,  'Consultant'),
+( 3,  'Chief Operating Officer'),
+( 3,  'VP Operations'),
+( 3,  'Sr. Director'),
+( 3,  'Director'),
+( 3,  'Manager'),
+( 3,  'Engineer'),
+( 3,  'Analyst'),
+( 3,  'Consultant'),
+( 4,  'Chief Operating Officer'),
+( 4,  'VP Operations'),
+( 4,  'Sr. Director'),
+( 4,  'Director'),
+( 4,  'Manager'),
+( 4,  'Engineer'),
+( 4,  'Analyst'),
+( 4,  'Consultant'),
+( 7,  'Chief Operating Officer'),
+( 7,  'VP Operations'),
+( 7,  'Sr. Director'),
+( 7,  'Director'),
+( 7,  'Manager'),
+( 7,  'Engineer'),
+( 7,  'Analyst'),
+( 7,  'Consultant'),
+( 9,  'Chief Operating Officer'),
+( 9,  'VP Operations'),
+( 9,  'Sr. Director'),
+( 9,  'Director'),
+( 9,  'Manager'),
+( 9,  'Engineer'),
+( 9,  'Analyst'),
+( 9,  'Consultant'),
+( 10,  'Chief Operating Officer'),
+( 10,  'VP Operations'),
+( 10,  'Sr. Director'),
+( 10,  'Director'),
+( 10,  'Manager'),
+( 10,  'Engineer'),
+( 10,  'Analyst'),
+( 10,  'Consultant'),
+( 55,  'Chief Operating Officer'),
+( 55,  'VP Operations'),
+( 55,  'Sr. Director'),
+( 55,  'Director'),
+( 55,  'Manager'),
+( 55,  'Engineer'),
+( 55,  'Analyst'),
+( 55,  'Consultant');
+
+
+
+

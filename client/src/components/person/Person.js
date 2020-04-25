@@ -197,15 +197,7 @@ class Person extends React.Component {
     nextItem: "",
     referrer: "",
     delLoader:false,
-    roles:[ 'Select role',
-            'Chief Operating Officer',
-            'VP Operations',
-            'Sr. Director',
-            'Director',
-            'Manager',
-            'Engineer',
-            'Analyst',
-            'Consultant'],
+    roles:[ 'Select role'],
     pageTitle:'User'
   };
 
@@ -348,6 +340,16 @@ class Person extends React.Component {
     fetch("/api/departments/org/" + orgId)
       .then(results => results.json())
       .then(departments => this.setState({ departments:[{id:0,name:"Select department"}].concat(departments) }));
+    
+      fetch("/api/auth/roletypes/" + orgId)
+      .then(results => results.json())
+      .then(response => {
+        const roles=['Select role'];
+        if(response){
+          response.forEach((r)=>roles.push(r.description))
+        }
+        this.setState({ roles})
+      });
   }
 
   render() {

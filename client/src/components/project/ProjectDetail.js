@@ -351,7 +351,7 @@ class ProjectDetail extends React.Component {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <FormControl className={classes.formControl}>
+            <FormControl className={classes.formControl} style={{width:"50%"}}>
               <InputLabel shrink htmlFor="status-simple">
                 Status
               </InputLabel>
@@ -374,7 +374,7 @@ class ProjectDetail extends React.Component {
             </FormControl>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <FormControl className={classes.formControl}>
+            <FormControl className={classes.formControl} style={{width:"50%"}}>
               <InputLabel shrink htmlFor="kpi-simple">Main KPI</InputLabel>
               <Select
                 value={this.state.mainKpiId}
@@ -403,6 +403,7 @@ class ProjectDetail extends React.Component {
               value={this.state.startAt}
               onChange={this.handleChange("startAt")}
               className={classes.textFieldWide}
+              style={{width:"50%"}}
               InputLabelProps={{
                 shrink: true
               }}
@@ -414,6 +415,7 @@ class ProjectDetail extends React.Component {
               label="Progress"
               value={this.props.progress}
               className={classes.textFieldWide}
+              style={{width:"50%"}}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -434,6 +436,7 @@ class ProjectDetail extends React.Component {
               value={this.state.endAt}
               onChange={this.handleChange("endAt")}
               className={classes.textFieldWide}
+              style={{width:"50%"}}
               InputLabelProps={{
                 shrink: true
               }}
@@ -441,25 +444,23 @@ class ProjectDetail extends React.Component {
           </Grid>
 
 
-          <Grid item xs={10} sm={4}>
+          <Grid item xs={12} sm={6}>
             <TextField
               id="standard-required"
               label="Comments"
-              fullWidth={true}
               value={this.state.projectLastComment}
-              
               className={classes.textFieldWide}
+              style={{width:"50%"}}
               inputProps={{
                 readOnly: Boolean(true),
                 disabled: Boolean(true),
               }}
             />
-          </Grid>
-          <Grid item xs={2} sm={2}>
-              <IconButton  onClick={()=>this.setState({readyToProjectComment:true})}>
+            <IconButton  onClick={()=>this.setState({readyToProjectComment:true})} style={{position:"absolute"}}>
                   <ViewIcon color="primary" />
               </IconButton>
           </Grid>
+          
 
 
           <Grid item xs={12} sm={12}>

@@ -23,7 +23,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import { lighten } from "@material-ui/core/styles/colorManipulator";
 import { Link, Redirect } from "react-router-dom";
 import EditIcon from "@material-ui/icons/Edit";
-import ExportIcon from "@material-ui/icons/MoveToInbox";
+import ExportIcon from "@material-ui/icons/Launch";
 import IconButton from "@material-ui/core/IconButton/index";
 import { stableSort, getSorting, desc } from "../common/TableFunctions";
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -33,8 +33,8 @@ const rows = [
   // { id: "edit", numeric: false, disablePadding: false, label: "" },
   { id: "title", numeric: false, disablePadding: false, label: "Title",align:"left",width:200 },
   { id: "description", numeric: false, disablePadding: false, label: "Description" ,align:"left",width:300 },
-  { id: "type", numeric: false, disablePadding: false, label: "Type" ,align:"left",width:100 },
-  { id: "imported", numeric: false, disablePadding: false, label: "Imported" ,align:"left",width:100 },
+  { id: "tagetValue", numeric: false, disablePadding: false, label: "Taget Value" ,align:"left",width:150 },
+  { id: "imported", numeric: false, disablePadding: false, label: "Imported" ,align:"left",width:150 },
   { id: "delete", numeric: false, disablePadding: false, label: "Actions" ,align:"left",width:200 }
 ];
 
@@ -43,7 +43,7 @@ const rowsWithProject = [
   { id: "title", numeric: false, disablePadding: false, label: "Title" ,align:"left",width:200 },
   { id: "description", numeric: false, disablePadding: false, label: "Description" ,align:"left",width:300 },
   { id: "project", numeric: false, disablePadding: false, label: "Project" ,align:"left",width:300 },
-  { id: "type", numeric: false, disablePadding: false, label: "Type" ,align:"left",width:100 },
+  { id: "tagetValue", numeric: false, disablePadding: false, label: "Taget Value" ,align:"left",width:150 },
   { id: "delete", numeric: false, disablePadding: false, label: "Actions" ,align:"left",width:200 }
 ];
 
@@ -395,10 +395,10 @@ class KpiTable extends React.Component {
                           </ul>   
                           }</TableCell>
                       }
-                      <TableCell style={{width:100}}  align="left" className={classes.noTextDecoration}>{(kpi.type && kpi.type!='null')?kpi.type:''}</TableCell>
+                      <TableCell style={{width:150}}  align="left" className={classes.noTextDecoration}>{kpi.level}</TableCell>
                       
                       { !this.state.fromOrganization &&
-                        <TableCell style={{width:200}}  align="left" className={classes.noTextDecoration}>{kpi.projectId>0?'No':'Yes'}</TableCell>
+                        <TableCell style={{width:150}}  align="left" className={classes.noTextDecoration}>{kpi.projectId>0?'No':'Yes'}</TableCell>
                       
                       }
 

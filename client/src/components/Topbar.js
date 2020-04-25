@@ -20,8 +20,12 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button/index";
-
+import Popper from '@material-ui/core/Popper';
+import Fade from '@material-ui/core/Fade';
+import Paper from '@material-ui/core/Paper';
+const profileLogo = require("../images/profile.png");
 const logo = require("../images/ValueInfLogo.png");
+
 const styles = theme => ({
   appBar: {
     position: "relative",
@@ -80,6 +84,36 @@ const styles = theme => ({
     paddingTop: 20,
     paddingBottom: 20,
     minWidth: "auto"
+  },
+  profileLogoMenu: {
+    width: 30,
+    height: 30,
+    margin:10
+  },
+  profileLogoMenuContainer: {
+  
+    padding:0,
+    width:48,
+    margin:5,
+    alignItems:"right",
+    justifyContent:"right"
+  },
+
+  profileLogo: {
+    width: 40,
+    height: 40,
+    margin:10
+  },
+  profileLogoContainer: {
+   
+    padding:0,
+    width:60,
+    margin:5,
+    alignItems:"center",
+    justifyContent:"center"
+  },
+  typography:{
+    padding: 2
   }
 });
 
@@ -122,14 +156,6 @@ const AdminMenu = [
   {
     label: "Client Filter",
     pathname: "/clientorg"
-  },
-  {
-    label: "Logout",
-    pathname: "/logout"
-  },
-  {
-    label: "About",
-    pathname: "/about"
   }
 ];
 
@@ -162,14 +188,6 @@ const StandardAdminMenu = [
   {
     label: "Role Managment",
     pathname: "/rolemgt"
-  },
-  {
-    label: "Logout",
-    pathname: "/logout"
-  },
-  {
-    label: "About",
-    pathname: "/about"
   }
 ];
 
@@ -219,21 +237,7 @@ function getStandardMenu(){
       })
   }
 
-  StandardMenu.push(
-    {
-      label: "Logout",
-      pathname: "/logout"
-    }
-  )
 
-  if(checkPermision('About','read')){
-    StandardMenu.push({
-      label: "About",
-      pathname: "/about"
-    })
-}
-  
-  
   return StandardMenu;
 }
 function getMenu(menuType) {
@@ -362,6 +366,8 @@ class Topbar extends Component {
     value: 0,
     open: false,
     mobileShow: '',
+    anchorEl:null,
+    showPopover:false
   };
 
   menuFun() {
@@ -395,16 +401,31 @@ class Topbar extends Component {
     return value;
   };
 
+  openPopover = (event) => {
+    const {showPopover} =this.state;
+    this.setState({anchorEl:event.currentTarget,showPopover:!showPopover})
+  };
+
+  toSentenceCase(string) {
+    var sentence = string.split(" ");
+    for (var i = 0; i < sentence.length; i++) {
+      sentence[i] = sentence[i][0].toUpperCase() + sentence[i].slice(1);
+    }
+    return sentence.join(" ");
+  }
+
   render() {
+   
     const { classes, location } = this.props;
     const currentPath = location ? location.pathname : "/";
     let menuType = "";
-    const username = getUser().email;
-    if (isLoggedIn() && !this.props.loggedOut && isAdministrator()) {
+  
+    const isLogin=isLoggedIn()
+    if (isLogin && !this.props.loggedOut && isAdministrator()) {
       menuType = "admin";
-    }else if (isLoggedIn() && !this.props.loggedOut && !isAdministrator() && isCustomerAdmin()) {
+    }else if (isLogin && !this.props.loggedOut && !isAdministrator() && isCustomerAdmin()) {
       menuType = "standard-admin";
-    } else if (isLoggedIn() && !this.props.loggedOut && !isAdministrator()) {
+    } else if (isLogin && !this.props.loggedOut && !isAdministrator()) {
       menuType = "standard";
     } else {
       menuType = "notLoggedIn";
@@ -445,17 +466,73 @@ class Topbar extends Component {
                     ))}
                   </Tabs>
                 </div>
-                <div className={classes.productLogo} align={"right"}>
-                  <Typography>
-                    {username}
-                  </Typography>
-                </div>
+                {isLogin && !this.props.loggedOut &&  
+                <div className={classes.profileLogoMenuContainer} align={"right"} onClick={(event)=>this.openPopover(event)}>
+                    <img src={profileLogo} alt="" className={classes.profileLogoMenu} />
+                   
+                </div>}
+                {isLogin && !this.props.loggedOut && this.renderPopOver()}
               </React.Fragment>
             </Grid>
           </Grid>
         </Toolbar>
       </AppBar>
     );
+  }
+
+  renderPopOver(){
+    const {anchorEl,showPopover} =this.state;
+    const { classes } = this.props;
+    const user = getUser();
+    return (
+        <Popper style={{zIndex:9999}} open={showPopover} anchorEl={anchorEl} placement={'bottom-start'} transition>
+          {({ TransitionProps }) => (
+          <Fade {...TransitionProps} timeout={350}>
+            <Paper style={{ minWidth: 300 }}>
+
+              <Grid
+                container
+                spacing={0}
+                direction="column"
+                alignItems="center"
+                justify="center"
+
+              >
+                <Grid item xs={3}>
+                  <div className={classes.profileLogoContainer} align={"center"} onClick={(event) => this.openPopover(event)}>
+                    <img src={profileLogo} alt="" className={classes.profileLogo} />
+                  </div>
+                </Grid>
+              </Grid>
+
+              <Grid  item xs={12} style={{paddingLeft:20}}>
+                <Typography className={classes.typography}>Name: {this.toSentenceCase(user.fullName)}</Typography>
+                <Typography className={classes.typography}>Email: {user.email}</Typography>
+                {user.role && <Typography className={classes.typography}>Role: {user.role}</Typography>}
+              </Grid>
+
+
+              <Grid
+                container
+                spacing={0}
+                direction="column"
+                alignItems="center"
+                justify="center"
+
+              >
+                <Grid item xs={12}>
+                  <Tab component={Link} to={{ pathname: '/password', search: this.props.location.search }} classes={{ root: classes.tabItem }} label={'Change Password'} />
+                  <Tab component={Link} to={{ pathname: '/logout', search: this.props.location.search }} classes={{ root: classes.tabItem }} label={'Logout'} />
+                  {checkPermision('About', 'read') &&
+                    <Tab component={Link} to={{ pathname: '/about', search: this.props.location.search }} classes={{ root: classes.tabItem }} label={'About'} />
+                  }
+                </Grid>
+              </Grid>
+            </Paper>
+          </Fade>
+          )}
+        </Popper>
+    )
   }
 }
 

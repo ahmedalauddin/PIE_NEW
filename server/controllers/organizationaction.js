@@ -4,8 +4,6 @@
 const models = require("../models");
 const logger = require("../util/logger")(__filename);
 const callerType = "controller";
-const util = require("util");
-const mailer = require("./mailer");
 
 module.exports = {
 
@@ -189,86 +187,6 @@ module.exports = {
          
         })
         .then(() => {
-          if(assigneeId){
-            var userAssignee = models.Person.findByPk(assigneeId,{raw:true}).then((respons)=>{
-              // console.log('updateOrganizationAction-----------------userAssigneeuserAssigneeuserAssignee-',respons);
-              //var to = respons.email;
-              var to = respons.email;
-              var subject = "Valueinfinity - Action Updated.";
-              //var text = "Hi "+respons.firstName+", An existing Action is updated recently that is assigned to you."
-              var content="";
-              description.split('\n').forEach((t)=>{
-                content+=`<tr>
-                <td style="font:16px/30px Arial, Helvetica, sans-serif; color:#333; font-weight:bold;"> <em style="font-style:normal;display:inline-block;"> 
-                  ${t}
-                  </td>
-              </tr>`
-              })
-              
-              
-              var text =`<!doctype html>
-              <html>
-              
-              <head>
-                <meta charset="utf-8">
-                <title>::::</title>
-                <style>
-                  body {
-                    margin: 0;
-                    padding: 0;
-                  }
-                </style>
-              </head>
-              
-              <body>
-                <table border="0" width="600" style="padding:0; margin:20px auto;">
-                  <tr>
-                    <td style="font:17px Arial, Helvetica, sans-serif; color:#333;">Hello ${respons.firstName}, </td>
-                  </tr>
-                  <tr>
-                    <td height="20"></td>
-                  </tr>
-                  <tr>
-                  <td style="font:17px Arial, Helvetica, sans-serif; color:#333;">The following actions has been assigned to you.
-                    The details of the task has been mentioned below.</td>
-                </tr>
-                  <tr>
-                    <td height="20"></td>
-                  </tr>
-                  ${content}
-                  
-                 
-                  <tr>
-                    <td height="20"></td>
-                  </tr>
-                  <tr>
-                    <td style="font:17px Arial, Helvetica, sans-serif; color:#333;">Open Task Link <a
-                        href="http://pie.value-infinity.com/project/" target="_blank"
-                        style="color:#0B6CDA; text-decoration:underline;">http://pie.value-infinity.com/project/</td>
-                  </tr>
-                  <tr>
-                    <td height="20"></td>
-                  </tr>
-                  <tr>
-                    <td style="font:italic 17px Arial, Helvetica, sans-serif; color:#333;">This is an system generated email, please
-                      do not reply to this email</td>
-                  </tr>
-                  <tr>
-                    <td height="20"></td>
-                  </tr>
-                  <tr>
-                    <td style="font:17px Arial, Helvetica, sans-serif; color:#333;">Thanks</td>
-                  </tr>
-                  <tr>
-                    <td style="font:17px Arial, Helvetica, sans-serif; color:#333;">Team Value-Infinity.</td>
-                  </tr>
-                </table>
-              </body>
-              
-              </html>`
-              mailer.sendMail(to,subject,text);
-            })      
-          }
           res.status(201).send({
             success: true,
             message: "Organization Action updated successfully"

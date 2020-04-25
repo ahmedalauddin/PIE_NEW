@@ -597,7 +597,7 @@ class Kpi extends React.Component {
                       <TextField
                         id="level"
                         required
-                        label="Level"
+                        label="Taget Value"
                         onChange={this.handleChange("level")}
                         value={this.state.level}
                         className={classes.textField}
@@ -605,43 +605,7 @@ class Kpi extends React.Component {
                         style={{width:405}}
                       />
                     </Grid>
-                    <Grid item sm={10}>
-                      <InputLabel shrink htmlFor="kpi-type-simple">KPI Type</InputLabel><br/>
-                      <FormControl className={classes.formControl} style={{width:405}}  >
-                        <Select
-                          value={this.state.type}
-                          onChange={this.handleSelectChange}
-                          inputProps={{
-                            name: 'type',
-                            id: 'kpi-type-simple',
-                          }}
-                        >
-                          <MenuItem value="">None</MenuItem>
-                          <MenuItem value="lagging">Lagging</MenuItem>
-                          <MenuItem value="leading">Leading</MenuItem>
-                        </Select>
-                      </FormControl>
-                      <br/><br/><br/>
-                    </Grid>
-                    <Grid item sm={10}>
-                      <Typography component="p">
-                        KPI Tags
-                      </Typography>
-                      <ReactTags
-                        classNames={{
-                          tags: "ReactTags__tags",
-                          tagInput: "ReactTags__tagInput",
-                          tagInputField: "ReactTags__tagInput input.ReactTags__tagInputField:focus",
-                          selected: "ReactTags__selected",
-                          suggestions: "ReactTags__suggestions ul",
-                          activeSuggestion: "ReactTags__suggestions ul li.ReactTags__activeSuggestion"}}
-                        tags={tags}
-                        suggestions={suggestions}
-                        handleDelete={this.handleDelete}
-                        handleAddition={this.handleAddition}
-                        handleDrag={this.handleDrag}
-                        delimiters={delimiters} />
-                    </Grid>
+                    
                     <Grid item sm={10} container direction="row">
                       {this.state.showSaveButton &&
                       <Typography component="p">
