@@ -334,7 +334,6 @@ class ProjectPanelList extends Component {
                           </div>
                         </ExpansionPanelSummary>
                       </ExpansionPanel>
-                      <TableBody>
                         {!this.state.skeletonLoader && projects && projects.length && stableSort(projects, getSorting(order, orderBy))
                           .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                           .map(project => {
@@ -457,7 +456,6 @@ class ProjectPanelList extends Component {
                         {this.state.skeletonLoader &&
                           <Skeleton count={20} />
                         }
-                      </TableBody>
                       <TablePagination
                         rowsPerPageOptions={rowsOptions}
                         component="div"
