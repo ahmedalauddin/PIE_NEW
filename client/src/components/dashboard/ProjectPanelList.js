@@ -366,7 +366,7 @@ class ProjectPanelList extends Component {
                             // console.log('tasksString-',tasksString)
                             return (
                               <ExpansionPanel key={project.id}>
-                                <ExpansionPanelSummary style={{ padding: "3%" }} expandIcon={checkPermision('Dashboard Expand Projects', 'read') ? <ExpandMoreIcon /> : null}>
+                                <ExpansionPanelSummary style={{ paddingLeft: "3%" }} expandIcon={checkPermision('Dashboard Expand Projects', 'read') ? <ExpandMoreIcon /> : null}>
 
 
                                   <div className={classes.columntitle} style={{ width: "25%" }}>
@@ -412,8 +412,8 @@ class ProjectPanelList extends Component {
                                 </ExpansionPanelSummary>
                                 {checkPermision('Dashboard Expand Projects', 'read') &&
                                   <ExpansionPanelDetails className={classes.details} style={{ padding: 0, margin: 0 }}>
-                                    <Grid container spacing={3} style={{ padding: "3%", margin: 0 }}>
-                                      <div style={{ width: "29%" }}>
+                                    <Grid container spacing={3} style={{ paddingLeft: "3%", margin: 0 }}>
+                                      <div style={{ width: "28%" }}>
                                         <Typography className={classes.secondaryHeading} component="p">
                                           <Typography className={classes.heading}>Owner:</Typography>
                                           {ownerarray && ownerarray.map(owner => {
@@ -424,7 +424,7 @@ class ProjectPanelList extends Component {
                                           )}
                                         </Typography>
                                       </div>
-                                      <div style={{ width: "35%" }}>
+                                      <div style={{ width: "34%" }}>
                                         <Typography className={classes.secondaryHeading} component="p">
                                           <Typography className={classes.heading}>Team:</Typography>
                                           {teamarray && teamarray.map(team => {
