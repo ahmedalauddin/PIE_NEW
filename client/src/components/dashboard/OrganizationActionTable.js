@@ -47,10 +47,10 @@ import DatePicker from "react-datepicker";
 import "../../stylesheets/react-datepicker.css";
  
 const rows = [
-  { id: "assignedto", numeric: false, disablePadding: false, label: "Members",align:"left",width:200 },
-  { id: "description", numeric: false, disablePadding: false, label: "Focus Area",align:"left",width:400 },
-  { id: "dateadded", numeric: false, disablePadding: false, label: "Date Added", align:"left",width:150},
-   { id: "actions", numeric: false, disablePadding: false, label: "Actions" ,align:"left",width:200}
+  { id: "assignedto", numeric: false, disablePadding: false, label: "Members",align:"left",width:"20%" },
+  { id: "description", numeric: false, disablePadding: false, label: "Focus Area",align:"left",width:"40%" },
+  { id: "dateadded", numeric: false, disablePadding: false, label: "Date Added", align:"left",width:"20%"},
+   { id: "actions", numeric: false, disablePadding: false, label: "Actions" ,align:"left",width:"20%"}
 ];
 
 const statuses = [
@@ -401,7 +401,7 @@ class OrganizationActionTable extends React.Component {
                         justify="space-between"
                         alignItems="center"
                       >
-                      <Grid xs={3} md={3} container direction="row" alignItems="center" justify="flex-start">
+                      <Grid xs={6} md={6} container direction="row" alignItems="center" justify="flex-start">
                       {checkPermision('Regrouping','write') &&
                           <>
                           <Select
@@ -472,9 +472,6 @@ class OrganizationActionTable extends React.Component {
         <Card className={classes.card}>
           <CardContent className="list-project-panellist">
 
-
-            <div className="padding25px">
-
               <div className={classes.tableWrapper}>
                 <Table className={classes.table} aria-labelledby="tableTitle">
                   <EnhancedTableHead
@@ -500,12 +497,12 @@ class OrganizationActionTable extends React.Component {
                             className="testingclass"
                           >
 
-                            <TableCell style={{width:200}}  align="left"  className={classes.noTextDecoration} >
+                            <TableCell style={{width:"20%"}}  align="left"  className={classes.noTextDecoration} >
                               <Typography className={classes.heading}>{OrganizationAction.person && OrganizationAction.person.fullName}</Typography>
                             </TableCell>
 
-                            <TableCell style={{width:400}} align="left" className={classes.noTextDecoration}>
-                              <Typography style={{width:380}} className={classes.heading}>
+                            <TableCell style={{width:"40%"}} align="left" className={classes.noTextDecoration}>
+                              <Typography style={{width:"90%"}} className={classes.heading}>
                                 {OrganizationAction.description 
                                     && OrganizationAction.description.split("\n").map((i,key) => {
                                       return <p className="inlineBlock" key={key}>{i.trim()}</p>
@@ -514,12 +511,12 @@ class OrganizationActionTable extends React.Component {
                             </TableCell>
 
 
-                            <TableCell  style={{width:150}} align="left" className={classes.noTextDecoration}>
+                            <TableCell  style={{width:"20%"}} align="left" className={classes.noTextDecoration}>
                               <Typography className={classes.heading}>{OrganizationAction.dateAdded}</Typography>
                             </TableCell>
 
 
-                            <TableCell  style={{width:200}} align="left" component="th" scope="row" padding="none">
+                            <TableCell  style={{width:"20%"}} align="left" component="th" scope="row" padding="none">
                             {checkPermision('Regrouping','delete') &&<>{
                                 this.state.delLoader != 0 && this.state.delLoader == OrganizationAction.id ?
                                   <CircularProgress />
@@ -570,7 +567,6 @@ class OrganizationActionTable extends React.Component {
               />
 
          
-            </div>
           </CardContent></Card></Grid>
     )
   }

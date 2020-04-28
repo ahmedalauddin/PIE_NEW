@@ -37,6 +37,18 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import Snackbar from "@material-ui/core/Snackbar";
 import DeleteProjectDialog from '../dialogs/DeleteProjectDialog';
 
+
+const divStyle = {
+  background: '#fff',
+  display: 'flex',
+  margin: '0px 0px 15px 0px',
+  alignItems: 'center',
+  flexGrow: '0',
+  maxWidth: '100%',
+  flexBasis: '83%',
+  justifyContent: 'center',
+};
+
 class ProjectPanelList extends Component {
   constructor(props) {
     super(props);
@@ -280,202 +292,198 @@ class ProjectPanelList extends Component {
     return (
       <React.Fragment>
         <DeleteProjectDialog open={this.state.openDialog} deleteId={this.state.deleteId} closeFunction={this.handelCloseDialog} delFunction={this.deactivateProject} heading="Are you sure you want to delete this Project?" />
-        <div className={classes.paddingbottom20+' '+classes.root}>
-        <div className="list-cls">
-        <Grid container justify="center">
-            <Grid spacing={12} container lg={10} alignItems="center" justify="center">
-              <Grid item xs={12} md={10}>
-                <Card className={classes.card}>
-                  <CardContent className="list-project-panellist">
+            <div style={divStyle}> 
+              <Grid item>
+                  <Card className={classes.card}>
+                    <CardContent className="list-project-panellist">
 
-       
-          <ExpansionPanel expanded={false}>
-            <ExpansionPanelSummary>
-              
-              <div className={classes.columntitle}>
-                <Typography className={classes.heading} style={{width:300}}>
-                  Project title
+
+                      <ExpansionPanel expanded={false}>
+                        <ExpansionPanelSummary>
+
+                          <div className={classes.columntitle} style={{ width: "25%" }}>
+                            <Typography className={classes.heading} >
+                              Project title
                 </Typography>
-              </div>
-              {this.renderClientColumnHeading()}
-              <div className={classes.columnstatus} >
-                <Typography className={classes.secondaryHeading} style={{width:200}}>
-                  Status
+                          </div>
+                          {this.renderClientColumnHeading()}
+                          <div className={classes.columnstatus} style={{ width: "22%" }}>
+                            <Typography className={classes.secondaryHeading} >
+                              Status
                 </Typography>
-              </div>
-              <div className={classes.columntarget}>
-                <Typography className={classes.secondaryHeading} style={{width:200}}>
-                  Targeted KPI
+                          </div>
+                          <div className={classes.columntarget} style={{ width: "22%" }}>
+                            <Typography className={classes.secondaryHeading} >
+                              Targeted KPI
                 </Typography>
-              </div>
-              <div className={classes.columnstartdate}>
-                <Typography className={classes.secondaryHeading} style={{width:100}}>
-                  Start date
+                          </div>
+                          <div className={classes.columnstartdate} style={{ width: "11%" }}>
+                            <Typography className={classes.secondaryHeading} >
+                              Start date
                 </Typography>
-              </div>
-              <div className={classes.columnenddate}>
-                <Typography className={classes.secondaryHeading} style={{width:100}}>
-                  End date
+                          </div>
+                          <div className={classes.columnenddate} style={{ width: "11%" }}>
+                            <Typography className={classes.secondaryHeading} >
+                              End date
                 </Typography>
-              </div>
-              <div className={classes.columnactions}>
-                <Typography className={classes.secondaryHeading} style={{width:100}}>
-                  Actions
+                          </div>
+                          <div className={classes.columnactions} style={{ width: "8%" }}>
+                            <Typography className={classes.secondaryHeading} >
+                              Actions
                 </Typography>
-              </div>
-            </ExpansionPanelSummary>
-          </ExpansionPanel>
-          <TableBody>
-         {!this.state.skeletonLoader && projects && projects.length && stableSort(projects, getSorting(order, orderBy))
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map(project => {
-                    const tasksString = project.tasks
-                    let tasksArray = []
-                    if(tasksString && tasksString.length > 0){
-                      if( tasksString[0] !== null){
-                        tasksArray = tasksString[0].split(",")
-                      }
-                    }
+                          </div>
+                        </ExpansionPanelSummary>
+                      </ExpansionPanel>
+                      <TableBody>
+                        {!this.state.skeletonLoader && projects && projects.length && stableSort(projects, getSorting(order, orderBy))
+                          .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                          .map(project => {
+                            const tasksString = project.tasks
+                            let tasksArray = []
+                            if (tasksString && tasksString.length > 0) {
+                              if (tasksString[0] !== null) {
+                                tasksArray = tasksString[0].split(",")
+                              }
+                            }
 
 
-                    const teamsString = project.team
-                    let teamarray = []
-                    if(teamsString && teamsString.length > 0){
-                      if( teamsString !== null){
-                        teamarray = teamsString.split(",")
-                      }
-                    }
+                            const teamsString = project.team
+                            let teamarray = []
+                            if (teamsString && teamsString.length > 0) {
+                              if (teamsString !== null) {
+                                teamarray = teamsString.split(",")
+                              }
+                            }
 
 
-                    const ownersString = project.owners
-                    let ownerarray = []
-                    if(ownersString && ownersString.length > 0){
-                      if( ownersString !== null){
-                        ownerarray = ownersString.split(",")
-                      }
-                    }
-                    // console.log('array-',tasksArray);
-                    // console.log('tasksString-',tasksString)
-            return (
-              <ExpansionPanel key={project.id}>
-                <ExpansionPanelSummary style={{padding:8}} expandIcon={ checkPermision ('Dashboard Expand Projects','read') ? <ExpandMoreIcon />: null}>
-                  
-                       
-                  <div className={classes.columntitle}>
-                    <Typography className={classes.heading} style={{width:300}}>
-                      {project.projectTitle}
-                    </Typography>
-                  </div>
-                  {this.renderClientColumn(project.organization)}
-                  <div className={classes.columnstatus}>
-                    <Typography className={classes.secondaryHeading} style={{width:200}}>
-                      {project.status}
-                    </Typography>
-                  </div>
-                  <div className={classes.columntarget}>
-                    <Typography className={classes.secondaryHeading}  style={{width:200}}>
-                      {project.mainKpi}
-                    </Typography>
-                  </div>
-                  <div className={classes.columnstartdate}>
-                    <Typography className={classes.secondaryHeading}  style={{width:100}}>
-                      {formatDate(project.startAt)}
-                    </Typography>
-                  </div>
-                  <div className={classes.columnenddate}>
-                    <Typography className={classes.secondaryHeading} style={{width:100}}>
-                      {formatDate(project.endAt)}
-                    </Typography>
-                  </div>
+                            const ownersString = project.owners
+                            let ownerarray = []
+                            if (ownersString && ownersString.length > 0) {
+                              if (ownersString !== null) {
+                                ownerarray = ownersString.split(",")
+                              }
+                            }
+                            // console.log('array-',tasksArray);
+                            // console.log('tasksString-',tasksString)
+                            return (
+                              <ExpansionPanel key={project.id}>
+                                <ExpansionPanelSummary style={{ padding: "3%" }} expandIcon={checkPermision('Dashboard Expand Projects', 'read') ? <ExpandMoreIcon /> : null}>
 
-                  <div className={classes.columnactions} >
-                    {checkPermision ('Projects','read') &&
-                    <IconButton onClick={() => {this.setEditRedirect(project.id);}}>
-                      <EditIcon color="primary" />
-                    </IconButton>
-                    }
-                    {isAdministrator() &&
-                    <IconButton onClick={() => { this.openDialog(project.id);  }} >
-                        <DeleteIcon color="primary" />
-                      </IconButton>
-                  }
-                  </div>
 
-                </ExpansionPanelSummary>
-                { checkPermision ('Dashboard Expand Projects','read') &&
-                <ExpansionPanelDetails className={classes.details} style={{padding:0,margin:0}}>
-                  <Grid container spacing={3} style={{padding:8,margin:0}}>
-                    <div style={{width:300}}>
-                      <Typography className={classes.secondaryHeading} component="p">
-                      <Typography className={classes.heading}>Owner:</Typography>
-                       {ownerarray && ownerarray.map(owner => {
-                         return(
-                          <p className="inlineBlock" style={{padding:0,margin:0}}>{owner}</p>
-                        )   
+                                  <div className={classes.columntitle} style={{ width: "25%" }}>
+                                    <Typography className={classes.heading} >
+                                      {project.projectTitle}
+                                    </Typography>
+                                  </div>
+                                  {this.renderClientColumn(project.organization)}
+                                  <div className={classes.columnstatus} style={{ width: "22%" }}>
+                                    <Typography className={classes.secondaryHeading} >
+                                      {project.status}
+                                    </Typography>
+                                  </div>
+                                  <div className={classes.columntarget} style={{ width: "22%" }}>
+                                    <Typography className={classes.secondaryHeading} >
+                                      {project.mainKpi}
+                                    </Typography>
+                                  </div>
+                                  <div className={classes.columnstartdate} style={{ width: "11%" }}>
+                                    <Typography className={classes.secondaryHeading} >
+                                      {formatDate(project.startAt)}
+                                    </Typography>
+                                  </div>
+                                  <div className={classes.columnenddate} style={{ width: "11%"  }}>
+                                    <Typography className={classes.secondaryHeading} >
+                                      {formatDate(project.endAt)}
+                                    </Typography>
+                                  </div>
+
+                                  <div className={classes.columnactions} style={{ width: "8%"  }}>
+                                    {checkPermision('Projects', 'read') &&
+                                      <IconButton onClick={() => { this.setEditRedirect(project.id); }}>
+                                        <EditIcon color="primary" />
+                                      </IconButton>
+                                    }
+                                    {isAdministrator() &&
+                                      <IconButton onClick={() => { this.openDialog(project.id); }} >
+                                        <DeleteIcon color="primary" />
+                                      </IconButton>
+                                    }
+                                  </div>
+
+                                </ExpansionPanelSummary>
+                                {checkPermision('Dashboard Expand Projects', 'read') &&
+                                  <ExpansionPanelDetails className={classes.details} style={{ padding: 0, margin: 0 }}>
+                                    <Grid container spacing={3} style={{ padding: "3%", margin: 0 }}>
+                                      <div style={{ width: "29%" }}>
+                                        <Typography className={classes.secondaryHeading} component="p">
+                                          <Typography className={classes.heading}>Owner:</Typography>
+                                          {ownerarray && ownerarray.map(owner => {
+                                            return (
+                                              <p className="inlineBlock" style={{ padding: 0, margin: 0 }}>{owner}</p>
+                                            )
+                                          }
+                                          )}
+                                        </Typography>
+                                      </div>
+                                      <div style={{ width: "35%" }}>
+                                        <Typography className={classes.secondaryHeading} component="p">
+                                          <Typography className={classes.heading}>Team:</Typography>
+                                          {teamarray && teamarray.map(team => {
+                                            return (
+                                              <p className="inlineBlock" style={{ padding: 0, margin: 0 }}>{team}</p>
+                                            )
+                                          }
+                                          )}
+                                        </Typography>
+                                      </div>
+                                      <div style={{ width: "30%" }}>
+                                        <Typography className={classes.secondaryHeading} component="p">
+                                          <Typography className={classes.heading}>Tasks:</Typography>
+                                          {
+                                            tasksArray && tasksArray.map(task => {
+                                              return (
+                                                <p className="inlineBlock" style={{ padding: 0, margin: 0 }}>{task}</p>
+                                              )
+                                            })
+                                          }
+                                        </Typography>
+                                      </div>
+                                    </Grid>
+                                  </ExpansionPanelDetails>
+                                }
+                              </ExpansionPanel>
+                            );
+                          })}
+                        {this.state.skeletonLoader &&
+                          <Skeleton count={20} />
                         }
-                        )}
-                      </Typography>
-                    </div>
-                    <div style={{width:200}}>
-                      <Typography className={classes.secondaryHeading} component="p">
-                      <Typography className={classes.heading}>Team:</Typography>
-                        {teamarray && teamarray.map(team => {
-                         return(
-                          <p className="inlineBlock" style={{padding:0,margin:0}}>{team}</p>
-                        )   
-                        }
-                        )}
-                      </Typography>
-                    </div>
-                    <div style={{width:300}}>
-                      <Typography className={classes.secondaryHeading} component="p">
-                      <Typography className={classes.heading}>Tasks:</Typography>
-                        {
-                          tasksArray && tasksArray.map(task => {
-                            return(
-                              <p className="inlineBlock" style={{padding:0,margin:0}}>{task}</p>
-                            )
-                          })
-                        }
-                      </Typography>
-                    </div>
-                  </Grid>
-                </ExpansionPanelDetails>
-                  }
-              </ExpansionPanel>
-            );
-          })}
-          {this.state.skeletonLoader &&
-            <Skeleton count={20}/> 
-          }
-          </TableBody>
-          <TablePagination
-            rowsPerPageOptions={rowsOptions}
-            component="div"
-            count={projects.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            backIconButtonProps={{
-              "aria-label": "Previous Page"
-            }}
-            nextIconButtonProps={{
-              "aria-label": "Next Page"
-            }}
-            onChangePage={this.handleChangePage}
-            onChangeRowsPerPage={this.handleChangeRowsPerPage}
-          />
-          
-          {checkPermision ('Projects','read') &&
-            <Fab component={Link} color="primary" aria-label="Add" to={`/project`} className={classes.fab}>
-              <AddIcon />
-            </Fab>
-          }
+                      </TableBody>
+                      <TablePagination
+                        rowsPerPageOptions={rowsOptions}
+                        component="div"
+                        count={projects.length}
+                        rowsPerPage={rowsPerPage}
+                        page={page}
+                        backIconButtonProps={{
+                          "aria-label": "Previous Page"
+                        }}
+                        nextIconButtonProps={{
+                          "aria-label": "Next Page"
+                        }}
+                        onChangePage={this.handleChangePage}
+                        onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                      />
 
-          </CardContent>
-                </Card>
+                      {checkPermision('Projects', 'read') &&
+                        <Fab component={Link} color="primary" aria-label="Add" to={`/project`} className={classes.fab}>
+                          <AddIcon />
+                        </Fab>
+                      }
+
+                    </CardContent>
+                  </Card>
               </Grid>
-            </Grid>
-          </Grid>
+                </div>
           <Snackbar
               open={this.state.openSnackbar}
               onClose={this.handleClose}
@@ -485,8 +493,7 @@ class ProjectPanelList extends Component {
               }}
               message={<span id="message-id">{this.state.message}</span>}
             />
-        </div>
-        </div>
+       
       </React.Fragment>
     );
   }

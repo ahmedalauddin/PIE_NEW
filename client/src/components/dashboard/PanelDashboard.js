@@ -93,7 +93,7 @@ class PanelDashboard extends Component {
             <Grid item xs={12} md={10} className="dashboard-filter-menu">
               <DashboardFilter allClients={false}/>
             </Grid>
-            <Grid item xs={12} md={10} className="panel-dashboard-list">
+            <Grid item xs={12} md={10} className="dashboard-filter-menu">
               <ProjectPanelList allClients={false} />
             </Grid>
           
