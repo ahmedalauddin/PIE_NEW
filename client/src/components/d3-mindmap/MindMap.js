@@ -20,7 +20,7 @@ import { red, grey } from "@material-ui/core/colors";
 import "./tree-styles.scss";
 import Grid from "@material-ui/core/Grid";
 import Paper from '@material-ui/core/Paper';
-import { getOrgId, getOrgName, checkPermision } from "../../redux";
+import { getOrgId, getOrgName, checkPermision, getMindmap, getMindmapNode } from "../../redux";
 import Snackbar from "@material-ui/core/Snackbar";
 import TreeMindMap from "./TreeMindMap";
 import NodeDetail from "./NodeDetail";
@@ -181,13 +181,15 @@ class MindMap extends React.Component {
     this.state = {
       orgName: getOrgName(),
       orgId: getOrgId(),
-      mindmapId: this.props.location.state ? this.props.location.state.mindmapId : '', 
       selectedNodeId: "",
       selectedNodeText: "",
       openSnackbar: false,
       message: "",
       tabValue: 0,
-      selectedNodesCount: 0
+      selectedNodesCount: 0,
+      map:null,
+      showTree:false,
+      nodeMetaData:{}
     };
   };
 
@@ -215,6 +217,87 @@ class MindMap extends React.Component {
         message: message
       });
     }
+    const mindmapId =  this.props.location.state ? this.props.location.state.mindmapId : ''; 
+
+    if(mindmapId){
+      fetch(`/api/mindmaps/${mindmapId}`)
+      .then(response => {
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.indexOf("application/json") !== -1) {
+            response.json().then(map => {
+            if (map) {
+              let nodeMetaData={};
+              if(map.mapData && map.mapData.nodeMetaData){
+                nodeMetaData=map.mapData.nodeMetaData;
+              }
+              this.setState({map,showTree:true,mindmapId,nodeMetaData});
+              setTimeout(()=>{
+                const selectedNodeId=getMindmapNode().id;
+                if(selectedNodeId){
+                  this.setState({
+                    selectedNodeId
+                  });
+                }
+              },200)
+            } else {
+              this.setState({showTree:true,mindmapId})
+            }
+          });
+        } else{
+          this.setState({showTree:true})
+        }
+      }).catch(()=>this.setState({showTree:true}));
+    }else{
+      this.setState({showTree:true});
+    }
+
+  }
+
+  saveMindmap = (mapName,mapDescription,isNewMap) => {
+    //this.saveNoteToJson();
+
+    const { mindmapId,nodeMetaData } = this.state;
+    const mapData = getMindmap();
+    mapData.nodeMetaData=nodeMetaData;
+    let postData = {
+      orgId: this.state.orgId,
+      mapData,
+      mapName: mapName,
+      mapDescription: mapDescription
+    };
+
+    // Method -- POST (create) or PUT (update) depending if we're working on a new mindmap.
+    let method = (!isNewMap) ? "PUT" : "POST";
+    let url = (!isNewMap) ? "/api/mindmaps/" + mindmapId : "/api/mindmaps";
+
+    setTimeout(() => {
+      fetch(url, {
+        method: method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(postData)
+      })
+        .then(response => response.json())
+        .then(response => {
+          //console.log('response is: ' + response);
+          if (isNewMap) {
+            this.setState({
+              openSnackbar: true,         // Success - open the snackbar
+              message: "Mind map saved.",
+              isNewMap: false,
+              mindmapId: response.id
+            });
+          } else {
+            this.setState({
+              openSnackbar: true,         // Success - open the snackbar
+              message: "Mind map saved.",
+              isNewMap: false
+            });
+          }
+        })
+        .catch(err => {
+          this.setState({ message: "Error occurred." });
+        });
+    }, 2000);
   }
 
   showMessages = (message) => {
@@ -242,12 +325,8 @@ class MindMap extends React.Component {
 
   render() {
     const { classes } = this.props;
-    // let mindmapId = this.props.match.params.id;
-    let mindmapId =  this.props.location.state ? this.props.location.state.mindmapId : ''; 
-    // We'll use "/mindmaplist" for the current path.
-    // const currentPath = this.props.location.pathname;
-    console.log("MindMap, selected node: " + this.state.selectedNodeId);
-
+    const { map,mindmapId,showTree,nodeMetaData,selectedNodeId } = this.state;
+    
     return (
       <React.Fragment>
         <CssBaseline />
@@ -255,7 +334,12 @@ class MindMap extends React.Component {
         <div className={classes.root}>
           <Grid container className={classes.root} spacing={24}>
             <Grid item xs={false} sm={9} md={9} >
-              <TreeMindMap mindmapId={mindmapId} updateSelectedNodesCount={this.updateSelectedNodesCount} callback={this.sendSelectedNode.bind(this)} />
+              {showTree && 
+                <TreeMindMap map={map} 
+                              saveMindmap={this.saveMindmap}
+                              mindmapId={mindmapId} 
+                              updateSelectedNodesCount={this.updateSelectedNodesCount} 
+                              callback={this.sendSelectedNode.bind(this)} />}
             </Grid>
             <Grid item xs={false} sm={3} md={3} >
               <div className={classes.root}>
@@ -267,7 +351,7 @@ class MindMap extends React.Component {
                 </AppBar>
                 {this.state.tabValue === 0 && (
                   <TabContainer>
-                    <NodeDetail nodeId={this.state.selectedNodeId} mindmapId={mindmapId} messages={this.showMessages} selectedNodesCount={this.state.selectedNodesCount}/>
+                    {selectedNodeId && <NodeDetail onChange={(data)=>this.setState({nodeMetaData:data})} nodeMetaData={nodeMetaData} nodeId={selectedNodeId} mindmapId={mindmapId} messages={this.showMessages} selectedNodesCount={this.state.selectedNodesCount}/>}
                   </TabContainer>)}
                 {this.state.tabValue === 1 && (
                   <TabContainer>

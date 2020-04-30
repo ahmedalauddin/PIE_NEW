@@ -19,9 +19,9 @@ function d3Tree(treeData, direction, height, width) {
   let adjustedHeight = height;
   let adjustedWidth = (width - 400)/2;
 
-  console.log("d3tree, direction = " + direction);
-  console.log("d3tree, tree height = " + height + ", tree width = " + width);
-  console.log("d3tree, adjusted height = " + adjustedHeight + ", adjusted width = " + adjustedWidth);
+  // console.log("d3tree, direction = " + direction);
+  // console.log("d3tree, tree height = " + height + ", tree width = " + width);
+  // console.log("d3tree, adjusted height = " + adjustedHeight + ", adjusted width = " + adjustedWidth);
   if (direction === "left") {
     SWITCH_CONST = -1;
   }

@@ -56,7 +56,7 @@ class TreeMindMap extends React.Component {
     this.deselectNode = this.deselectNode.bind(this);
     this.updateNodeValue = this.updateNodeValue.bind(this);
     this.setButtonStates = this.setButtonStates.bind(this);
-    this.saveMindmap = this.saveMindmap.bind(this);
+    
     this.saveNoteToJson = this.saveNoteToJson.bind(this);
     this.findSelectedNodeId = this.findSelectedNodeId.bind(this);
     this.findSelectedNodeName = this.findSelectedNodeName.bind(this);
@@ -136,22 +136,22 @@ class TreeMindMap extends React.Component {
     let svg = d3.select("svg");
     let json = getMindmap();
 
-    console.log("called saveNoteToJson");
+    //console.log("called saveNoteToJson");
     let nodes = svg.selectAll("#nodes").selectAll("g").selectAll("foreignObject.note");
     nodes.each((d, i) => {
-      console.log("d note " + d.note + ", id " + d.id);
+      //console.log("d note " + d.note + ", id " + d.id);
       let jsonNode = getNodeById(d.id, json);
       if (this.textContent) {
         // note text has been updated
-        console.log("jsonNode note updated: " + this.textContent);
+        //console.log("jsonNode note updated: " + this.textContent);
         // TODO: may have to ctach this and update here.
       }
-      console.log("jsonNode note: " + jsonNode.note + ", id: " + jsonNode.id);
+      //console.log("jsonNode note: " + jsonNode.note + ", id: " + jsonNode.id);
 
     });
     // TODO: check to see if note updates JSON.
 
-    console.log("saveNoteToJson complete.");
+    //console.log("saveNoteToJson complete.");
   };
 
   // Open post-it note for selected ID
@@ -251,7 +251,7 @@ class TreeMindMap extends React.Component {
 
   setMindmapJson = (json) => {
     if (Array.isArray(json)) {
-      console.log("setMindmapJson, error: JSON is an array");
+      //console.log("setMindmapJson, error: JSON is an array");
     }
     store.dispatch(setMindmap(JSON.stringify(json)));
   };
@@ -383,8 +383,7 @@ class TreeMindMap extends React.Component {
 
   logNode = message => {
     let svg = d3.select("svg");
-    console.log(message, ": node ID = " + this.findSelectedNodeId(svg) +
-      ", name = " + this.findSelectedNodeName());
+    ////console.log(message, ": node ID = " + this.findSelectedNodeId(svg) + ", name = " + this.findSelectedNodeName());
   };
 
   getSelectedNode = (nodes, i) => {
@@ -406,7 +405,7 @@ class TreeMindMap extends React.Component {
       currentlySelectedNode.size() > 0 &&
       currentlySelectedNode.attr("name") === clickedNodeId
     ) {
-      console.log("going into edit mode!");
+      //console.log("going into edit mode!");
       d3.select(clickedNode)
         .call(this.selectNode);
       d3.select(clickedNode)
@@ -536,7 +535,7 @@ class TreeMindMap extends React.Component {
       );
       parent.children.length === 0 && delete parent.children;
     }
-    console.log("JSON for jsonData now is:" + JSON.stringify(jsonData));
+    //console.log("JSON for jsonData now is:" + JSON.stringify(jsonData));
     let deletedNode = {
       id: selectedNode.attr("id"),
       name: selectedNode.attr("name"),
@@ -584,9 +583,9 @@ class TreeMindMap extends React.Component {
    * @returns {*}
    */
   chart = () => {
-    console.log("Org = " + getOrgName());
+    //console.log("Org = " + getOrgName());
     if (!(getOrgId() > 0 )) {
-      console.log("Need to redirect to login");
+      //console.log("Need to redirect to login");
       this.setState({
         hasError: true
       });
@@ -626,21 +625,21 @@ class TreeMindMap extends React.Component {
       // 4. Register other event handlers
       d3.select("body").on("keydown", function (e) {
         // eslint-disable-next-line no-console
-        console.log(`keydown: ${d3.event.keyCode}`);
+        //console.log(`keydown: ${d3.event.keyCode}`);
         // Check to see if a node is being edited
         let nodeIsBeingEdited = gNode.select("g.node-editing").size();
 
         if (d3.event.keyCode === 9) {
-          console.log("tab - append child to selected node");
+          //console.log("tab - append child to selected node");
           // appendChildToSelectedNode(svg);
         } else if (d3.event.keyCode === 13 && !nodeIsBeingEdited) {
-          console.log("enter - add sibling to selected node");
+          //console.log("enter - add sibling to selected node");
           // addSiblingToSelectedNode(svg);
         } else if (d3.event.keyCode === 8 && !nodeIsBeingEdited) {
-          console.log("delete - remove selected node");
+          //console.log("delete - remove selected node");
           // removeSelectedNode(svg);
         } else if (d3.event.keyCode === 27) {
-          console.log("esc - deselect node");
+          //console.log("esc - deselect node");
           // handleKeypressEsc(svg);
         }
       });
@@ -656,7 +655,7 @@ class TreeMindMap extends React.Component {
       .select("foreignObject")
       .select("p")
       .style("background-color", "#ddd");
-    console.log(`${node.attr("name")} is being edited`);
+    //console.log(`${node.attr("name")} is being edited`);
   };
 
   selectNode = node => {
@@ -734,7 +733,7 @@ class TreeMindMap extends React.Component {
   deselectNode = (d, i, nodes) => {
     this.logNode("deselectNode");
     let idOfSelectedNode = d3.select(nodes[i]).attr("id");
-    console.log("Selected node id = " +  idOfSelectedNode + ", name = " +  d3.select(nodes[i]).attr("name"));
+    //console.log("Selected node id = " +  idOfSelectedNode + ", name = " +  d3.select(nodes[i]).attr("name"));
 
     let newTextValue = d3
       .select(nodes[i])
@@ -767,12 +766,12 @@ class TreeMindMap extends React.Component {
       let node = findNode(idOfSelectedNode, json);
       node.name = newValue;
     } catch (error) {
-      console.log(error);
+      //console.log(error);
     }
   };
 
   handleClickOnCanvas = (d, i, nodes) => {
-    console.log("handleClickOnCanvas, nodes: " + nodes[i]);
+    //console.log("handleClickOnCanvas, nodes: " + nodes[i]);
     d3.select(nodes[i])
       .selectAll("g.node")
       .filter(".node-selected")
@@ -957,7 +956,7 @@ class TreeMindMap extends React.Component {
     nodeUpdate.transition()
       .duration(duration)
       .attr("transform", function(d) {
-        console.log("nodeUpdate, debug: id = " + d.id + ", x pos = " + d.y + ", y pos = " + d.x);
+        //console.log("nodeUpdate, debug: id = " + d.id + ", x pos = " + d.y + ", y pos = " + d.x);
         return "translate(" + d.y + "," + d.x + ")";
       })
       .attr("fill-opacity", 1)
@@ -969,7 +968,7 @@ class TreeMindMap extends React.Component {
     let nodeExit = node.exit().transition()
       .duration(duration)
       .attr("transform", function(d) {
-        console.log("nodeExit, debug: id = " + d.id + ", y = " + d.y + ", x = " + d.x);
+        //console.log("nodeExit, debug: id = " + d.id + ", y = " + d.y + ", x = " + d.x);
         return "translate(" + d.y + "," + d.x + ")";
       })
       .remove();
@@ -1059,96 +1058,28 @@ class TreeMindMap extends React.Component {
   /**
    * Save Mind map JSON to the database.
    */
-  saveMindmap = () => {
-    this.saveNoteToJson();
-
-    let mindmapId = null;
-    if (this.state.mindmapId !== undefined) {
-      mindmapId = this.state.mindmapId;
-    }
-
-    console.log("JSON:" + JSON.stringify(getMindmap()));
-    let postData = {
-      orgId: this.state.orgId,
-      mapData: getMindmap(),
-      mapName: this.state.mapName,
-      mapDescription: this.state.mapDescription
-    };
-
-    // Method -- POST (create) or PUT (update) depending if we're working on a new mindmap.
-    let method = (!this.state.isNewMap) ? "PUT" : "POST";
-    let url = (!this.state.isNewMap) ? "/api/mindmaps/" + mindmapId : "/api/mindmaps";
-
-    setTimeout(() => {
-      fetch(url, {
-        method: method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(postData)
-      })
-        .then(response => response.json())
-        .then(response => {
-          console.log('response is: ' + response);
-          if (this.state.isNewMap) {
-            this.setState({
-              openSnackbar: true,         // Success - open the snackbar
-              message: "Mind map saved.",
-              isNewMap: false,
-              mindmapId: response.id
-            });
-          } else {
-            this.setState({
-              openSnackbar: true,         // Success - open the snackbar
-              message: "Mind map saved.",
-              isNewMap: false
-            });
-          }
-        })
-        .catch(err => {
-          this.setState({ message: "Error occurred." });
-        });
-    }, 2000);
-  };
+  
   //</editor-fold>
 
   componentDidCatch(error, info) {
-    console.log("error: " + error + ", info: " + info);
+    //console.log("error: " + error + ", info: " + info);
     this.setState({hasError: true});
     return <Redirect to="/Login" />;
   };
 
   componentDidMount() {
-    const mindmapId = this.props.mindmapId;
+    const { map } = this.props;
 
-    // Try to fetch data.
-    if (mindmapId > 0) {
-      fetch(`/api/mindmaps/${mindmapId}`)
-        .then(response => {
-          const contentType = response.headers.get("content-type");
-          if (contentType && contentType.indexOf("application/json") !== -1) {
-            return response.json().then(map => {
-              // process your JSON data further
-              if (map) {
-                this.setState({
-                  mapName: map.mapName,
-                  mapDescription: map.mapDescription
-                });
-                // Call Redux here.
-                this.setMindmapJson(map.mapData);
-              } else {
-                this.newMap();
-              }
-            });
-          } else {
-            this.newMap();
-          }
-        })
-        .then(() => {
-          this.chart();
+    if (map) {
+        this.setState({
+          mapName: map.mapName,
+          mapDescription: map.mapDescription
         });
+        this.setMindmapJson(map.mapData);
     } else {
       this.newMap();
-      this.chart();
     }
+    this.chart();
   }
 
   //<editor-fold desc="// Functions for the snackbar">
@@ -1288,7 +1219,7 @@ class TreeMindMap extends React.Component {
              <Button
               variant="contained"
               color="secondary"
-              onClick={this.saveMindmap}
+              onClick={()=>this.props.saveMindmap(this.state.mapName,this.state.mapDescription,this.state.isNewMap)}
               className={classes.outlinedButton}
             >
               Save Mind Map

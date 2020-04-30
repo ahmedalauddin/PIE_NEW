@@ -291,31 +291,62 @@ function getAppbarValue(menuType, currentPath)  {
       value = 9;
     }
   } else if (menuType === "standard") {
-    let counter=0;
-    if (checkPermision('Dashboard','read') && (!currentPath ||  currentPath === "/paneldashboard")) {
-      value = counter++;
+    let menus=[];
+    
+    if (checkPermision('Dashboard','read') ) {
+      menus.push('Dashboard')
     }
-    if (checkPermision('Mind Map','read') && currentPath === "/mindmaplist") {
-      value = counter++;
+    if (checkPermision('Mind Map','read') ) {
+      menus.push('Mind Map')
     }
 
-    if (checkPermision('Regrouping','read') && (currentPath === "/organizationactions" || (currentPath !==  undefined && currentPath.includes("/OrganizationAction")))) {
-      value = counter++;
+    if (checkPermision('Regrouping','read') ) {
+      menus.push('Regrouping')
     }
-    if (checkPermision('Search','read') && currentPath === "/search") {
-      value = counter++;
+    if (checkPermision('Search','read') ) {
+      menus.push('Search')
     }
-    if (checkPermision('Analytics','read') && currentPath === "/analytics") {
-      value = counter++;
+    if (checkPermision('Analytics','read') ) {
+      menus.push('Analytics')
     }
-    if (checkPermision('Organization','read') && (currentPath === "/clientorg"  || currentPath === "/person" || currentPath === "/department")) {
-      value = counter++;
+    if (checkPermision('Organization','read') ) {
+      menus.push('Organization')
     }
     if (currentPath === "/logout") {
-      value = counter++;
+      menus.push('logout')
     }
-    if (checkPermision('About','read') && currentPath === "/about") {
-      value = counter++;
+    if (checkPermision('About','read') ) {
+      menus.push('About')
+    }
+
+    if (!currentPath ||  currentPath === "/paneldashboard") {
+      value = menus.indexOf('Dashboard');
+    }
+    if ( currentPath === "/mindmaplist") {
+      value = menus.indexOf('Mind Map');
+    }
+
+    if (currentPath === "/organizationactions" || (currentPath !==  undefined && currentPath.includes("/OrganizationAction"))) {
+      value = menus.indexOf('Regrouping');
+    }
+    if (currentPath === "/search") {
+      value = menus.indexOf('Search');
+    }
+    if ( currentPath === "/analytics") {
+      value = menus.indexOf('Analytics');
+    }
+    if (currentPath === "/clientorg"  || currentPath === "/person" || currentPath === "/department") {
+      value = menus.indexOf('Organization');
+    }
+    if (currentPath === "/logout") {
+      value = menus.indexOf('logout');
+    }
+    if (currentPath === "/about") {
+      value = menus.indexOf('About');
+    }
+    
+    if(value<0){
+      value=0;
     }
   }else if (menuType === "standard-admin") {
     if (!currentPath ||  currentPath === "/paneldashboard") {

@@ -11,7 +11,7 @@
  */
 export function findNode(selectedNodeId, jsonMapData) {
   // Find the node in the JSON data.
-  console.log("findNode -> selectedNodeId: " + selectedNodeId);
+  //console.log("findNode -> selectedNodeId: " + selectedNodeId);
 
   let nodeInTree = [jsonMapData];
   let nodeFound = false;
@@ -81,7 +81,7 @@ export function findParentNode(selectedNodeId, jsonMapData) {
 export function hasParent(selectedNodeId, jsonMapData) {
   // Operates on mindmap JSON data.
   // Find the parent of the node in the JSON data.
-  console.log("hasParent -> selectedNodeId: " + selectedNodeId);
+  //console.log("hasParent -> selectedNodeId: " + selectedNodeId);
 
   let parentNodes = [jsonMapData];
   let nodeFound = false;

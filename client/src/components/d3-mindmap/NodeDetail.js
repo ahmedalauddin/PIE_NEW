@@ -16,7 +16,7 @@ import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { Redirect } from "react-router-dom";
-import { getOrgId, getMindmapNode, getMindmap, setMindmapNode, store, checkPermision } from "../../redux";
+import { getOrgId, getMindmapNode, checkPermision } from "../../redux";
 import { red } from "@material-ui/core/colors";
 import * as jsonq from "jsonq";
 
@@ -149,12 +149,11 @@ class NodeDetail extends React.Component {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
-    this.handleBlur = this.handleBlur.bind(this);
-    this.handleNodeDescriptionChange = this.handleNodeDescriptionChange.bind(this);
     this.fetchKpiDetail = this.fetchKpiDetail.bind(this);
-    this.updateMindmap = this.updateMindmap.bind(this);
     this.setButtonStates = this.setButtonStates.bind(this);
-    this.getMindMapNodeDescription = this.getMindMapNodeDescription.bind(this);
+
+    
+
     this.state = {
       kpiId: undefined,
       title: undefined,
@@ -167,15 +166,19 @@ class NodeDetail extends React.Component {
       project: undefined,
       projectId: undefined,
       projectDescription: undefined,
-      kpiSaveDisabled: true,
+      kpiSaveDisabled: false,
       hasError: "",
       startAt: "",
       endAt: "",
       message: "",
-      buttonText: undefined,
+      buttonText: "Create KPI",
       isEditing: false,
       redirect: false,
-      isNew: false
+      isNew: false,
+      nodeMetaData:null,
+      nodeId:null,
+      nodeDescription:"",
+      notes:""
     };
   };
 
@@ -200,41 +203,6 @@ class NodeDetail extends React.Component {
     this.setState({ [name]: event.target.value });
   };
 
-  // Updates the node description.
-  handleBlur = name => event => {
-    let nodeDescription = event.target.value;
-    this.updateMindmap(nodeDescription);
-  };
-
-  handleNodeDescriptionChange = name => event => {
-    // Specific change handler for the node description.  Use Redux for this.
-    // See if we can get by without updating state for now by using Redux.
-    this.setState({ [name]: event.target.value });
-
-  };
-
-  // Update Redux store with selected mindmap node and the mindmap JSON itself.
-  updateMindmap = (nodeDescription) => {
-    let node = getMindmapNode();
-    if (node && (node !== "{}")) {
-      node.description = nodeDescription;
-      store.dispatch(setMindmapNode(JSON.stringify(node)));
-
-      // Get the node for our selected id.
-      let jsonMapData = getMindmap();
-      let mapData = jsonq(jsonMapData);
-      var nodeObject = mapData.find("id", function () {
-        return this === node.id;
-      });
-
-      nodeObject.parent().find("description").value(nodeDescription);
-      console.log("json node from full map: " + nodeObject.parent().value());
-
-      // update 12/3/19
-      // store.dispatch(setMindmap(JSON.stringify(mapData.value())));
-      store.dispatch(setMindmapNode(JSON.stringify(mapData.value())));
-    }
-  };
 
   handleExpandClick = () => {
     this.setState(state => ({ expanded: !state.expanded }));
@@ -287,26 +255,6 @@ class NodeDetail extends React.Component {
       });
   }
 
-  getMindMapNodeDescription = () => {
-    // Redux version of getting node description (from JSON)
-    const node = getMindmapNode();
-    if (node != null) {
-      const nodeDescription = node.description;
-
-      if (nodeDescription != null) {
-        this.setState({
-          nodeDescription: nodeDescription,
-          node: node
-        });
-      }
-    } else {
-      this.setState({
-        nodeDescription: "",
-        node: ""
-      });
-    }
-
-  };
 
   fetchKpiDetail = () => {
     let selectedNodeId = this.props.nodeId;
@@ -363,35 +311,30 @@ class NodeDetail extends React.Component {
   };
 
   componentDidMount() {
-    this.fetchKpiDetail();
-    this.getMindMapNodeDescription();
+    this.updateComponent();
   }
 
   componentDidUpdate(prevProps) {
-    // Changing this.  Now compare Redux to state.
-    // if (this.props.nodeId !== prevProps.nodeId) {
-    const mindmapNodeId = getMindmapNode().id;
-    console.log("mindmap id: " + mindmapNodeId);
-
-    if ((typeof mindmapNodeId != "undefined") && (this.state.mindmapNodeId !== mindmapNodeId)) {
-      this.fetchKpiDetail();
-      this.getMindMapNodeDescription();
-      this.setState({
-        mindmapNodeId: mindmapNodeId
-      });
-    }
-
-    if (this.props.selectedNodesCount > 0 && prevProps.selectedNodesCount === 0 && (this.state.title !== "" && this.state.description !== "" && this.state.formula !== "")) {
-      this.setState({
-        kpiSaveDisabled: false
-      });
-    }
-    if (this.props.selectedNodesCount === 0 && prevProps.selectedNodesCount > 0) {
-      this.setState({
-        kpiSaveDisabled: true
-      });
+    if(this.props.nodeId != prevProps.nodeId){
+      this.updateComponent();
     }
   };
+
+  updateComponent(){
+    const {nodeMetaData,nodeId} =this.props;
+    let nodeDescription="";
+    let notes="";
+    if(!nodeMetaData[nodeId]){
+      nodeMetaData[nodeId]={}
+    }
+    if(nodeMetaData[nodeId].nodeDescription){
+      nodeDescription=nodeMetaData[nodeId].nodeDescription;
+    }
+    if(nodeMetaData[nodeId].notes){
+      notes=nodeMetaData[nodeId].notes;
+    }
+    this.setState({ nodeMetaData,nodeId,nodeDescription,notes })
+  }
 
   // Set button state.  Don't activate the KPI Save button when there is not text for the KPI title.
   setButtonStates = (text) => {
@@ -411,7 +354,9 @@ class NodeDetail extends React.Component {
   }
 
   render() {
-    const { classes } = this.props;
+    const { classes,onChange } = this.props;
+    const {nodeMetaData,nodeId,nodeDescription,notes} =this.state;
+
 
     if (this.state.hasError) {
       return <h1>An error occurred.</h1>;
@@ -428,16 +373,18 @@ class NodeDetail extends React.Component {
               <TextField
                 id="nodeDescription"
                 label="Node Description"
-                onChange={this.handleChange("nodeDescription")}
-                onBlur={this.handleBlur("nodeDescription")}
-                value={this.state.nodeDescription}
+                onChange={(event)=>this.setState({nodeDescription:event.target.value})}
+                onBlur={()=>{nodeMetaData[nodeId].nodeDescription=nodeDescription;onChange(nodeMetaData)}}
+                value={nodeDescription}
                 rowMax="6"
                 fullWidth
                 margin="normal"
                 InputLabelProps={{
                   shrink: true
                 }}
-              /><br /><br /><br />
+              />
+              
+              <br /><br /><br />
 
             {checkPermision('Mind Map KPI','read') &&<>
               <Typography variant="h6" gutterBottom>
@@ -493,7 +440,22 @@ class NodeDetail extends React.Component {
               </Typography>
               }
               </>}
-              <br />
+              <br/>
+              <TextField
+                id="outlined-multiline-static"
+                label="Note"
+                multiline
+                rows={6}
+                margin="normal"
+                onChange={(event)=>this.setState({notes:event.target.value})}
+                onBlur={()=>{nodeMetaData[nodeId].notes=notes;onChange(nodeMetaData)}}
+                value={notes}
+                fullWidth
+                variant="outlined"
+                InputLabelProps={{
+                  shrink: true
+                }}
+              />
             </Grid>
           </Grid>
         </form>

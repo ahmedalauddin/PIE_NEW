@@ -401,7 +401,6 @@ export function isLoggedIn() {
 
 export function checkPermision(module,permission) {
   try {
-    console.log(module,permission)
     const user= JSON.parse(store.getState().user);
     
     if(user.organization.owningOrg || user.isCustomerAdmin){
