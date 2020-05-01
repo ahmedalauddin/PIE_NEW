@@ -123,8 +123,7 @@ class RoleManagment extends React.Component {
             'Organization',
             'Organization Department',
             'Organization KPI',
-            'Organization People',
-            'About'
+            'Organization People'
             ],
     roleAcls:{}
       

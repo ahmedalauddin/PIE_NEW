@@ -189,16 +189,22 @@ class MindMap extends React.Component {
       selectedNodesCount: 0,
       map:null,
       showTree:false,
-      nodeMetaData:{}
+      nodeMetaData:{},
+      kpisData:{}
     };
   };
 
   // This is the callback used by TreeMindMap.  Use this to get information from the TreeMindMap.
-  sendSelectedNode(nodeId, nodeText, mindmapId) {
+  async sendSelectedNode(nodeId, nodeText, mindmapId) {
+    const kpi=await this.fetchKpi(nodeId);
+    const {kpisData} = this.state;
+    kpisData[nodeId]=kpisData[nodeId] || kpi;
+
     this.setState({
       selectedNodeId: nodeId,
       selectedNodeText: nodeText,
-      mindmapId: mindmapId
+      mindmapId: mindmapId,
+      kpisData
     });
   };
 
@@ -231,11 +237,15 @@ class MindMap extends React.Component {
                 nodeMetaData=map.mapData.nodeMetaData;
               }
               this.setState({map,showTree:true,mindmapId,nodeMetaData});
-              setTimeout(()=>{
+              setTimeout(async ()=>{
                 const selectedNodeId=getMindmapNode().id;
                 if(selectedNodeId){
+                  const kpi=await this.fetchKpi(selectedNodeId);
+                  const {kpisData} = this.state;
+                  kpisData[selectedNodeId]=kpi;
                   this.setState({
-                    selectedNodeId
+                    selectedNodeId,
+                    kpisData
                   });
                 }
               },200)
@@ -249,6 +259,26 @@ class MindMap extends React.Component {
       }).catch(()=>this.setState({showTree:true}));
     }else{
       this.setState({showTree:true});
+    }
+
+  }
+
+  async fetchKpi(selectedNodeId) {
+
+    let res = await fetch(`/api/kpis-mindmapnode/${selectedNodeId}`);
+    let kpis = await res.json();
+
+    if (kpis && kpis.length > 0) {
+      return {
+        title: kpis[0].title,
+        kpiId: kpis[0].id,
+        description: kpis[0].description,
+        project: kpis[0].project,
+        projectDescription: kpis[0].projectDescription,
+        formula: kpis[0].formulaDescription,
+      }
+    } else {
+      return {}
     }
 
   }
@@ -277,20 +307,22 @@ class MindMap extends React.Component {
         body: JSON.stringify(postData)
       })
         .then(response => response.json())
-        .then(response => {
-          //console.log('response is: ' + response);
+        .then(async response => {
+          const kpisData=await this.saveKpis();
           if (isNewMap) {
             this.setState({
               openSnackbar: true,         // Success - open the snackbar
               message: "Mind map saved.",
               isNewMap: false,
-              mindmapId: response.id
+              mindmapId: response.id,
+              kpisData
             });
           } else {
             this.setState({
               openSnackbar: true,         // Success - open the snackbar
               message: "Mind map saved.",
-              isNewMap: false
+              isNewMap: false,
+              kpisData
             });
           }
         })
@@ -298,6 +330,56 @@ class MindMap extends React.Component {
           this.setState({ message: "Error occurred." });
         });
     }, 2000);
+  }
+
+  async saveKpis() {
+    const {kpisData,orgId}=this.state;
+    
+    let nodeIds=Object.keys(kpisData);
+    console.log("called saveKpis",kpisData)
+    for(let n=0;n<nodeIds.length;n++){
+      const mindmapNodeId=nodeIds[n];
+      let kpi=kpisData[mindmapNodeId];
+      
+      if(!kpi.title || !kpi.formula || !kpi.description){
+        continue;
+      }
+
+      console.log("Updating Kpi :: ",kpi.title);
+
+      kpi.mindmapNodeId=mindmapNodeId;
+      kpi.orgId=orgId;
+
+      let kpiId=kpi.kpiId;
+      let apiPath = "";
+      let method = "";
+      
+      if (kpiId > 0) {
+        apiPath = "/api/kpis/" + kpiId;
+        method = "PUT";
+      } else {
+        method = "POST";
+        apiPath = "/api/kpis";
+      }
+
+      try{
+
+        const response=await fetch(apiPath, {
+          method: method,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(kpi)
+        })
+        console.log("responseData",response);
+        if(response.status ==200 || response.status ==201){
+          const responseData=await response.json();
+          kpi.kpiId=responseData.kpiId;
+          console.log("responseData",responseData);
+        }
+      }catch(e){console.log(e)}
+    }
+
+    return kpisData;
+   
   }
 
   showMessages = (message) => {
@@ -325,8 +407,7 @@ class MindMap extends React.Component {
 
   render() {
     const { classes } = this.props;
-    const { map,mindmapId,showTree,nodeMetaData,selectedNodeId } = this.state;
-    
+    const { map,mindmapId,showTree,nodeMetaData,selectedNodeId,kpisData } = this.state;
     return (
       <React.Fragment>
         <CssBaseline />
@@ -351,7 +432,7 @@ class MindMap extends React.Component {
                 </AppBar>
                 {this.state.tabValue === 0 && (
                   <TabContainer>
-                    {selectedNodeId && <NodeDetail onChange={(data)=>this.setState({nodeMetaData:data})} nodeMetaData={nodeMetaData} nodeId={selectedNodeId} mindmapId={mindmapId} messages={this.showMessages} selectedNodesCount={this.state.selectedNodesCount}/>}
+                    {selectedNodeId && <NodeDetail onChangeKpisData={(data)=>this.setState({kpisData:data})}  onChangeNodeMetaData={(data)=>this.setState({nodeMetaData:data})} kpisData={kpisData} nodeMetaData={nodeMetaData} nodeId={selectedNodeId} mindmapId={mindmapId} messages={this.showMessages} selectedNodesCount={this.state.selectedNodesCount}/>}
                   </TabContainer>)}
                 {this.state.tabValue === 1 && (
                   <TabContainer>

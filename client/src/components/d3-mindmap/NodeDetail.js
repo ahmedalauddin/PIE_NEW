@@ -147,22 +147,16 @@ const styles = theme => ({
 class NodeDetail extends React.Component {
   constructor(props) {
     super(props);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleChange = this.handleChange.bind(this);
-    this.fetchKpiDetail = this.fetchKpiDetail.bind(this);
-    this.setButtonStates = this.setButtonStates.bind(this);
-
-    
 
     this.state = {
       kpiId: undefined,
       title: undefined,
+      formula: undefined,
+      description: undefined,
       orgId: 0,
       nodeDescription: getMindmapNode().description,
       mindmapNodeId: getMindmapNode().id,
       node: "",
-      description: undefined,
-      formula: undefined,
       project: undefined,
       projectId: undefined,
       projectDescription: undefined,
@@ -178,7 +172,9 @@ class NodeDetail extends React.Component {
       nodeMetaData:null,
       nodeId:null,
       nodeDescription:"",
-      notes:""
+      notes:"",
+      kpi:{},
+      orgId: getOrgId()
     };
   };
 
@@ -196,119 +192,15 @@ class NodeDetail extends React.Component {
   handleClick = Transition => () => {
     this.setState({ openSnackbar: true, Transition });
   };
-  //   //</editor-fold>
-
-  handleChange = name => event => {
-    this.setButtonStates(event.target.value);
-    this.setState({ [name]: event.target.value });
-  };
+  
 
 
   handleExpandClick = () => {
     this.setState(state => ({ expanded: !state.expanded }));
   };
 
-  async handleSubmit(event) {
-    event.preventDefault();
+  
 
-    const kpiId = this.state.kpiId;
-    let apiPath = "";
-    let successMessage = "";
-    let method = "";
-
-    if (kpiId > 0) {
-      // For updates
-      apiPath = "/api/kpis/" + kpiId;
-      successMessage = "KPI '" + this.state.title + "' updated.";
-      method = "PUT";
-    } else {
-      // For create
-      method = "POST";
-      if (this.state.project === "") {
-        // Create KPI only
-        apiPath = "/api/kpis/";
-        successMessage = "KPI '" + this.state.title + "' created.";
-      } else {
-        // Create KPI and a project.
-        apiPath = "/api/kpis-with-project/";
-        successMessage = "KPI '" + this.state.title + "' created with project '" +
-          this.state.project + "'";
-      }
-    }
-    await fetch(apiPath, {
-      method: method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(this.state)
-    })
-      .then(response => response.json())
-      .then((response) => {
-        successMessage = response.message ? response.message : successMessage
-        // Redirect to the Project component.
-        this.setState({
-          buttonText: "Update KPI",
-          message: successMessage
-        });
-        this.props.messages(successMessage);
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  }
-
-
-  fetchKpiDetail = () => {
-    let selectedNodeId = this.props.nodeId;
-    console.log("NodeDetail.js, selectedNodeId:" + selectedNodeId);
-
-    if (selectedNodeId !== "") {
-      // Update KPI
-      fetch(`/api/kpis-mindmapnode/${selectedNodeId}`)
-        .then(res => res.json())
-        .then(kpi => {
-          if (kpi[0]) {
-            this.setState({
-              title: kpi[0].title,
-              kpiId: kpi[0].id,
-              description: kpi[0].description,
-              project: kpi[0].project,
-              projectDescription: kpi[0].projectDescription,
-              formula: kpi[0].formulaDescription,
-              mindmapNodeId: selectedNodeId,
-              orgId: getOrgId(),
-              buttonText: "Update KPI"
-            });
-            this.setButtonStates(kpi[0].title);
-          } else {
-            this.setState({
-              title: "",
-              kpiId: "",
-              description: "",
-              kpiSaveDisabled: true,
-              formula: "",
-              project: "",
-              projectDescription: "",
-              mindmapNodeId: selectedNodeId,
-              orgId: getOrgId(),
-              buttonText: "Create KPI"
-            });
-          }
-        });
-    } else {
-      // Create KPI
-      this.setState({
-        title: "",
-        kpiId: "",
-        description: "",
-        formula: "",
-        project: "",
-        projectDescription: "",
-        mindmapNodeId: selectedNodeId,
-        orgId: getOrgId(),
-        isEditing: true,
-        buttonText: "Create KPI"
-      });
-    }
-  };
 
   componentDidMount() {
     this.updateComponent();
@@ -321,7 +213,7 @@ class NodeDetail extends React.Component {
   };
 
   updateComponent(){
-    const {nodeMetaData,nodeId} =this.props;
+    const {nodeMetaData,nodeId,kpisData} =this.props;
     let nodeDescription="";
     let notes="";
     if(!nodeMetaData[nodeId]){
@@ -333,30 +225,22 @@ class NodeDetail extends React.Component {
     if(nodeMetaData[nodeId].notes){
       notes=nodeMetaData[nodeId].notes;
     }
-    this.setState({ nodeMetaData,nodeId,nodeDescription,notes })
-  }
+    const kpi = kpisData[nodeId];
+    const kpiId =kpi.kpiId || 0;
+    const title =kpi.title || '';
+    const formula =kpi.formula || '';
+    const description =kpi.description || '';
 
-  // Set button state.  Don't activate the KPI Save button when there is not text for the KPI title.
-  setButtonStates = (text) => {
-    if (text !== "" && this.props.selectedNodesCount > 0) {
-      this.setState({
-        kpiSaveDisabled: false
-      });
-    } else {
-      this.setState({
-        kpiSaveDisabled: true
-      });
-    }
-  };
+    this.setState({ nodeMetaData,nodeId,nodeDescription,notes,kpisData,kpiId,title,formula,description })
+  }
 
   componentDidCatch() {
     return <Redirect to="/Login" />;
   }
 
   render() {
-    const { classes,onChange } = this.props;
-    const {nodeMetaData,nodeId,nodeDescription,notes} =this.state;
-
+    const { classes,onChangeNodeMetaData,onChangeKpisData } = this.props;
+    const {nodeMetaData,nodeId,nodeDescription,notes,kpisData,title,formula,description} =this.state;
 
     if (this.state.hasError) {
       return <h1>An error occurred.</h1>;
@@ -364,7 +248,6 @@ class NodeDetail extends React.Component {
 
     return (
       <div className={classes.paper}>
-        <form onSubmit={this.handleSubmit} noValidate>
           <Grid container spacing={24}>
             <Grid item xs={12}>
               <Typography variant="h6" gutterBottom>
@@ -374,7 +257,7 @@ class NodeDetail extends React.Component {
                 id="nodeDescription"
                 label="Node Description"
                 onChange={(event)=>this.setState({nodeDescription:event.target.value})}
-                onBlur={()=>{nodeMetaData[nodeId].nodeDescription=nodeDescription;onChange(nodeMetaData)}}
+                onBlur={()=>{nodeMetaData[nodeId].nodeDescription=nodeDescription;onChangeNodeMetaData(nodeMetaData)}}
                 value={nodeDescription}
                 rowMax="6"
                 fullWidth
@@ -384,17 +267,16 @@ class NodeDetail extends React.Component {
                 }}
               />
               
-              <br /><br /><br />
+              <br />
 
             {checkPermision('Mind Map KPI','read') &&<>
-              <Typography variant="h6" gutterBottom>
-                KPI
-              </Typography>
+
               <TextField
                 id="title"
                 label="KPI Title"
-                onChange={this.handleChange("title")}
-                value={this.state.title}
+                onChange={(event)=>this.setState({title:event.target.value})}
+                onBlur={()=>{kpisData[nodeId].title=title;onChangeKpisData(kpisData)}}
+                value={title}
                 fullWidth
                 margin="normal"
                 InputLabelProps={{
@@ -403,9 +285,10 @@ class NodeDetail extends React.Component {
               />
               <TextField
                 id="description"
-                label="Description"
-                onChange={this.handleChange("description")}
-                value={this.state.description}
+                label="KPI Description"
+                onChange={(event)=>this.setState({description:event.target.value})}
+                onBlur={()=>{kpisData[nodeId].description=description;onChangeKpisData(kpisData)}}
+                value={description}
                 fullWidth
                 margin="normal"
                 InputLabelProps={{
@@ -417,28 +300,17 @@ class NodeDetail extends React.Component {
                 label="KPI Formula"
                 multiline
                 rowsMax="4"
-                value={this.state.formula}
-                onChange={this.handleChange("formula")}
+                value={formula}
+                onChange={(event)=>this.setState({formula:event.target.value})}
+                onBlur={()=>{kpisData[nodeId].formula=formula;onChangeKpisData(kpisData)}}
                 fullWidth
                 className={classes.textFieldWide}
                 margin="normal"
                 InputLabelProps={{
                   shrink: true
                 }}
-              /><br /><br />
-              <br /><br />
-              {checkPermision('Mind Map KPI','write') &&<Typography component="p">
-                <Button
-                  variant="contained"
-                  color="primary"
-                  disabled={this.state.kpiSaveDisabled}
-                  onClick={this.handleSubmit}
-                  className={classes.secondary}
-                >
-                  {this.state.buttonText}
-                </Button>
-              </Typography>
-              }
+              />
+             
               </>}
               <br/>
               <TextField
@@ -448,7 +320,7 @@ class NodeDetail extends React.Component {
                 rows={6}
                 margin="normal"
                 onChange={(event)=>this.setState({notes:event.target.value})}
-                onBlur={()=>{nodeMetaData[nodeId].notes=notes;onChange(nodeMetaData)}}
+                onBlur={()=>{nodeMetaData[nodeId].notes=notes;onChangeNodeMetaData(nodeMetaData)}}
                 value={notes}
                 fullWidth
                 variant="outlined"
@@ -458,7 +330,6 @@ class NodeDetail extends React.Component {
               />
             </Grid>
           </Grid>
-        </form>
       </div>
     );
   }

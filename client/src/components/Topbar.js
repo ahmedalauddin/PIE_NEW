@@ -315,9 +315,7 @@ function getAppbarValue(menuType, currentPath)  {
     if (currentPath === "/logout") {
       menus.push('logout')
     }
-    if (checkPermision('About','read') ) {
-      menus.push('About')
-    }
+  
 
     if (!currentPath ||  currentPath === "/paneldashboard") {
       value = menus.indexOf('Dashboard');
@@ -341,9 +339,7 @@ function getAppbarValue(menuType, currentPath)  {
     if (currentPath === "/logout") {
       value = menus.indexOf('logout');
     }
-    if (currentPath === "/about") {
-      value = menus.indexOf('About');
-    }
+  
     
     if(value<0){
       value=0;
@@ -374,9 +370,7 @@ function getAppbarValue(menuType, currentPath)  {
     if (currentPath === "/logout") {
       value = 7;
     }
-    if (currentPath === "/about") {
-      value = 8;
-    }
+   
   } else {
     if (!currentPath ||  currentPath === "/login") {
       value = 0;
@@ -469,23 +463,13 @@ class Topbar extends Component {
           <Grid container spacing={24} alignItems="baseline">
             <Grid item xs={12} className={classes.flex}>
               <React.Fragment>
-                <div className={classes.productLogo}>
+                <div className={classes.productLogo} style={{width:"17%",margin:0}}>
                   <Typography>
                     <Link style={{color: 'black', textDecorationLine:'none'}} activeStyle={{color: 'black'}} to={`/`}>ValueInfinity Innovation Platform</Link>
                   </Typography>
                 </div>
-                <div className="more-menu-btn">
-                  <Button
-                    aria-controls="customized-menu"
-                    aria-haspopup="true"
-                    variant="contained"
-                    color="primary"
-                    onClick={this.menuFun}
-                  >
-                    Open Menu
-                  </Button>
-                </div>
-                <div className={classes.tabContainer+' '+this.state.mobileShow}>
+              
+                <div className={classes.tabContainer+' '+this.state.mobileShow} style={{width:"75%",margin:0}}>
                   <Tabs
                     value={this.current(menuType) || this.state.value}
                     indicatorColor="primary"
@@ -498,11 +482,12 @@ class Topbar extends Component {
                   </Tabs>
                 </div>
                 {isLogin && !this.props.loggedOut &&  
-                <div className={classes.profileLogoMenuContainer} align={"right"} onClick={(event)=>this.openPopover(event)}>
+                <div  className={classes.profileLogoMenuContainer} align={"right"} onClick={(event)=>this.openPopover(event)}>
                     <img src={profileLogo} alt="" className={classes.profileLogoMenu} />
                    
                 </div>}
                 {isLogin && !this.props.loggedOut && this.renderPopOver()}
+                
               </React.Fragment>
             </Grid>
           </Grid>
@@ -516,7 +501,7 @@ class Topbar extends Component {
     const { classes } = this.props;
     const user = getUser();
     return (
-        <Popper style={{zIndex:9999}} open={showPopover} anchorEl={anchorEl} placement={'bottom-start'} transition>
+        <Popper style={{zIndex:9999}} open={showPopover} anchorEl={anchorEl} placement={'bottom-end'} transition>
           {({ TransitionProps }) => (
           <Fade {...TransitionProps} timeout={350}>
             <Paper style={{ minWidth: 300 }}>
@@ -554,9 +539,7 @@ class Topbar extends Component {
                 <Grid item xs={12}>
                   <Tab component={Link} to={{ pathname: '/password', search: this.props.location.search }} classes={{ root: classes.tabItem }} label={'Change Password'} />
                   <Tab component={Link} to={{ pathname: '/logout', search: this.props.location.search }} classes={{ root: classes.tabItem }} label={'Logout'} />
-                  {checkPermision('About', 'read') &&
-                    <Tab component={Link} to={{ pathname: '/about', search: this.props.location.search }} classes={{ root: classes.tabItem }} label={'About'} />
-                  }
+                  
                 </Grid>
               </Grid>
             </Paper>

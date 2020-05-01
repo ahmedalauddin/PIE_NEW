@@ -28,6 +28,7 @@ module.exports = {
       nodeId = "";
     }
     let ifExist = 0
+    let kpiId=0;
     if (req.body.mindmapNodeId || req.body.projectId) {
       ifExist = await models.Kpi.count({
         where: {
@@ -76,11 +77,11 @@ module.exports = {
         deptId: req.body.deptId
       })
         .then(kpi => {
-          
+          kpiId= kpi.id;
           if(req.body.projectId){
             models.ProjectKpi.create({
               projId: req.body.projectId,
-              kpiId: kpi.id,
+              kpiId,
               createdAt: new Date(),
               updatedAt: new Date(),
             })
@@ -90,7 +91,6 @@ module.exports = {
           // SQL to insert all tags.  Need to loop through the array of tags to build the strings of values
           // we'll insert.
           let tags = req.body.tags;
-          let kpiId = kpi.id;
           logger.debug(`${callerType} create Kpi -> tags: ${JSON.stringify(req.body.tags)}`);
           let tag = "";
           if (tags != undefined && tags.length > 0) {
@@ -117,7 +117,8 @@ module.exports = {
         .then(() => {
           res.status(201).send({
             success: true,
-            message: "KPI " + req.body.title + " created successfully"
+            message: "KPI " + req.body.title + " created successfully",
+            kpiId:kpiId
           });
         })
         .catch(error => {
@@ -194,7 +195,8 @@ module.exports = {
         if(p === 1){
           res.status(200).send({
             success: true,
-            message: "KPI Updated successfully"
+            message: "KPI Updated successfully",
+            kpiId:id
           });
         }else{
           res.status(200).send({

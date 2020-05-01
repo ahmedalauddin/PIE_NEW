@@ -27,33 +27,22 @@ export default function withAuth(ComponentToProtect) {
     componentDidMount() {
       fetch("/api/auth/validate")
         .then(res => {
-          if (res.status === 200) {
-            this.setState({ loading: false });
-          } else {
-            const error = new Error(res.error);
-            throw error;
+          if (res.status !== 200) {
+            this.redirectToLogin();
           }
-        })
-        .catch(err => {
+        }) .catch(err => {
           console.error(err);
           store.dispatch(setUser(JSON.stringify("")));
-          this.setState({ loading: false, redirect: true });
+          this.redirectToLogin();
         });
     }
 
+    redirectToLogin(){
+      if(window.location.pathname!=''){
+        window.location.assign('/?returnUrl='+window.location.pathname)
+      }
+    }
     render() {
-      const { loading, redirect } = this.state;
-
-      if (redirect) {
-        Log.trace("withAuth -> redirecting to login");
-        return <Redirect to="/login" />;
-      }
-
-      if (loading) {
-        Log.trace("withAuth -> loading...continuing to render");
-      }
-
-      Log.trace("withAuth -> returning React.Fragment");
       return (
         <React.Fragment>
           <ComponentToProtect {...this.props} />

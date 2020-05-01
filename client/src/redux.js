@@ -403,7 +403,7 @@ export function checkPermision(module,permission) {
   try {
     const user= JSON.parse(store.getState().user);
     
-    if(user.organization.owningOrg || user.isCustomerAdmin){
+    if((user.organization && user.organization.owningOrg) || user.isCustomerAdmin){
       return true;
     }
     const acls=user.acls;

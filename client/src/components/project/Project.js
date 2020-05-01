@@ -114,7 +114,6 @@ class Project extends React.Component {
   };
 
   componentDidMount() {
-   
     this.setOrganizationInfo();
     let message = "";
     
@@ -145,7 +144,8 @@ class Project extends React.Component {
     const { classes } = this.props;
     const currentPath = this.props.location.pathname;
     const { expanded } = this.state;
-    let projId = this.props.location.state ? this.props.location.state.projId : '';
+    
+    let projId = this.props.match.params.id || (this.props.location.state ? this.props.location.state.projId : '');
 
     if (this.state.hasError) {
       return <h1>An error occurred.</h1>;

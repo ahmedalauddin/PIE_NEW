@@ -306,7 +306,7 @@ module.exports = {
                 <td height="20"></td>
               </tr>
               <tr>
-                <td style="font:17px Arial, Helvetica, sans-serif; color:#333;">Open Task Link <a href="http://pie.value-infinity.com/project/" target="_blank" style="color:#0B6CDA; text-decoration:underline;">http://pie.value-infinity.com/project/</td>
+                <td style="font:17px Arial, Helvetica, sans-serif; color:#333;">Open Task Link <a href="http://pie.value-infinity.com/project/${projectId}" target="_blank" style="color:#0B6CDA; text-decoration:underline;">http://pie.value-infinity.com/project/</td>
               </tr>
               <tr>
                 <td height="20"></td>

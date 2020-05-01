@@ -51,6 +51,18 @@ class Login extends React.Component {
     // state values.
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+  
+  }
+
+
+ getParameterByName(name) {
+      let url = window.location.href;
+      name = name.replace(/[\[\]]/g, '\\$&');
+      let regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+          results = regex.exec(url);
+      if (!results) return null;
+      if (!results[2]) return '';
+      return decodeURIComponent(results[2].replace(/\+/g, ' '));
   }
 
   handleChange = name => event => {
@@ -107,22 +119,58 @@ class Login extends React.Component {
       })
       .then(() => {
         console.log("Ready to redirect");
+        let returnUrl = this.getParameterByName('returnUrl');
         if (!isAdministrator()) {
+          
+          
+          let permitUrls=[];
+
           if(checkPermision('Dashboard','read')){
-            redirectTarget = "/paneldashboard";
-          }else if(checkPermision('Mind Map','read')){
-            redirectTarget = "/mindmaplist";
-          }else if(checkPermision('Regrouping','read')){
-            redirectTarget = "/organizationactions";
-          }else if(checkPermision('Search','read')){
-            redirectTarget = "/search";
-          }else if(checkPermision('Analytics','read')){
-            redirectTarget = "/analytics";
-          }else if(checkPermision('Organization','read')){
-            redirectTarget = "/organization";
-          }else if(checkPermision('About','read')){
-            redirectTarget = "/about";
+            permitUrls.push("/paneldashboard");
           }
+          
+          if(checkPermision('Mind Map','read')){
+           
+            permitUrls.push("/mindmaplist");
+          }
+          if(checkPermision('Regrouping','read')){
+
+            permitUrls.push("/organizationactions");
+          }
+          if(checkPermision('Search','read')){
+
+            permitUrls.push("/search");
+          }
+          if(checkPermision('Analytics','read')){
+
+            permitUrls.push("/analytics");
+          }
+          if(checkPermision('Organization','read')){
+            permitUrls.push("/organization");
+          }
+
+          if(checkPermision('Projects','read')){
+            permitUrls.push("/project");
+          }
+
+
+          if(returnUrl){
+              let isMatched=false;
+              permitUrls.forEach(u=>{
+                if(!isMatched && returnUrl.startsWith(u)){
+                  isMatched=true;
+                }
+              })
+              if(isMatched){
+                redirectTarget=returnUrl;
+              }
+
+          }else if(permitUrls.length>0){
+            redirectTarget=permitUrls[0];
+          }
+          
+        }else if(returnUrl){
+          redirectTarget = returnUrl;
         } else {
           redirectTarget = "/clientorg";
         }
@@ -145,6 +193,7 @@ class Login extends React.Component {
   render() {
     const { classes } = this.props;
     const currentPath = this.props.location.pathname;
+    
 
     if (this.state.readyToRedirect) {
       return <Redirect to={this.state.redirectTarget} />;
