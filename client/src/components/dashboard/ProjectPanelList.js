@@ -270,7 +270,10 @@ class ProjectPanelList extends Component {
       // return <Redirect to={`/project/${this.state.projectId}`} />;
       return <Redirect
       to={{
-        pathname: '/project/'+this.state.projectId
+        pathname: '/project/',
+        state: {
+          projId: this.state.projectId
+        }
       }}
     />;
 

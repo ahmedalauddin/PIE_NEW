@@ -304,7 +304,6 @@ class NodeDetail extends React.Component {
                 onChange={(event)=>this.setState({formula:event.target.value})}
                 onBlur={()=>{kpisData[nodeId].formula=formula;onChangeKpisData(kpisData)}}
                 fullWidth
-                className={classes.textFieldWide}
                 margin="normal"
                 InputLabelProps={{
                   shrink: true

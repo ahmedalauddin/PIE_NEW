@@ -38,7 +38,10 @@ export default function withAuth(ComponentToProtect) {
     }
 
     redirectToLogin(){
-      if(window.location.pathname!=''){
+      if(window.location.pathname!='' && window.location.pathname!='/'){
+        store.dispatch(setUser(JSON.stringify("")));
+        localStorage.clear();
+        sessionStorage.clear();
         window.location.assign('/?returnUrl='+window.location.pathname)
       }
     }
