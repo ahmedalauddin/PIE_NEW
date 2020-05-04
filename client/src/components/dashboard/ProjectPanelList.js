@@ -14,7 +14,7 @@ import Grid from "@material-ui/core/Grid";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Typography from "@material-ui/core/Typography";
 import { Link, Redirect } from "react-router-dom";
-import { getOrgId, isAdministrator,checkPermision } from "../../redux";
+import { getOrgId, isAdministrator,checkPermision,isStandardUser } from "../../redux";
 import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
@@ -115,11 +115,12 @@ class ProjectPanelList extends Component {
       const startYearFilter = this.props.projectListFilter.startYear;
       const endYearFilter = this.props.projectListFilter.endYear;
       const allClients = this.props.allClients;
+      const userId=isStandardUser();
 
       if (parseInt(orgId) > 0) {
         // console.log("ProjectPanelList, before setState for filter values");
         // Use the props for the body of the fetch request.
-        const reqBody = {statusFilter, startYearFilter, endYearFilter, allClients, orgId};
+        const reqBody = {statusFilter, startYearFilter, endYearFilter, allClients, orgId, userId};
 
         fetch(fetchUrl, {
           method: "POST",

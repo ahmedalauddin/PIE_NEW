@@ -376,6 +376,19 @@ export function isCustomerAdmin() {
   return isAdmin;
 }
 
+export function isStandardUser() {
+  let userId = 0;
+  try {
+    const user =JSON.parse(store.getState().user);
+    if(!user.isCustomerAdmin && !user.organization.owningOrg){
+      userId=user.id;
+    }
+  } catch (error) {
+    console.log("isAdministrator: error");
+  }
+  return userId;
+}
+
 /**
  * *isLoggedIn*
  * Is the logged in user an administrator

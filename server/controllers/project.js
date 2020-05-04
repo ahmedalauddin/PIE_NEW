@@ -455,7 +455,8 @@ module.exports = {
       const status = req.body.statusFilter;
       const startYears = req.body.startYearFilter;
       const endYears = req.body.endYearFilter;
-      const allClients = req.body.allClients;       // For whether to filter by a single client organization.
+      const allClients = req.body.allClients;  
+      const personId = req.body.userId;     // For whether to filter by a single client organization.
       let firstClause = true;
       let orgClause = "";
       let statusClause = "";
@@ -464,6 +465,7 @@ module.exports = {
       let endYearClause = "";
       let first = true;
       let activeCl = "";
+      let personClause = "";
       logger.debug(`${callerType} Project: getProjectFilteredDashboard------------------------------------`);
       logger.debug(`${callerType} Project: getProjectFilteredDashboard -> req.body: ${JSON.stringify(req.body)}`);
       logger.debug(`${callerType} Project: getProjectFilteredDashboard -> allClients: ${allClients}, orgId: ${orgId}, filter: ${status}`);
@@ -548,6 +550,9 @@ module.exports = {
       activeCl += " P.active=1 ";
 
 
+      if(personId>0){
+        personClause=` and P.id in (select distinct projectId from ProjectPersons where personId=${personId} and (inProject=1 or owner=1)) `;
+      }
       logger.debug(`${callerType} Project: getProjectFilteredDashboard -> past end year, endYearClause: ${endYearClause}`);
       //</editor-fold>
 
@@ -561,7 +566,7 @@ module.exports = {
         from Projects P left outer join ProjectStatuses PS on P.statusId = PS.id \
         left outer join Organizations O on P.orgId = O.id \
         left outer join Kpis K on P.mainKpiId = K.id and K.active = 1 "
-        + orgClause + statusClause + startYearClause + endYearClause + activeCl + " order by P.title";
+        + orgClause + statusClause + startYearClause + endYearClause + activeCl + personClause + " order by P.title";
 
       logger.debug(`${callerType} Project: getProjectFilteredDashboard -> sql: ${sql}`);
       return models.sequelize
