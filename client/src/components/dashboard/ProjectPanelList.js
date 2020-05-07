@@ -413,13 +413,13 @@ class ProjectPanelList extends Component {
                                       {formatDate(project.startAt)}
                                     </Typography>
                                   </div>
-                                  <div className={classes.columnenddate} style={{ width: "15%"  }}>
+                                  <div className={classes.columnenddate} >
                                     <Typography className={classes.secondaryHeading} >
                                       {formatDate(project.endAt)}
                                     </Typography>
                                   </div>
 
-                                  <div className={classes.columnactions} style={{ width: "12%"  }}>
+                                  <div className={classes.columnactions} >
                                     {checkPermision('Projects', 'read') &&
                                       <IconButton onClick={() => { this.setEditRedirect(project.id); }}>
                                         <EditIcon color="primary" />
@@ -436,7 +436,7 @@ class ProjectPanelList extends Component {
                                 {checkPermision('Dashboard Expand Projects', 'read') &&
                                   <ExpansionPanelDetails className={classes.details} style={{ padding: 0, margin: 0 }}>
                                     <Grid container spacing={3} style={{ paddingLeft: "3%", margin: 0 }}>
-                                      <div style={{ flexBasis:"18rem" }}>
+                                      <div style={{ flexBasis:"16rem" }}>
                                         <Typography className={classes.secondaryHeading} component="p">
                                           <Typography className={classes.heading}>Owner:</Typography>
                                           {ownerarray && ownerarray.map(owner => {
@@ -447,7 +447,7 @@ class ProjectPanelList extends Component {
                                           )}
                                         </Typography>
                                       </div>
-                                      <div style={{ flexBasis:"17rem" }}>
+                                      <div style={{ flexBasis:"15rem" }}>
                                         <Typography className={classes.secondaryHeading} component="p">
                                           <Typography className={classes.heading}>Team:</Typography>
                                           {teamarray && teamarray.map(team => {
@@ -458,7 +458,7 @@ class ProjectPanelList extends Component {
                                           )}
                                         </Typography>
                                       </div>
-                                      <div style={{ flexBasis:"260rem" }}>
+                                      <div style={{ flexBasis:"26rem" }}>
                                         <Typography className={classes.secondaryHeading} component="p">
                                           <Typography className={classes.heading}>Tasks:</Typography>
                                           {
