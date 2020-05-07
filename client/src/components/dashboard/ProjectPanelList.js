@@ -83,7 +83,10 @@ class ProjectPanelList extends Component {
       deleteId: '',
 
       openSnackbar: false,
-      message: ""
+      message: "",
+      readyToEditKpi:null,
+      editKpiId:null,
+      kpiProjectId:null
     };
     //</editor-fold>
     };
@@ -134,7 +137,8 @@ class ProjectPanelList extends Component {
           .then(projects => {
             this.setState({
               projects: projects,
-              skeletonLoader:false
+              skeletonLoader:false,
+              orgId:orgId
             });
             // console.log("fetch: complete");
           });
@@ -255,10 +259,28 @@ class ProjectPanelList extends Component {
     this.setState({ rowsPerPage: event.target.value });
   };
 
-
+  editKpi(mainKpiId,projectId){
+    this.setState({readyToEditKpi:true,editKpiId:mainKpiId,kpiProjectId:projectId})
+  }
   render() {
     const { classes } = this.props;
-    const { projects, mindmaps, order, orderBy, rowsPerPage, page } = this.state;
+    const { projects, mindmaps, order, orderBy, rowsPerPage, page,readyToEditKpi,editKpiId,orgId,kpiProjectId } = this.state;
+
+
+    if (readyToEditKpi) {
+      return (
+        <Redirect
+          to={{
+            pathname: "/kpi",
+            state: {
+              projectId: kpiProjectId,
+              kpiId: editKpiId
+            }
+          }}
+        />
+      );
+    }
+
     if (this.state.hasError) {
       return (
         <div className={classes.column}>
@@ -382,7 +404,7 @@ class ProjectPanelList extends Component {
                                     </Typography>
                                   </div>
                                   <div className={classes.columntarget} style={{ width: "22%" }}>
-                                    <Typography className={classes.secondaryHeading} >
+                                    <Typography className={classes.secondaryHeadingLink} onClick={()=>this.editKpi(project.mainKpiId,project.id)} >
                                       {project.mainKpi}
                                     </Typography>
                                   </div>

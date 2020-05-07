@@ -58,6 +58,11 @@ export const styles = theme => ({
     fontSize: theme.typography.pxToRem(15),
     color: theme.palette.text.secondary,
   },
+  secondaryHeadingLink: {
+    fontSize: theme.typography.pxToRem(15),
+    color: "#0d47a1",
+    textDecoration: "underline"
+  },
   formControl: {
     margin: theme.spacing.unit,
     minWidth: 170,

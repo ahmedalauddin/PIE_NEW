@@ -15,7 +15,7 @@ let multer = require('multer');
 
 
 const  uuuid = uuidv4();
-const DIR = "/";
+const DIR = "/data";
 const DIRwithu = DIR+"/"+uuuid;
 if (!fs.existsSync(DIRwithu)){
   fs.mkdirSync(DIRwithu);

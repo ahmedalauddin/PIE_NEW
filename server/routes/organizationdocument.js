@@ -9,7 +9,7 @@ let multer = require('multer');
     let uuidv4 = require('uuid/v4');
 
 
-const DIR = "/";
+const DIR = "/data";
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
