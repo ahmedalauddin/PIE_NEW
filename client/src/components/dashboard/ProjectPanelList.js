@@ -324,33 +324,33 @@ class ProjectPanelList extends Component {
                       <ExpansionPanel expanded={false}>
                         <ExpansionPanelSummary>
 
-                          <div className={classes.columntitle} style={{ width: "25%" }}>
+                          <div className={classes.columntitle} >
                             <Typography className={classes.heading} >
                               Project title
                 </Typography>
                           </div>
                           {this.renderClientColumnHeading()}
-                          <div className={classes.columnstatus} style={{ width: "22%" }}>
+                          <div className={classes.columnstatus} >
                             <Typography className={classes.secondaryHeading} >
                               Status
                 </Typography>
                           </div>
-                          <div className={classes.columntarget} style={{ width: "22%" }}>
+                          <div className={classes.columntarget} >
                             <Typography className={classes.secondaryHeading} >
                               Targeted KPI
                 </Typography>
                           </div>
-                          <div className={classes.columnstartdate} style={{ width: "11%" }}>
+                          <div className={classes.columnstartdate} >
                             <Typography className={classes.secondaryHeading} >
                               Start date
                 </Typography>
                           </div>
-                          <div className={classes.columnenddate} style={{ width: "11%" }}>
+                          <div className={classes.columnenddate} >
                             <Typography className={classes.secondaryHeading} >
                               End date
                 </Typography>
                           </div>
-                          <div className={classes.columnactions} style={{ width: "8%" }}>
+                          <div className={classes.columnactions} >
                             <Typography className={classes.secondaryHeading} >
                               Actions
                 </Typography>
@@ -392,34 +392,34 @@ class ProjectPanelList extends Component {
                                 <ExpansionPanelSummary style={{ paddingLeft: "3%" }} expandIcon={checkPermision('Dashboard Expand Projects', 'read') ? <ExpandMoreIcon /> : null}>
 
 
-                                  <div className={classes.columntitle} style={{ width: "25%" }}>
+                                  <div className={classes.columntitle} >
                                     <Typography className={classes.heading} >
                                       {project.projectTitle}
                                     </Typography>
                                   </div>
                                   {this.renderClientColumn(project.organization)}
-                                  <div className={classes.columnstatus} style={{ width: "22%" }}>
+                                  <div className={classes.columnstatus} >
                                     <Typography className={classes.secondaryHeading} >
                                       {project.status}
                                     </Typography>
                                   </div>
-                                  <div className={classes.columntarget} style={{ width: "22%" }}>
+                                  <div className={classes.columntarget} >
                                     <Typography className={classes.secondaryHeadingLink} onClick={()=>this.editKpi(project.mainKpiId,project.id)} >
                                       {project.mainKpi}
                                     </Typography>
                                   </div>
-                                  <div className={classes.columnstartdate} style={{ width: "11%" }}>
+                                  <div className={classes.columnstartdate} >
                                     <Typography className={classes.secondaryHeading} >
                                       {formatDate(project.startAt)}
                                     </Typography>
                                   </div>
-                                  <div className={classes.columnenddate} style={{ width: "11%"  }}>
+                                  <div className={classes.columnenddate} style={{ width: "15%"  }}>
                                     <Typography className={classes.secondaryHeading} >
                                       {formatDate(project.endAt)}
                                     </Typography>
                                   </div>
 
-                                  <div className={classes.columnactions} style={{ width: "8%"  }}>
+                                  <div className={classes.columnactions} style={{ width: "12%"  }}>
                                     {checkPermision('Projects', 'read') &&
                                       <IconButton onClick={() => { this.setEditRedirect(project.id); }}>
                                         <EditIcon color="primary" />
@@ -436,7 +436,7 @@ class ProjectPanelList extends Component {
                                 {checkPermision('Dashboard Expand Projects', 'read') &&
                                   <ExpansionPanelDetails className={classes.details} style={{ padding: 0, margin: 0 }}>
                                     <Grid container spacing={3} style={{ paddingLeft: "3%", margin: 0 }}>
-                                      <div style={{ width: "28%" }}>
+                                      <div style={{ flexBasis:"18rem" }}>
                                         <Typography className={classes.secondaryHeading} component="p">
                                           <Typography className={classes.heading}>Owner:</Typography>
                                           {ownerarray && ownerarray.map(owner => {
@@ -447,7 +447,7 @@ class ProjectPanelList extends Component {
                                           )}
                                         </Typography>
                                       </div>
-                                      <div style={{ width: "34%" }}>
+                                      <div style={{ flexBasis:"17rem" }}>
                                         <Typography className={classes.secondaryHeading} component="p">
                                           <Typography className={classes.heading}>Team:</Typography>
                                           {teamarray && teamarray.map(team => {
@@ -458,7 +458,7 @@ class ProjectPanelList extends Component {
                                           )}
                                         </Typography>
                                       </div>
-                                      <div style={{ width: "30%" }}>
+                                      <div style={{ flexBasis:"260rem" }}>
                                         <Typography className={classes.secondaryHeading} component="p">
                                           <Typography className={classes.heading}>Tasks:</Typography>
                                           {

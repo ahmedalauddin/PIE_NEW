@@ -89,13 +89,13 @@ export const styles = theme => ({
     flexBasis: "10rem"
   },
   columntarget: {
-    flexBasis: "20rem"
+    flexBasis: "14rem"
   },
   columnstartdate: {
-    flexBasis: "10rem"
+    flexBasis: "13rem"
   },
   columnenddate: {
-    flexBasis: "10rem"
+    flexBasis: "13rem"
   },
   columnactions: {
     flexBasis: "9rem"

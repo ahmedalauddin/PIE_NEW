@@ -4,7 +4,7 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import Typography from "@material-ui/core/Typography";
 import Topbar from "../Topbar";
 import { Link, Redirect } from "react-router-dom";
-import { getOrgId, getOrgName, getOrgDepartments,checkPermision } from "../../redux";
+import { getOrgId, getOrgName, getOrgDepartments,checkPermision,store,setOrg,isAdministrator } from "../../redux";
 import "../../stylesheets/Draft.css";
 import ProjectPersons from "./ProjectPersons";
 import ProjectDetail from "./ProjectDetail";
@@ -74,7 +74,8 @@ class Project extends React.Component {
       snackbarMessage: "",
       message: "",
       show : true,
-      projectProgress:0
+      projectProgress:0,
+      projId:null
     };
   }
 
@@ -88,16 +89,29 @@ class Project extends React.Component {
     this.setState({ value });
   };
 
-  setOrganizationInfo = () => {
-    // Get the organization from the filter.
-    let orgName = getOrgName();
+  setOrganizationInfo = async () => {
+    console.log("called setOrganizationInfo")
     let orgId = getOrgId();
+    let projId = this.props.match.params.id || (this.props.location.state ? this.props.location.state.projId : '');
+    if(this.props.match.params.id && isAdministrator()){
+      const res = await fetch(`/api/projects/${projId}`);
+      const project = await res.json();
+      orgId = project.orgId;
+      const orgresponse=await fetch("/api/organizations/" + orgId);
+      const orgData = await orgresponse.json();
+      store.dispatch(setOrg(JSON.stringify(orgData)));
+    }
+
+
+   
     let departments = getOrgDepartments();
+    let orgName = getOrgName();
 
     this.setState({
       orgName: orgName,
       orgId: orgId,
-      departments: departments
+      departments: departments,
+      projId
     });
   };
 
@@ -115,7 +129,7 @@ class Project extends React.Component {
 
   componentDidMount() {
     this.setOrganizationInfo();
-    let message = "";
+    
     
   }
 
@@ -143,10 +157,12 @@ class Project extends React.Component {
   render() {
     const { classes } = this.props;
     const currentPath = this.props.location.pathname;
-    const { expanded } = this.state;
+    const { expanded,orgName,projId } = this.state;
     
-    let projId = this.props.match.params.id || (this.props.location.state ? this.props.location.state.projId : '');
-
+   
+    if(!orgName){
+      return null;
+    }
     if (this.state.hasError) {
       return <h1>An error occurred.</h1>;
     }
@@ -167,7 +183,7 @@ class Project extends React.Component {
                   Project Detail
                 </Typography>
                 <Typography variant="h7">
-                  Organization: {getOrgName()}
+                  Organization: {orgName}
                 </Typography>
                 <ProjectDetail projectId={projId} messages={this.showMessages} progress={this.state.projectProgress} renderNewProject={(id) => this.renderNewProject(id)} />
               </Paper>
