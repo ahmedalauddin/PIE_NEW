@@ -91,6 +91,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.BOOLEAN,
         allowNull: true,
         defaultValue: 1
+      },
+      deptId: {
+        type: DataTypes.INTEGER,
+        allowNull: true
       }
     },
     {

@@ -41,7 +41,8 @@ module.exports = {
       summary: req.body.summary,
       progress: parseInt(req.body.progress),
       startAt: req.params.startDate,
-      endAt: req.params.endDate
+      endAt: req.params.endDate,
+      deptId: req.body.deptId
     })
       .then(p => {
         // SQL to insert all people from the org into the ProjectPersons table with
@@ -80,7 +81,8 @@ module.exports = {
       summary: req.body.summary,
       progress: parseInt(req.body.progress),
       startAt: req.body.startAt,
-      endAt: req.body.endAt
+      endAt: req.body.endAt,
+      deptId: req.body.deptId
     })
       .then(p => {
         // SQL to insert all people from the org into the ProjectPersons table with
@@ -175,7 +177,8 @@ module.exports = {
           progress: req.body.progress,
           startAt: req.body.startAt,
           endAt: req.body.endAt,
-          statusId: req.body.statusId
+          statusId: req.body.statusId,
+          deptId: req.body.deptId
         },
         {
           returning: true,
@@ -209,7 +212,8 @@ module.exports = {
           progress: req.body.progress,
           startAt: req.body.startAt,
           endAt: req.body.endAt,
-          statusId: req.body.statusId
+          statusId: req.body.statusId,
+          deptId: req.body.deptId
         },
         {
           returning: true,

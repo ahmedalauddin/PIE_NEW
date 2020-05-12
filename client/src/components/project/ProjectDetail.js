@@ -22,7 +22,7 @@ import InputLabel from "@material-ui/core/InputLabel";
 import FormControl from "@material-ui/core/FormControl";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
-import { getOrgId, getOrgName, getOrgDepartments, setProject, store,checkPermision } from "../../redux";
+import { getOrgId, getOrgName, setProject, store,checkPermision } from "../../redux";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import ViewIcon from "@material-ui/icons/Comment";
 import IconButton from "@material-ui/core/IconButton/index";
@@ -77,20 +77,25 @@ class ProjectDetail extends React.Component {
     loader: false,
     delLoader: false,
     projectLastComment:"",
-    readyToProjectComment:false
+    readyToProjectComment:false,
+    deptId:0
   };
 
   setOrganizationInfo = () => {
     // Get the organization from the filter.
     let orgName = getOrgName();
     let orgId = getOrgId();
-    let departments = getOrgDepartments();
 
-    this.setState({
-      orgName: orgName,
-      orgId: orgId,
-      departments: departments
+    fetch(`/api/departments/org/${orgId}`)
+    .then(res => res.json())
+    .then(departments => {
+      this.setState({
+        orgName: orgName,
+        orgId: orgId,
+        departments: departments
+      });
     });
+    
   };
 
   handleChange = name => event => {
@@ -192,6 +197,7 @@ class ProjectDetail extends React.Component {
           description: project.description,
           org: project.organization.name,
           orgId: project.orgId,
+          deptId: project.deptId,
           summary: project.summary,
           mainKpiId: project.mainKpiId,
           kpis: project.kpis,
@@ -239,6 +245,8 @@ class ProjectDetail extends React.Component {
       });
     }
     this.fetchProjectStatuses();
+
+    
   }
 
   componentDidCatch() {
@@ -349,6 +357,32 @@ class ProjectDetail extends React.Component {
                 shrink: true
               }}
             />
+          </Grid>
+
+          <Grid item xs={12}>
+            <FormControl className={classes.formControl} style={{width:"100%"}}>
+              <InputLabel htmlFor="dept-simple" required>
+                Department
+              </InputLabel>
+              <Select
+                value={this.state.deptId}
+                onChange={this.handleSelectChange}
+                inputProps={{
+                  name: "deptId",
+                  id: "deptId"
+                }}
+              >
+                {this.state.departments && this.state.departments.map(dept => {
+                  return (
+                    <MenuItem key={dept.id} value={dept.id}>
+                      {dept.name}
+                    </MenuItem>
+                  );
+                })}
+              </Select>
+            </FormControl>
+            <br />
+            <br />
           </Grid>
           <Grid item xs={12} sm={6}>
             <FormControl className={classes.formControl} style={{width:"50%"}}>

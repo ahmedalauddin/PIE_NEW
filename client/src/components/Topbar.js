@@ -127,6 +127,10 @@ const LoginMenu = [
 const AdminMenu = [
   {
     label: "Dashboard",
+    pathname: "/analytics-dashboard"
+  },
+  {
+    label: "Projects",
     pathname: "/paneldashboard"
   },
   {
@@ -140,10 +144,6 @@ const AdminMenu = [
   {
     label: "Search",
     pathname: "/search"
-  },
-  {
-    label: "Projects",
-    pathname: "/projectdashboard"
   },
   {
     label: "Organizations",
@@ -161,8 +161,13 @@ const AdminMenu = [
 
 
 const StandardAdminMenu = [
+ 
   {
     label: "Dashboard",
+    pathname: "/analytics-dashboard"
+  },
+  {
+    label: "Projects",
     pathname: "/paneldashboard"
   },
   {
@@ -260,36 +265,35 @@ function getMenu(menuType) {
 function getAppbarValue(menuType, currentPath)  {
   var value = 0;
   if (menuType === "admin") {
-    if (!currentPath  || currentPath === "/paneldashboard") {
+
+    if (!currentPath  || currentPath === "/analytics-dashboard") {
       value = 0;
     }
-    if (currentPath === "/mindmaplist") {
+    if (!currentPath  || currentPath === "/paneldashboard") {
       value = 1;
     }
-    if (currentPath === "/organizationactions" || (currentPath !==  undefined && currentPath.includes("/OrganizationAction"))) {
+    if (currentPath === "/mindmaplist") {
       value = 2;
     }
-    if (currentPath === "/search") {
+    if (currentPath === "/organizationactions" || (currentPath !==  undefined && currentPath.includes("/OrganizationAction"))) {
       value = 3;
     }
-    if (currentPath === "/projectdashboard" || (currentPath !== undefined && currentPath.includes("/project/"))) {
+    if (currentPath === "/search") {
       value = 4;
     }
-    if (currentPath === "/orgdashboard"  || currentPath === "/department") {
+    if (currentPath === "/projectdashboard" || (currentPath !== undefined && currentPath.includes("/project/"))) {
       value = 5;
     }
-    if (currentPath === "/analytics") {
+    if (currentPath === "/orgdashboard"  || currentPath === "/department") {
       value = 6;
     }
-    if (currentPath === "/clientorg") {
+    if (currentPath === "/analytics") {
       value = 7;
     }
-    if (currentPath === "/logout") {
+    if (currentPath === "/clientorg") {
       value = 8;
     }
-    if (currentPath === "/about") {
-      value = 9;
-    }
+    
   } else if (menuType === "standard") {
     let menus=[];
     
@@ -345,30 +349,33 @@ function getAppbarValue(menuType, currentPath)  {
       value=0;
     }
   }else if (menuType === "standard-admin") {
-    if (!currentPath ||  currentPath === "/paneldashboard") {
+    if (!currentPath  || currentPath === "/analytics-dashboard") {
       value = 0;
     }
-    if (currentPath === "/mindmaplist") {
+    if (!currentPath ||  currentPath === "/paneldashboard") {
       value = 1;
+    }
+    if (currentPath === "/mindmaplist") {
+      value = 2;
     }
 
     if (currentPath === "/organizationactions" || (currentPath !==  undefined && currentPath.includes("/OrganizationAction"))) {
-      value = 2;
-    }
-    if (currentPath === "/search") {
       value = 3;
     }
-    if (currentPath === "/analytics") {
+    if (currentPath === "/search") {
       value = 4;
     }
-    if (currentPath === "/clientorg"  || currentPath === "/person" || currentPath === "/department") {
+    if (currentPath === "/analytics") {
       value = 5;
     }
-    if (currentPath === "/rolemgt") {
+    if (currentPath === "/clientorg"  || currentPath === "/person" || currentPath === "/department") {
       value = 6;
     }
-    if (currentPath === "/logout") {
+    if (currentPath === "/rolemgt") {
       value = 7;
+    }
+    if (currentPath === "/logout") {
+      value = 8;
     }
    
   } else {

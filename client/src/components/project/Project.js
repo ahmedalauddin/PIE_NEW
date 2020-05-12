@@ -108,9 +108,9 @@ class Project extends React.Component {
     let orgName = getOrgName();
 
     this.setState({
-      orgName: orgName,
-      orgId: orgId,
-      departments: departments,
+      orgName,
+      orgId,
+      departments,
       projId
     });
   };
@@ -169,7 +169,7 @@ class Project extends React.Component {
     return (
       <React.Fragment>
         <CssBaseline />
-        <Topbar currentPath={currentPath} />
+        <Topbar currentPath={"/paneldashboard"} />
 
         {this.state.show && 
         <div className={classes.root}>

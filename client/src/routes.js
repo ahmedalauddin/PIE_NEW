@@ -49,12 +49,14 @@ import OrganizationDocumentUpdate from "./components/dashboard/OrganizationDocum
 import OrganizationActionTable from "./components/dashboard/OrganizationActionTable";
 import ProjectComment from "./components/project/ProjectComment";
 import RoleManagment from "./components/role/RoleManagment";
+import AnalyticsDashboard from "./components/analytics-dashboard/AnalyticsDashboard";
 
 export default props => (
   <BrowserRouter>
     <ScrollToTop>
       <Switch>
         <Route exact path="/dashboard" component={withAuth(ProjectDashboard)} />
+        <Route exact path="/analytics-dashboard" component={withAuth(AnalyticsDashboard)} />
         <Route exact path="/paneldashboard" component={withAuth(PanelDashboard)} />
         <Route exact path="/orgdashboard" component={withAuth(OrgDashboard)} />
         <Route exact path="/highlight" component={withAuth(HighlightDashboard)} />

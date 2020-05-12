@@ -335,5 +335,27 @@ module.exports = {
         logger.error(error.stack);
         res.status(400).send(error);
       });
-  }
+  },
+
+  orgnizationProjectStatus(req, res) {
+    const projectId = req.params.projid;
+   
+    const sql = `SELECT d.name as department,ps.label as status,count(p.id) as total FROM Projects p
+                left join Departments d on d.id=p.deptId
+                left join ProjectStatuses ps on ps.id=p.statusId
+                where p.orgId=${req.params.id} and p.active=1 group by p.deptId,p.statusId`;
+
+    return models.sequelize.query(
+      sql, {
+        type: models.sequelize.QueryTypes.SELECT
+      })
+      .then(milestones => {
+        logger.debug(`${callerType} Milestone listForGantt -> successful, count: ${milestones.length}`);
+        res.status(201).send(milestones);
+      })
+      .catch(error => {
+        logger.error(`${callerType} Milestone listForGantt -> error: ${error.stack}`);
+        res.status(400).send(error);
+      });
+  },
 };

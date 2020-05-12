@@ -56,4 +56,8 @@ router.post("/api/organizations/:id", orgController.updateOrganizationName);
 logger.debug(`${callerType} DELETE -> path: /api/organization-deactivate/:id`);
 router.put("/api/organization-deactivate/:id", orgController.deactivate);
 
+
+logger.debug(`${callerType} GET -> path: /api/orgnization-project-status/:id`);
+  router.get("/api/orgnization-project-status/:id", orgController.orgnizationProjectStatus);
+
 };
