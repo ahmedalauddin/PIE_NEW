@@ -159,5 +159,5 @@ insert into `mvp2`.`Roles`
 ( 55,  'Consultant');
 
 
-
+ALTER TABLE ProjectActions MODIFY COLUMN `status` ENUM('Open','Closed','New') DEFAULT 'New';
 

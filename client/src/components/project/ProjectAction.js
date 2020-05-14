@@ -166,7 +166,7 @@ class ProjectAction extends React.Component {
     description: "",
     projectId: 0,
     assigneeId: null,
-    status: 'Open',
+    status: 'New',
     project: {},
     persons: [],
     // title: "",
@@ -512,14 +512,16 @@ class ProjectAction extends React.Component {
                             id: "status"
                           }}
                         >
+                          <MenuItem key='New' value='New'>
+                            New
+                          </MenuItem>
                           <MenuItem key='Open' value='Open'>
-                                Open
+                            Open
+                          </MenuItem>
+                          <MenuItem key='Closed' value='Closed'>
+                            Closed
                               </MenuItem>
 
-                              <MenuItem key='Closed' value='Closed'>
-                              Closed
-                              </MenuItem>
-                            
                         </Select>
                       </FormControl>
                     </Grid>

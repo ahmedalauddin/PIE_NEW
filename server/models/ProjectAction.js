@@ -18,8 +18,8 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true
     },
     status: {
-      type: DataTypes.ENUM('Open','Closed'),
-      defaultValue: 'Open',
+      type: DataTypes.ENUM('Open','Closed','New'),
+      defaultValue: 'New',
     },
     disabled: {
       type: DataTypes.BOOLEAN,

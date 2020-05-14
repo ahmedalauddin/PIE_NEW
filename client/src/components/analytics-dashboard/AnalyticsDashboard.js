@@ -20,7 +20,9 @@ class AnalyticsDashboard extends Component {
     this.state = {
       orgId: "",
       orgName: "",
-      orgProjectStatus:null
+      orgProjectStatus:null,
+      orgProjectActionStatus:null,
+      orgProjectMilstoneStatus:null
     };
   }
 
@@ -39,14 +41,22 @@ class AnalyticsDashboard extends Component {
     const orgName= getOrgName();
     const res = await fetch(`/api/orgnization-project-status/${orgId}`);
     const orgProjectStatus = await res.json();
-    this.setState({orgProjectStatus,orgId,orgName});
+
+    const res2 = await fetch(`/api/orgnization-project-action-status/${orgId}`);
+    const orgProjectActionStatus = await res2.json();
+
+    const res3 = await fetch(`/api/orgnization-milstone-status/${orgId}`);
+    const orgProjectMilstoneStatus = await res3.json();
+
+    
+    this.setState({orgProjectStatus,orgProjectActionStatus,orgProjectMilstoneStatus,orgId,orgName});
   }
 
 
 
   render() {
     const { classes } = this.props;
-    const { orgId , orgName, orgProjectStatus } = this.state;
+    const { orgId , orgName, orgProjectStatus, orgProjectActionStatus,orgProjectMilstoneStatus } = this.state;
     
 
     return (
@@ -69,17 +79,18 @@ class AnalyticsDashboard extends Component {
                 </Paper>
               </Grid>}
 
-              <Grid item xs={12} sm={5}>
+              {orgProjectMilstoneStatus && <Grid item xs={12} sm={5}>
                 <Paper className={classes.paper}>
-                    <MileStoneWidget />
+                    <MileStoneWidget orgProjectMilstoneStatus={orgProjectMilstoneStatus} />
                 </Paper>
-              </Grid>
+              </Grid>}
 
-              <Grid item xs={12} sm={5}>
+              {orgProjectActionStatus && <Grid item xs={12} sm={5}>
                 <Paper className={classes.paper}>
-                    <ActionWidget />
+                    <ActionWidget orgProjectActionStatus={orgProjectActionStatus} />
                 </Paper>
               </Grid>
+              }
             </Grid>
 
           </Grid>

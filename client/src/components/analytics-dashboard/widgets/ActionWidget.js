@@ -7,6 +7,34 @@ variablePie(Highcharts);
 
 class ActionWidget extends Component {
     render() {
+        const { orgProjectActionStatus } = this.props;
+        let newActions=0;
+        let openActions=0;
+        let closeActions=0;
+        orgProjectActionStatus.forEach(a=>{
+            if(a.status=="New"){
+                newActions=a.total;
+
+            }else if(a.status=="Open"){
+                openActions=a.total;
+
+            }else if(a.status=="Close"){
+                closeActions=a.total;
+            }
+        })
+        const  data= [{
+                    name: 'New',
+                    y: newActions,
+                    color:'rgb(124, 181, 236)'
+                }, {
+                    name: 'Open',
+                    y: openActions,
+                    color:'rgb(144, 237, 125)'
+                }, {
+                    name: 'Close',
+                    y: closeActions,
+                    color: 'rgb(128, 133, 233)'
+                }]
         const options = {
             chart: {
                 plotBackgroundColor: null,
@@ -15,45 +43,26 @@ class ActionWidget extends Component {
                 type: 'pie'
             },
             title: {
-                text: 'All Actions'
+                text: 'Actions Status'
             },
             tooltip: {
-                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                pointFormat: '{series.name}: <b>{point.y:.1f}</b>'
             },
-            accessibility: {
-                point: {
-                    valueSuffix: '%'
-                }
-            },
+          
             plotOptions: {
                 pie: {
                     allowPointSelect: true,
                     cursor: 'pointer',
                     dataLabels: {
                         enabled: true,
-                        format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+                        format: '<b>{point.name}</b>: {point.y}'
                     }
                 }
             },
             series: [{
-                name: 'Brands',
+                name: 'Actions',
                 colorByPoint: true,
-                data: [{
-                    name: 'Action 1',
-                    y: 61.41
-                }, {
-                    name: 'Action 2',
-                    y: 11.84
-                }, {
-                    name: 'Action 3',
-                    y: 10.85
-                }, {
-                    name: 'Action 4',
-                    y: 4.67
-                }, {
-                    name: 'Action 5',
-                    y: 4.18
-                }]
+                data
             }]
         }
         return (

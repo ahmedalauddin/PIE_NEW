@@ -24,6 +24,41 @@ class ProjectStatusWidget extends Component {
             }
         })
 
+
+        const series =[{
+            name: 'Project Status',
+            data: [
+                {
+                    name:'Approved',
+                    y:approved,
+                    color:'rgb(124, 181, 236)'
+                },
+                {
+                    name:'Not Approved',
+                    y:notApproved,
+                    color:'rgb(247, 163, 92)'
+                },
+                {
+                    name:'In Progress',
+                    y:inProgress,
+                    color:'rgb(144, 237, 125)'
+                },
+                {
+                    name:'Completed',
+                    y:completed,
+                    color: 'rgb(128, 133, 233)'
+                },
+                {
+                    name:'Postponed',
+                    y:postponed,
+                    color:'rgb(67, 67, 72)'
+                }                
+            ],
+            dataLabels: {
+                enabled: false,
+            }
+        }]
+
         const options = {
             chart: {
                 type: 'column'
@@ -32,7 +67,14 @@ class ProjectStatusWidget extends Component {
                 text: 'Project Status'
             },
             xAxis: {
-                categories: ['Approved', 'Not Approved', 'In Progress','Completed','Postponed']
+                type: 'category',
+                labels: {
+                    rotation: -20,
+                    style: {
+                        fontSize: '13px',
+                        fontFamily: 'Verdana, sans-serif'
+                    }
+                }
             },
             yAxis: {
                 min: 0,
@@ -52,8 +94,11 @@ class ProjectStatusWidget extends Component {
             },
            
             tooltip: {
-                headerFormat: '<b>{point.x}</b>: ',
+                headerFormat: '<b>{point.key}</b>: ',
                 pointFormat: '{point.stackTotal}'
+            },
+            legend:{
+                enabled: false
             },
             plotOptions: {
                 column: {
@@ -63,22 +108,7 @@ class ProjectStatusWidget extends Component {
                     }
                 }
             },
-            series: [{
-                name: 'Approved',
-                data: [approved, 0, 0, 0, 0]
-            }, {
-                name: 'Not Approved',
-                data: [0, notApproved, 0, 0, 0 ]
-            }, {
-                name: 'In Progress',
-                data: [0, 0, inProgress, 0, 0 ]
-            }, {
-                name: 'Completed',
-                data: [0, 0, 0, completed, 0 ]
-            }, {
-                name: 'Postponed',
-                data: [0, 0, 0, 0, postponed ]
-            }]
+            series
         }
         return (
             <div className="line-series">

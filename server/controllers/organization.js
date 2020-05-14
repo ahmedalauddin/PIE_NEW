@@ -16,6 +16,16 @@ const mvcType = "controller";
 const util = require("util");
 const callerType = "controller";
 
+function progressTxt(progress){
+  const progressToken=(progress+"").split(".");
+   if(progressToken[0] && progressToken[0]==1){
+     return "100%";
+   }else if(progressToken[1] && progressToken[1].substring(0,1)>0){
+     return progressToken[1].substring(0,1)+"0%";
+   }
+   return "0%";
+}
+
 // create an organization
 module.exports = {
   create(req, res) {
@@ -338,7 +348,6 @@ module.exports = {
   },
 
   orgnizationProjectStatus(req, res) {
-    const projectId = req.params.projid;
    
     const sql = `SELECT d.name as department,ps.label as status,count(p.id) as total FROM Projects p
                 left join Departments d on d.id=p.deptId
@@ -349,12 +358,64 @@ module.exports = {
       sql, {
         type: models.sequelize.QueryTypes.SELECT
       })
-      .then(milestones => {
-        logger.debug(`${callerType} Milestone listForGantt -> successful, count: ${milestones.length}`);
-        res.status(201).send(milestones);
+      .then(result => {
+        logger.debug(`${callerType} orgnizationProjectStatus successful, count: ${result.length}`);
+        res.status(201).send(result);
       })
       .catch(error => {
-        logger.error(`${callerType} Milestone listForGantt -> error: ${error.stack}`);
+        logger.error(`${callerType} orgnizationProjectStatus error: ${error.stack}`);
+        res.status(400).send(error);
+      });
+  },
+
+  orgnizationProjectActionStatus(req, res) {
+   
+    const sql =  `SELECT pa.status,count(pa.id) as total
+                  FROM ProjectActions pa
+                  inner join Projects p on p.id=pa.projId
+                  where pa.disabled=0 and p.active=1 and p.orgId=${req.params.id}
+                  group by pa.status`;
+
+    return models.sequelize.query(
+      sql, {
+        type: models.sequelize.QueryTypes.SELECT
+      })
+      .then(result => {
+        logger.debug(`${callerType} orgnizationProjectActionStatus successful, count: ${result.length}`);
+        res.status(201).send(result);
+      })
+      .catch(error => {
+        logger.error(`${callerType} orgnizationProjectActionStatus error: ${error.stack}`);
+        res.status(400).send(error);
+      });
+  },
+
+  orgnizationMilstoneStatus(req, res) {
+   
+    const sql =  `SELECT jsonData FROM Gantt where orgId=${req.params.id} and active=1;`;
+
+    return models.sequelize.query(
+      sql, {
+        type: models.sequelize.QueryTypes.SELECT
+      })
+      .then(result => {
+        logger.debug(`${callerType} orgnizationProjectActionStatus successful, count: ${result.length}`);
+        const data={};
+        result.forEach(r=>{
+          r.jsonData.data.forEach(rd=>{
+                const progressKey= progressTxt(rd.progress);
+                if(!data[progressKey]){
+                  data[progressKey]=1;
+                }else{
+                  data[progressKey]=1+data[progressKey];
+                }
+
+            })
+          })
+        res.status(201).send(data);
+      })
+      .catch(error => {
+        logger.error(`${callerType} orgnizationProjectActionStatus error: ${error.stack}`);
         res.status(400).send(error);
       });
   },

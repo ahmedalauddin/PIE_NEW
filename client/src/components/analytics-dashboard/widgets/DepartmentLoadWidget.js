@@ -81,23 +81,29 @@ class DepartmentLoadWidget extends Component {
             series: [
                 {
                     name: 'Not Approved',
-                    data: notApprovedArray
+                    data: notApprovedArray,
+                    color:'rgb(247, 163, 92)'
                 },
                 {
                     name: 'Approved',
-                    data: approvedArray
+                    data: approvedArray,
+                    color:'rgb(124, 181, 236)'
                 },
                 {
                     name: 'Inprogress',
-                    data: inProgressArray
+                    data: inProgressArray,
+                    color:'rgb(144, 237, 125)'
                 }, 
                 {
                     name: 'Completed',
-                    data: completedArray
+                    data: completedArray,
+                    color: 'rgb(128, 133, 233)'
                 }, 
                 {
                     name: 'Postponed',
-                    data: postponedArray
+                    data: postponedArray,
+                    color:'rgb(67, 67, 72)'
+                    
                 }]
         }
         return (

@@ -57,7 +57,13 @@ logger.debug(`${callerType} DELETE -> path: /api/organization-deactivate/:id`);
 router.put("/api/organization-deactivate/:id", orgController.deactivate);
 
 
-logger.debug(`${callerType} GET -> path: /api/orgnization-project-status/:id`);
+ logger.debug(`${callerType} GET -> path: /api/orgnization-project-status/:id`);
   router.get("/api/orgnization-project-status/:id", orgController.orgnizationProjectStatus);
+
+  logger.debug(`${callerType} GET -> path: /api/orgnization-project-action-status/:id`);
+  router.get("/api/orgnization-project-action-status/:id", orgController.orgnizationProjectActionStatus);
+
+  logger.debug(`${callerType} GET -> path: /api/orgnization-milstone-status/:id`);
+  router.get("/api/orgnization-milstone-status/:id", orgController.orgnizationMilstoneStatus);
 
 };
