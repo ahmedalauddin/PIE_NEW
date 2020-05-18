@@ -150,7 +150,7 @@ const AdminMenu = [
     pathname: "/orgdashboard"
   },
   {
-    label: "Analytics",
+    label: "Action Tracker",
     pathname: "/analytics"
   },
   {
@@ -183,7 +183,7 @@ const StandardAdminMenu = [
     pathname: "/search"
   },
   {
-    label: "Analytics",
+    label: "Action Tracker",
     pathname: "/analytics"
   },
   {
@@ -231,7 +231,7 @@ function getStandardMenu(){
 
   if(checkPermision('Analytics','read')){
       StandardMenu.push({
-        label: "Analytics",
+        label: "Action Tracker",
         pathname: "/analytics"
       })
   }
@@ -281,17 +281,17 @@ function getAppbarValue(menuType, currentPath)  {
     if (currentPath === "/search") {
       value = 4;
     }
-    if (currentPath === "/projectdashboard" || (currentPath !== undefined && currentPath.includes("/project/"))) {
+    /*if (currentPath === "/projectdashboard" || (currentPath !== undefined && currentPath.includes("/project/"))) {
+      value = 5;
+    }*/
+    if (currentPath === "/orgdashboard"  || currentPath === "/department") {
       value = 5;
     }
-    if (currentPath === "/orgdashboard"  || currentPath === "/department") {
+    if (currentPath === "/analytics") {
       value = 6;
     }
-    if (currentPath === "/analytics") {
-      value = 7;
-    }
     if (currentPath === "/clientorg") {
-      value = 8;
+      value = 7;
     }
     
   } else if (menuType === "standard") {

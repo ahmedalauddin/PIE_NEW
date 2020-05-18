@@ -40,7 +40,7 @@ class ClientOrg extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.state = {
       id: "",
-      organizations: [],
+      organizations: [{id:0,name:'Select Organization'}],
       org: "",
       orgId: 0,
       expanded: false,
@@ -134,6 +134,7 @@ class ClientOrg extends React.Component {
     fetch("/api/organizations/?format=select")
       .then(results => results.json())
       .then(organizations => {
+        organizations.unshift({id:0,name:'Select Organization'})
         this.setState({ organizations });
       });
   }
@@ -192,8 +193,7 @@ class ClientOrg extends React.Component {
                       >
                         Select client organization
                       </Typography>
-                      <Typography variant="h5" component="h2">
-                        <FormControl className={classes.formControl}>
+                        <FormControl className={classes.formControl} style={{width:"100%"}}>
                           <InputLabel shrink htmlFor="org-simple">
                           </InputLabel>
                           <Select
@@ -216,7 +216,6 @@ class ClientOrg extends React.Component {
                         <br />
                         <br />
                         <br />
-                      </Typography>
                       <Typography variant="h5" component="h2">
                         <div className={classes.spaceTop}>
                           <br />

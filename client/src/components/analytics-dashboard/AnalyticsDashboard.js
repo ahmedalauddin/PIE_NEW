@@ -13,6 +13,7 @@ import ProjectStatusWidget from "./widgets/ProjectStatusWidget";
 import DepartmentLoadWidget from "./widgets/DepartmentLoadWidget";
 import MileStoneWidget from "./widgets/MileStoneWidget";
 import ActionWidget from "./widgets/ActionWidget";
+import ProjectNewVsCompletedWidget from "./widgets/ProjectNewVsCompletedWidget";
 
 class AnalyticsDashboard extends Component {
   constructor(props) {
@@ -53,7 +54,54 @@ class AnalyticsDashboard extends Component {
   }
 
 
+  renderCards(){
+    const { classes } = this.props;
+     const { orgId , orgName, orgProjectStatus, orgProjectActionStatus,orgProjectMilstoneStatus } = this.state;
 
+      return(
+        <Grid container alignItems="center" justify="center" spacing={24} sm={12}>
+             {orgProjectStatus && <Grid item xs={12} sm={4}>
+                <Paper className={classes.paper}>
+                    <ProjectStatusWidget orgProjectStatus={orgProjectStatus}/>
+                </Paper>
+              </Grid>}
+
+              {orgProjectStatus &&<Grid item xs={12} sm={4}>
+                <Paper className={classes.paper}>
+                    <DepartmentLoadWidget orgProjectStatus={orgProjectStatus}/>
+                </Paper>
+              </Grid>}
+
+              {orgProjectMilstoneStatus && <Grid item xs={12} sm={4}>
+                <Paper className={classes.paper}>
+                    <MileStoneWidget orgProjectMilstoneStatus={orgProjectMilstoneStatus} />
+                </Paper>
+              </Grid>}
+
+              {orgProjectActionStatus && <Grid item xs={12} sm={4}>
+                <Paper className={classes.paper}>
+                    <ActionWidget orgProjectActionStatus={orgProjectActionStatus} />
+                </Paper>
+              </Grid>
+              }
+
+              {orgProjectActionStatus && <Grid item xs={12} sm={4}>
+                <Paper className={classes.paper}>
+                    <ProjectNewVsCompletedWidget orgProjectActionStatus={orgProjectActionStatus} />
+                </Paper>
+              </Grid>
+              }
+              {orgProjectActionStatus &&<Grid item xs={12} sm={4}>
+                <Paper className={classes.paper}>
+                    
+                </Paper>
+              </Grid>}
+              
+        
+        
+        </Grid>
+      )
+  }
   render() {
     const { classes } = this.props;
     const { orgId , orgName, orgProjectStatus, orgProjectActionStatus,orgProjectMilstoneStatus } = this.state;
@@ -66,31 +114,12 @@ class AnalyticsDashboard extends Component {
         <div className={classes.root}>
           <Grid container justify="center" direction="column" alignItems="center" className="panel-dashboard">
             <PageTitle pageTitle={orgName+ " Dashboard"} />
-            <Grid container spacing={24}>
-              {orgProjectStatus && <Grid item xs={12} sm={5}>
-                <Paper className={classes.paper}>
-                    <ProjectStatusWidget orgProjectStatus={orgProjectStatus}/>
-                </Paper>
-              </Grid>}
-
-              {orgProjectStatus &&<Grid item xs={12} sm={5}>
-                <Paper className={classes.paper}>
-                    <DepartmentLoadWidget orgProjectStatus={orgProjectStatus}/>
-                </Paper>
-              </Grid>}
-
-              {orgProjectMilstoneStatus && <Grid item xs={12} sm={5}>
-                <Paper className={classes.paper}>
-                    <MileStoneWidget orgProjectMilstoneStatus={orgProjectMilstoneStatus} />
-                </Paper>
-              </Grid>}
-
-              {orgProjectActionStatus && <Grid item xs={12} sm={5}>
-                <Paper className={classes.paper}>
-                    <ActionWidget orgProjectActionStatus={orgProjectActionStatus} />
-                </Paper>
+            <Grid container alignItems="center" justify="center" spacing={24} sm={12}>
+            <Grid item sm={12}>
+              <Paper className={classes.paper}>
+              {this.renderCards()}
+              </Paper>
               </Grid>
-              }
             </Grid>
 
           </Grid>

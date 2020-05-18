@@ -357,7 +357,7 @@ class ProjectPanelList extends Component {
                           </div>
                         </ExpansionPanelSummary>
                       </ExpansionPanel>
-                        {!this.state.skeletonLoader && projects && projects.length && stableSort(projects, getSorting(order, orderBy))
+                        {!this.state.skeletonLoader && projects && projects.length>0 && stableSort(projects, getSorting(order, orderBy))
                           .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                           .map(project => {
                             const tasksString = project.tasks
