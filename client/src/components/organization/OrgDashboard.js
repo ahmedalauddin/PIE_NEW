@@ -244,6 +244,7 @@ class OrgDashboard extends Component {
   };
 
   
+
   render() {
     const { classes } = this.props;
     const currentPath = this.props.location.pathname;
@@ -271,12 +272,9 @@ class OrgDashboard extends Component {
         <div className={classes.root}>
           <Grid container justify="center" direction="column" alignItems="center" className="panel-dashboard"> 
             <PageTitle pageTitle={"All clients and projects"} />
-            <Grid item xs={12} md={10} className="panel-dashboard-list">
-              <div className={classes.root+' skeleton-org'}>
-                <div className="list-cls">
-                  <Grid container justify="center">
-                    <Grid spacing={12} container lg={10} alignItems="center" justify="center">
-                      <Grid item xs={12} md={10} className="testingOne">
+            
+            <Grid container justify="center" direction="column" alignItems="center" className="panel-dashboard">
+            <Grid  item xs={12} md={10} className="dashboard-filter-menu" >
                         <Card className={classes.card}>
                           <CardContent className="list-project-panellist">
                             <ExpansionPanel expanded={false}>
@@ -416,11 +414,9 @@ class OrgDashboard extends Component {
                           </CardContent>
                         </Card>
                       </Grid>
-                    </Grid>
-                  </Grid>
-                </div>
-              </div>
+
             </Grid>
+            
           </Grid>
           <Snackbar
               open={this.state.openSnackbar}
