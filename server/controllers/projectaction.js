@@ -136,7 +136,6 @@ module.exports = {
           if(assigneeId){
             var person = await models.Person.findByPk(assigneeId,{raw:true});
             const project= await models.Project.findByPk(projectId,{raw:true});
-              // console.log('createProjectAction-----------------------userAssigneeuserAssigneeuserAssignee-',respons);
               var to = person.email;
               var subject = "Notification of action assignment";
               //var text = "Hi "+respons.firstName+", A new action '"+title+"' is assigned to you."
@@ -293,7 +292,6 @@ module.exports = {
         .then(() => {
           if(assigneeId){
             var userAssignee = models.Person.findByPk(assigneeId,{raw:true}).then((respons)=>{
-              // console.log('updateProjectAction-----------------userAssigneeuserAssigneeuserAssignee-',respons);
               var to = respons.email;
               var subject = "Valueinfinity - Action Updated.";
               var text = "Hi "+respons.firstName+", An existing Action '"+title+"' is updated recently that is assigned to you."
@@ -343,5 +341,50 @@ module.exports = {
           res.status(400).send(error);
         });
     
+  },
+  orgnizationActions(req, res) {
+    const statusList = req.body.statusList;
+    const orgId = req.body.orgId;
+    console.log(req.body)
+    let sql =  `SELECT pa.*,p.title as projectName, concat(ps.firstName,' ',ps.lastName) as personName FROM ProjectActions pa
+                  left join Projects p on p.id=pa.projId
+                  left join Persons ps on ps.id =pa.assigneeId
+                  where pa.disabled=0 and p.orgId=${orgId}`;
+    if(statusList.length>0){
+      sql+=` and pa.status in ('${statusList.join("','")}')`
+    }
+    console.log(sql);
+    return models.sequelize.query(
+      sql, {
+        type: models.sequelize.QueryTypes.SELECT
+      })
+      .then(result => {
+        logger.debug(`${callerType} orgnizationActions successful, count: ${result.length}`);
+        res.status(201).send(result);
+      })
+      .catch(error => {
+        logger.error(`${callerType} orgnizationActions error: ${error.stack}`);
+        res.status(400).send(error);
+      });
+  },
+
+  orgnizationActionsCount(req, res) {
+    let sql =  `SELECT count(pa.id) as total,pa.status FROM ProjectActions pa
+                left join Projects p on p.id=pa.projId
+                where pa.disabled=0 and p.orgId=${req.params.id}
+                group by pa.status`;
+   
+    return models.sequelize.query(
+      sql, {
+        type: models.sequelize.QueryTypes.SELECT
+      })
+      .then(result => {
+        logger.debug(`${callerType} orgnizationActionsCount successful, count: ${result.length}`);
+        res.status(201).send(result);
+      })
+      .catch(error => {
+        logger.error(`${callerType} orgnizationActionsCount error: ${error.stack}`);
+        res.status(400).send(error);
+      });
   },
 };

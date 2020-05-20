@@ -29,4 +29,10 @@ module.exports = router => {
   router.get("/api/action-project-id/:id", projectaction.findById);
 
   router.get("/api/project-action-persons/:projectId", projectaction.projectActionPersonsByProjectId);
+
+  logger.debug(`${callerClass} POST -> path: /api/action-org`);
+  router.post("/api/action-org", projectaction.orgnizationActions);
+
+  logger.debug(`${callerClass} POST -> path: /api/actions-count-org/:id`);
+  router.get("/api/actions-count-org/:id", projectaction.orgnizationActionsCount);
 };

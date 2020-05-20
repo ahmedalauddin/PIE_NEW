@@ -161,3 +161,7 @@ insert into `mvp2`.`Roles`
 
 ALTER TABLE ProjectActions MODIFY COLUMN `status` ENUM('Open','Closed','New') DEFAULT 'New';
 
+
+
+ALTER TABLE Projects ADD COLUMN `completedAt` DATETIME DEFAULT NULL;
+

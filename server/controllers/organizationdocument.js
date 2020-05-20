@@ -10,7 +10,6 @@ const mailer = require("./mailer");
 module.exports = {
    listByOrganization(req, res) {
   logger.debug(`${callerType} Organization Documents findAll by ORG ID`);
-  //console.log('req',req.params);
   return models.OrganizationDocument.findAll({
     
     include: [

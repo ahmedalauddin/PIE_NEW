@@ -128,44 +128,7 @@ module.exports = {
     }
   },
 
-  /*
-  createWithProject(req, res) {
-    const projectId = req.body.projectId;
-    logger.debug(`kpi createWithProject -> projectId: ${projectId}`);
-    logger.debug(`kpi createWithProject -> JSON: req.body: ${JSON.stringify(req.body)}`);
-    let nodeId = "";
-    if (req.body.mindmapNodeId) {
-      nodeId = req.body.mindmapNodeId;
-    } else {
-      nodeId = "";
-    }
-    let kpiTitle = req.body.title;
-    let kpiDescription = req.body.description;
-    let formulaDescription = req.body.formula;
-    let project = req.body.project;
-    let projectDescription = req.body.projectDescription;
-    let mindmapNodeId = req.body.mindmapNodeId;
-    let orgId = req.body.orgId;
-    // TODO - test this.
-    // SQL to call stored procedure with its input parameters.
-    let sql = "CALL insert_kpi_with_project (" + orgId + ", '" + kpiTitle + "', '" + kpiDescription + "', '" +
-      formulaDescription + "', '" + mindmapNodeId + "', '" + project + "', '" + projectDescription + "')";
-
-    return models.sequelize
-      .query(sql)
-      .then(([results, metadata]) => {
-        // Results will be an empty array and metadata will contain the number of affected rows.
-        console.log("Kpi createWithProject -> metadata: " + metadata);
-        console.log("Kpi createWithProject -> create: successful");
-      })
-      .catch(error => {
-        logger.error(`${callerType} Kpi createWithProject -> error: ${error.stack}`);
-        res.status(400).send(error);
-      });
-  },
-  */
-
-  // Update a Kpi
+  
   update(req, res) {
     const id = req.params.id;
     return models.Kpi.update(
@@ -188,10 +151,7 @@ module.exports = {
     )
       .then(([d,p]) => {
         logger.debug(`${callerType} update -> successful`);
-        // logger.debug(`==========================================================`);
-        // // console.log(p.split(','));
-        // logger.debug(`${p} ============================================`);
-        // res.status(200).send(p);
+       
         if(p === 1){
           res.status(200).send({
             success: true,
@@ -212,20 +172,7 @@ module.exports = {
   },
 
   savePriorityOrder(req, res) {
-    /* Use a bulk update statement similar to this:
-        UPDATE students s
-        JOIN (
-            SELECT 1 as id, 5 as new_score1, 8 as new_score2
-            UNION ALL
-            SELECT 2, 10, 8
-            UNION ALL
-            SELECT 3, 8, 3
-            UNION ALL
-            SELECT 4, 10, 7
-        ) vals ON s.id = vals.id
-        SET score1 = new_score1, score2 = new_score2;
-     */
-    console.log("kpi -> savePriorityOrder");
+   
     const orgid = req.params.orgid;
     const kpis = req.body.kpis;
     let sql = "Update Kpis k join (";
@@ -238,16 +185,14 @@ module.exports = {
       } else {
         sql += "union all select " + kpis[i].id + ", " + (i+1) + " ";
       }
-      console.log("i = " + i + ", kpi id = " + kpis[i].id + ", kpi title = " + kpis[i].title);
     }
     sql += ") vals on k.id = vals.id set orgPriority = newPriority " +
       "where orgId = " + orgid;
-    console.log("Update SQL: " + sql);
     return models.sequelize
       .query(sql)
       .then(([results, metadata]) => {
         // Results will be an empty array and metadata will contain the number of affected rows.
-        console.log("KPI savePriorityOrder -> update: successful");
+          res.status(201).send(results);
       })
       .catch(error => {
         logger.error(`${callerType} KPI savePriorityOrder -> error: ${error.stack}`);
@@ -289,178 +234,7 @@ module.exports = {
         res.status(400).send(error);
       });
   },
-/*
-  removeFromProject(req, res) {
-    const id = req.params.id;
-    return models.Kpi.update(
-      {
-        projectId: null
-      },
-      {
-        returning: true,
-        where: {
-          id: id
-        }
-      }
-    )
-      .then(_k => {
-        var removefromMainkpi = models.Project.update(
-          {
-            mainKpiId: null
-          },
-          {
-            returning: true,
-            where: {
-              mainKpiId: id,
-              id: req.body.data[0].projectId
-            }
-          }
-        )
-        logger.debug(`${callerType} KPI deactivate, id ${id} -> successful`);
-        res.status(201).send(_k);
-      })
-      .catch(error => {
-        logger.error(`${callerType} KPI deactivate, id ${id} -> error: ${error.stack}`);
-        res.status(400).send(error);
-      });
-  },*/
 
-  // For KPI search, assign KPIs to the project.
-  // TODO: change this so it's a save as new instead of just using the KpiProjects table.
-  /*
-    This will need to insert records into the KPI table, just copying the KPIs from other projects.
-    Not too many changes: the main diff is we'll insert into the Kpis table instead of KpiProjects.
-   */
-  /*
-  saveAsNew(req, res) {
-    logger.debug(`${callerType} KPI assignToProject -> reg: ${JSON.stringify(req.body)}`);
-   
-
-    var jsonData = req.body.data;
-    let sqlArrays = "";
-    let sql = "";
-    let doInsert = false;
-    let projectId = req.body.projectId;
-    let orgnId = req.params.orgnId;
-
-    if (jsonData) {
-      // Convert the JSON into some arrays for a SQL statement.
-      // Break the input json down into an array and we can update with one SQL statement.
-      // Use JSON.parse.
-      for (var i = 0; i < jsonData.length; i++) {
-        // Only add items where selected is true
-        if (jsonData[i].selected === true) {
-          if (doInsert === true) {
-            sqlArrays += ", ";
-          }
-          sqlArrays += "('" + orgnId + "', '" + projectId + "', '" + jsonData[i].title + "', '" + jsonData[i].description + "', '" + jsonData[i].level + "', '" + jsonData[i].type + "', " + jsonData[i].orgPriority + ", '" + jsonData[i].active + "', '" + jsonData[i].status + "', '" + jsonData[i].formulaDescription + "', " + jsonData[i].departmentId + ") ";
-          doInsert = true;
-        }
-      }
-      // Changed insert statement, 12/5/19.
-      if (doInsert === true) {
-        sql = "INSERT into `Kpis` " +
-          "(orgId, projectId, title, description, level, type, orgPriority, active, status, formulaDescription, departmentId) " +
-          "VALUES " + sqlArrays +
-          "ON DUPLICATE KEY " +
-          "UPDATE projectId = projectId, id = id;"
-
-        let _obj = util.inspect(req, { showHidden: false, depth: null });
-        logger.debug(`${callerType} KPI assignToProject -> request: ${_obj}`);
-        logger.debug(`${callerType} KPI assignToProject -> sql: ${sql}`);
-
-        return models.sequelize
-          .query(sql)
-          .then(([results, metadata]) => {
-            // Results will be an empty array and metadata will contain the number of affected rows.
-            console.log("KPI assignToProject -> update: successful");
-            if(results > 0){
-              res.status(201).send({
-                success: true,
-                message: "KPI Updated successfully"
-              });
-            }else{
-              res.status(201).send({
-                success: true,
-                message: "Something went wrong."
-              });
-            }
-          })
-          .catch(error => {
-            logger.error(`${callerType} KPI saveAsNew -> error: ${error.stack}`);
-            res.status(400).send(error);
-          });
-      } else {
-        logger.debug(`${callerType} KPI saveAsNew -> no JSON data in request`);
-        return "error - no JSON";
-      }
-    }
-  },*/
-
-  // For KPI search, assign KPIs to the project.
-  /*
-  assignToProject(req, res) {
-    logger.debug(`${callerType} KPI assignToProject -> reg: ${JSON.stringify(req.body)}`);
-    /*
-    Need something like this:
-      INSERT into `KpiProjects`
-      (kpiId, projectId)
-      VALUES
-        ('69', '118'), ('67', '118'), ('66', '118')
-      ON DUPLICATE KEY
-      UPDATE projectId=projectId, kpiId=kpiId;
-
-
-    var jsonData = req.body.data;
-    let sqlArrays = "";
-    let sql = "";
-    let doInsert = false;
-    let projectId = req.body.projectId;
-
-    if (jsonData) {
-      // Convert the JSON into some arrays for a SQL statement.
-      // Break the input json down into an array and we can update with one SQL statement.
-      // Use JSON.parse.
-      for (var i = 0; i < jsonData.length; i++) {
-        // Only add items where selected is true
-        if (jsonData[i].selected === true) {
-          if (doInsert === true) {
-            sqlArrays += ", ";
-          }
-          sqlArrays += "('" + jsonData[i].id + "', '" + projectId + "') ";
-          doInsert = true;
-        }
-      }
-      if (doInsert === true) {
-        sql = "INSERT into `KpiProjects` " +
-          "(kpiId, projectId) " +
-          "VALUES " + sqlArrays +
-          "ON DUPLICATE KEY " +
-          "UPDATE projectId=projectId, kpiId=kpiId;"
-
-        let _obj = util.inspect(req, { showHidden: false, depth: null });
-        logger.debug(`${callerType} KPI assignToProject -> request: ${_obj}`);
-        logger.debug(`${callerType} KPI assignToProject -> sql: ${sql}`);
-
-        return models.sequelize
-          .query(sql)
-          .then(([results, metadata]) => {
-            // Results will be an empty array and metadata will contain the number of affected rows.
-            console.log("KPI assignToProject -> update: successful");
-          })
-          .catch(error => {
-            logger.error(`${callerType} KPI assignToProject -> error: ${error.stack}`);
-            res.status(400).send(error);
-          });
-      } else {
-        logger.debug(`${callerType} KPI assignToProject -> no JSON data in request`);
-        return "error - no JSON";
-      }
-    }
-  },
-   */
-
-  // Find a Kpi by Id
   findById(req, res) {
     logger.error(`${callerType} KPI, findById `);
     return models.Kpi.findByPk(req.params.id, {
@@ -781,7 +555,6 @@ module.exports = {
     }
 
     models.ProjectKpi.bulkCreate(records).then(([results, metadata]) => {
-      console.log("KPI assignToProject -> update: successful");
       if(results > 0){
         res.status(201).send({
           success: true,

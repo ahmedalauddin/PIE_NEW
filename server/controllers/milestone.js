@@ -185,7 +185,6 @@ module.exports = {
       }
     }catch(e){
       logger.debug(`${callerType} existingJsonData fetch error `);
-      console.log(e);
     }
     
     const sql = "update Gantt set jsonData = '" + jsonData + "' where projectId = " + projectId + ";";
@@ -201,7 +200,6 @@ module.exports = {
         if(newTaskOrReAssigned){
           const person= await models.Person.findByPk(newTaskOrReAssigned.assignedId,{raw:true});
           const project= await models.Project.findByPk(projectId,{raw:true});
-          console.log("newTaskOrReAssigned",newTaskOrReAssigned);
 
           const startDate=newTaskOrReAssigned.start_date.split(" ")[0];
           const endDate=newTaskOrReAssigned.end_date.split(" ")[0];

@@ -19,30 +19,9 @@ const util = require("util");
 const callerType = "controller";
 
 module.exports = {
-  // Update persons for a project.  This may need to be a loop and update the entries
-  // sequentially, including those removed from a project.  The update will need to have multiple
-  // rows updated.
+  
   update(req, res) {
-    console.log('req--',req.params.projectId);
-    // console.log('res--',res);
-    // Update ProjectPerson with SQL similar to this example.
-    /*
-      INSERT into `projectpersons`
-      (projectId, personId, owner)
-      VALUES
-      ('69', '118', '0', null),
-        ('67', '118', '1', true),
-        ('66', '118', '0', null),
-        ('34', '118', '1', '1'),
-        ('55', '118', '0', null),
-        ('8', '118', '0', null),
-        ('7', '118', '0', null)
-      ON DUPLICATE KEY
-      UPDATE projectId=projectId, personId=personId, owner=owner;
-     */
-
-    // Break the input json down into an array and we can update with one SQL statement.
-    // Use JSON.parse.
+    
     var jsonData = req.body.orgPersons;
     let sqlArrays = "";
     let sql = "";
@@ -99,9 +78,6 @@ module.exports = {
         "UPDATE personId=values(personId), projectId=values(projectId), " +
         "owner=values(owner), inProject=values(inProject);"
 
-        console.log("Start---------------------------------------");
-        console.log(sql);
-        console.log("End---------------------------------------");
       let _obj = util.inspect(req, { showHidden: false, depth: null });
       // logger.debug(`${callerType} update ProjectPerson -> request: ${_obj}`);
       logger.debug(`${callerType} update ProjectPerson -> sql: ${sql}`);

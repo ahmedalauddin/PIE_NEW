@@ -162,11 +162,13 @@ module.exports = {
   },
 
   // Update a project
-  update(req, res) {
+  async update(req, res) {
     //logger.debug(`${callerType} project update -> request: ${_obj}`);
     if (req.query.mmid && req.query.nid) {
       let _obj = util.inspect(req, { showHidden: false, depth: null });
-      //logger.debug(`${callerType} updateByMindMapNode -> request: ${_obj}`);
+     
+    
+
       return Project.update(
         {
           title: req.body.title,
@@ -202,6 +204,17 @@ module.exports = {
       let _obj = util.inspect(req, { showHidden: false, depth: null });
       logger.debug(`${callerType} update -> request: ${_obj}`);
       let _id = parseInt(req.body.id);
+
+      const updateCompletedAt={};
+      if(req.body.statusId==4){
+        const sql =  `SELECT statusId FROM Projects where id=${_id}`;
+        const result = await models.sequelize.query(sql, {type: models.sequelize.QueryTypes.SELECT})
+        if(result.length>0 && result[0].statusId != 4){
+          updateCompletedAt.completedAt=new Date();
+          logger.info(`${callerType} updating  completedAt : ${p.id}`);
+        }
+      }
+
       return Project.update(
         {
           title: req.body.title,
@@ -213,7 +226,8 @@ module.exports = {
           startAt: req.body.startAt,
           endAt: req.body.endAt,
           statusId: req.body.statusId,
-          deptId: req.body.deptId
+          deptId: req.body.deptId,
+          ...updateCompletedAt
         },
         {
           returning: true,
@@ -233,8 +247,8 @@ module.exports = {
 
   // find a project by id
   findById(req, res) {
-    let _obj = util.inspect(req.body, { showHidden: false, depth: null });
-    logger.debug(`${callerType} findById -> request: ${_obj}`);
+    
+    logger.debug(`${callerType} findById -> request: ${req.params.id}`);
     return Project.findByPk(req.params.id, {
       include: [
         {
@@ -260,12 +274,10 @@ module.exports = {
       ]
     })
       .then(p => {
-        logger.info(`${callerType} findById -> successful,  title: ${p  ? p.id : "not found"}`);
         if(p && p.id){
           let sql = "SELECT  pk.id as pkid,pk.id as pkid,k.* "+
           "FROM ProjectKpis pk,Projects p,Kpis k,Organizations o "+
           "where pk.projId=p.id and  pk.kpiId=k.id and k.orgId = o.id and pk.projId="+p.id;
-          logger.info(`${callerType} project kpis -> SQL: ${sql}`);
           models.sequelize
           .query(sql,
             {

@@ -397,8 +397,6 @@ module.exports = {
       "   OR (Pr.disabled = false and Pr.id in (select personId from OrganizationPersons OP where OP.organizationId = " + req.params.orgId + ")))) \ " +
       "group by Pr.email order by Pr.lastName, Pr.firstName";
 
-    console.log("Sql on Person.findByProject For /api/project-persons/ProjectId/OrgId");
-    console.log(sql);
 
     return models.sequelize
       .query(

@@ -18,9 +18,6 @@ function checkTargetDate(milestone) {
   let projectStart = new Date(milestone.projectStartAt);
   let projectEnd = new Date(milestone.projectEndAt);
   let success = true;
-  console.log(JSON.stringify(milestone));
-  console.log("Milestone: checkTargetDate -- project ID ", milestone.projectId);
-  console.log("Milestone checkTargetDate: startAt = " + projectStart + ", target = " + milestone.targetDate);
   if (projectStart != null) {
     if (milestone.targetDate < projectStart) {
       throw new Error("Milestone target date is prior to the start of the project.");
@@ -31,7 +28,6 @@ function checkTargetDate(milestone) {
       throw new Error("Milestone target date is after the end of the project.");
     }
   }
-  console.log("Milestone checkTargetDate: startAt = ", milestone.projectStartAt)
   return success;
 };
 
@@ -94,11 +90,8 @@ module.exports = (sequelize, DataTypes) => {
 
         },
         afterValidate: () => {
-          console.log("Milestone: afterValidate");
         },
         beforeCreate: (milestone, options, callback) => {
-          console.log("Milestone: beforeCreate");
-          console.log("Milestone: beforeCreate -- title ", milestone.title, ", project ID ", milestone.projectId);
           if (milestone.statusId == 0) {
             milestone.statusId = 1;
           }
@@ -110,13 +103,10 @@ module.exports = (sequelize, DataTypes) => {
 
         },
         afterCreate: (res) => {
-          console.log("Milestone: afterCreate: Created milestone with target date ", res.dataValues.targetDate);
         },
         beforeUpdate: () => {
-          console.log("Milestone: beforeCreate");
         },
         afterUpdate: () => {
-          console.log("Milestone: afterUpdate");
         }
       }
     }
