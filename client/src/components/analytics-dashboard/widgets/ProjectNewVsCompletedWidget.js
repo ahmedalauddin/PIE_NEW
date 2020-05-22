@@ -10,14 +10,14 @@ class ProjectNewVsCompletedWidget extends Component {
                 type: 'line'
             },
             title: {
-                text: 'New Vs Completed'
+                text: 'New Vs Closed'
             },
             xAxis: {
                 categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
             },
             yAxis: {
                 title: {
-                    text: 'Projects'
+                    text: 'Milestones'
                 }
             },
             plotOptions: {
@@ -32,7 +32,7 @@ class ProjectNewVsCompletedWidget extends Component {
                 name: 'New',
                 data: [7, 6, 9, 14, 18, 21, 25, 26, 23, 18, 13, 9]
             }, {
-                name: 'Completed',
+                name: 'Closed',
                 data: [3, 4, 5, 8, 11, 15, 17, 16, 14, 10, 6, 4]
             }]
         }

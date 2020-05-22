@@ -89,7 +89,14 @@ class Analytics extends React.Component {
     delLoader: 0,
     openStatus:0,
     newStatus:0,
-    closedStatus:0
+    closedStatus:0,
+    orgName:"",
+    orgId:0,
+    projects:[
+      "Major Component RTS",
+      "Project Management Methodology",
+      "On going APM Activities"
+    ]
 
   };
 
@@ -114,7 +121,15 @@ class Analytics extends React.Component {
         body: JSON.stringify(data)
       })
       .then(res => res.json())
-      .then(actionProjects => this.setState({ ProjectActions: actionProjects,orgName,orgId }));
+      .then(actionProjects => {
+        let projects ={}
+        actionProjects.forEach(ap=>{
+          projects[ap.projectName]={}
+        })
+        projects=Object.keys(projects);
+        console.log("actionProjects",actionProjects,projects)
+        this.setState({ ProjectActions: actionProjects,orgName,orgId })
+      });
 
       fetch(`/api/actions-count-org/${orgId}`)
       .then(res => res.json())
@@ -145,7 +160,9 @@ class Analytics extends React.Component {
   toggleStatus(status){
     let { selectedCards } =this.state;
 
-    if(selectedCards.indexOf(status)>-1){
+    if(status =='Total'){
+      selectedCards.splice(0,selectedCards.length);
+    } else if(selectedCards.indexOf(status)>-1){
       selectedCards=selectedCards.filter(s=>s!=status);
     }else{
       selectedCards.push(status);
@@ -184,7 +201,7 @@ class Analytics extends React.Component {
 
   renderFilter(){
     const { classes } = this.props;
-    const { selectedCards , openStatus, newStatus, closedStatus} =this.state;
+    const { selectedCards , openStatus, newStatus, closedStatus, projects} =this.state;
     return (
       <Grid container justify="center" direction="column" alignItems="center" className="panel-dashboard">
         <Grid item xs={12} md={10} className="dashboard-filter-menu" style={{margin:0,padding:0}} >
@@ -192,50 +209,93 @@ class Analytics extends React.Component {
             <CardContent className="list-project-panellist">
               <Grid
                 container
-                direction="row"
+                direction="row-reverse"
                 justify="space-between"
                 alignItems="center"
                 style={{margin:0,padding:0}}
               >
-                <Grid item xs={3} sm={3} onClick={() => this.toggleStatus('Open')} >
-                  <Paper className={classes.paper} >
-                    <Grid container direction="row" justify="space-between">
-                      <Typography className={classes.heading} style={{ alignSelf: "center" }}>Open({openStatus})</Typography>
-                      <IconButton style={{ background: selectedCards.indexOf('Open') == -1 ? "#f0f0f0" : '#9fa2e3' }}>
-                        <CheckIcon color="primary" style={{ color: selectedCards.indexOf('Open') == -1 ? "grey" : '#303f9f' }} />
-                      </IconButton>
-                    </Grid>
-                  </Paper>
-                </Grid>
-                <Grid item xs={3} sm={3} onClick={() => this.toggleStatus('New')}>
-                  <Paper className={classes.paper}>
-                    <Grid container direction="row" justify="space-between">
-                      <Typography className={classes.heading} style={{ alignSelf: "center" }}>New({newStatus})</Typography>
-                      <IconButton style={{ background: selectedCards.indexOf('New') == -1 ? "#f0f0f0" : '#9fa2e3' }}>
-                        <CheckIcon color="primary" style={{ color: selectedCards.indexOf('New') == -1 ? "grey" : '#303f9f' }} />
-                      </IconButton>
-                    </Grid>
-                  </Paper>
-                </Grid>
-                <Grid item xs={3} sm={3} onClick={() => this.toggleStatus('Closed')}>
-                  <Paper className={classes.paper}>
-                    <Grid container direction="row" justify="space-between">
-                      <Typography className={classes.heading} style={{ alignSelf: "center" }}>Closed({closedStatus})</Typography>
-                      <IconButton style={{ background: selectedCards.indexOf('Closed') == -1 ? "#f0f0f0" : '#9fa2e3' }}>
-                        <CheckIcon color="primary" style={{ color: selectedCards.indexOf('Closed') == -1 ? "grey" : '#303f9f' }} />
-                      </IconButton>
-                    </Grid>
-                  </Paper>
-                </Grid>
-
+             
+          
+          
+          <Grid item>
+            <FormControl className={classes.formControl}>
+              <Button
+                variant="contained"
+                color="primary"
+                className={classes.secondary}
+              >
+                Update Results
+              </Button>
+            </FormControl>
 
               </Grid>
-
+            </Grid>
             </CardContent>
           </Card>
 
         </Grid>
       </Grid>
+    )
+  }
+
+  renderStatusCount(){
+    const { classes } = this.props;
+    const { selectedCards , openStatus, newStatus, closedStatus} =this.state;
+    return (
+
+      <Grid
+        xs={12} md={12}
+        container
+        direction="row"
+        justify="space-between"
+        alignItems="center"
+        style={{ margin: 0, padding: 0}}
+      >
+        <Grid xs={4} md={4}></Grid>
+        <Grid item xs={2} sm={2} onClick={() => this.toggleStatus('Total')}  style={{paddingLeft:"0.5rem"}}>
+          <Paper className={classes.paper} style={{backgroundColor:"#f0de6e"}}>
+            <Grid container direction="row" justify="space-between">
+              <Typography className={classes.heading} style={{ alignSelf: "center" }}>Total({openStatus+newStatus+closedStatus})</Typography>
+              <IconButton style={{ background: selectedCards.length>0  ? "#f0f0f0" : '#9fa2e3' }}>
+                <CheckIcon color="primary" style={{ color: selectedCards.length>0 ? "grey" : '#303f9f' }} />
+              </IconButton>
+            </Grid>
+          </Paper>
+        </Grid>
+        <Grid item xs={2} sm={2} onClick={() => this.toggleStatus('Open')} style={{paddingLeft:"0.5rem"}}>
+          <Paper className={classes.paper} style={{backgroundColor:"#e980d9"}}>
+            <Grid container direction="row" justify="space-between">
+              <Typography className={classes.heading} style={{ alignSelf: "center" }}>Open({openStatus})</Typography>
+              <IconButton style={{ background: selectedCards.indexOf('Open') == -1 ? "#f0f0f0" : '#9fa2e3' }}>
+                <CheckIcon color="primary" style={{ color: selectedCards.indexOf('Open') == -1 ? "grey" : '#303f9f' }} />
+              </IconButton>
+            </Grid>
+          </Paper>
+        </Grid>
+        <Grid item xs={2} sm={2} onClick={() => this.toggleStatus('New')} style={{paddingLeft:"0.5rem"}}>
+          <Paper className={classes.paper} style={{backgroundColor:"#f7a35c"}}>
+            <Grid container direction="row" justify="space-between">
+              <Typography className={classes.heading} style={{ alignSelf: "center" }}>New({newStatus})</Typography>
+              <IconButton style={{ background: selectedCards.indexOf('New') == -1 ? "#f0f0f0" : '#9fa2e3' }}>
+                <CheckIcon color="primary" style={{ color: selectedCards.indexOf('New') == -1 ? "grey" : '#303f9f' }} />
+              </IconButton>
+            </Grid>
+          </Paper>
+        </Grid>
+        <Grid item xs={2} sm={2} onClick={() => this.toggleStatus('Closed')} style={{paddingLeft:"0.5rem"}}>
+          <Paper className={classes.paper} style={{backgroundColor:"#90ed7d"}}>
+            <Grid container direction="row" justify="space-between">
+              <Typography className={classes.heading} style={{ alignSelf: "center" }}>Closed({closedStatus})</Typography>
+              <IconButton style={{ background: selectedCards.indexOf('Closed') == -1 ? "#f0f0f0" : '#9fa2e3' }}>
+                <CheckIcon color="primary" style={{ color: selectedCards.indexOf('Closed') == -1 ? "grey" : '#303f9f' }} />
+              </IconButton>
+            </Grid>
+          </Paper>
+        </Grid>
+
+
+      </Grid>
+
     )
   }
 
@@ -327,16 +387,14 @@ class Analytics extends React.Component {
   render() {
     const { classes } = this.props;
     const { orgName,orgId } =this.state;
-    if(!orgId){
-      return null;
-    }
+    
     return (
       <React.Fragment>
         <CssBaseline />
         <Topbar currentPath={"/analytics"} />
         <div className={classes.root}>
           <Grid container justify="center" direction="column" alignItems="center" className="panel-dashboard">
-            <PageTitle pageTitle={orgName+" Action Tracker"} />
+            <PageTitle pageTitle={orgName +" Action Tracker"} />
 
             {this.renderFilter()}
 
@@ -345,6 +403,8 @@ class Analytics extends React.Component {
             <Grid xs={12} md={10} alignItems="center" justify="center">
               <Card className={classes.card}>
                 <CardContent className="list-project-panellist">
+                  
+                  {this.renderStatusCount()}
                   {this.renderTable()}
                 </CardContent></Card></Grid>
 

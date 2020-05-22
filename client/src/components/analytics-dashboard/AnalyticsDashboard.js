@@ -14,6 +14,8 @@ import DepartmentLoadWidget from "./widgets/DepartmentLoadWidget";
 import MileStoneWidget from "./widgets/MileStoneWidget";
 import ActionWidget from "./widgets/ActionWidget";
 import ProjectNewVsCompletedWidget from "./widgets/ProjectNewVsCompletedWidget";
+import MileStonePriorityWidget from "./widgets/MileStonePriorityWidget";
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 class AnalyticsDashboard extends Component {
   constructor(props) {
@@ -23,7 +25,8 @@ class AnalyticsDashboard extends Component {
       orgName: "",
       orgProjectStatus:null,
       orgProjectActionStatus:null,
-      orgProjectMilstoneStatus:null
+      orgProjectMilstoneStatus:null,
+      orgProjectMilstonePriority:null
     };
   }
 
@@ -42,60 +45,60 @@ class AnalyticsDashboard extends Component {
     const orgName= getOrgName();
     const res = await fetch(`/api/orgnization-project-status/${orgId}`);
     const orgProjectStatus = await res.json();
+    this.setState({orgProjectStatus,orgId,orgName});
 
     const res2 = await fetch(`/api/orgnization-project-action-status/${orgId}`);
     const orgProjectActionStatus = await res2.json();
+    this.setState({orgProjectActionStatus});
 
     const res3 = await fetch(`/api/orgnization-milstone-status/${orgId}`);
-    const orgProjectMilstoneStatus = await res3.json();
-
-    
-    this.setState({orgProjectStatus,orgProjectActionStatus,orgProjectMilstoneStatus,orgId,orgName});
+    const orgProjectMilstoneReponse = await res3.json();
+    this.setState({orgProjectMilstoneStatus:orgProjectMilstoneReponse.progressData,orgProjectMilstonePriority:orgProjectMilstoneReponse.priorityData});
   }
 
 
   renderCards(){
     const { classes } = this.props;
-     const { orgId , orgName, orgProjectStatus, orgProjectActionStatus,orgProjectMilstoneStatus } = this.state;
+     const { orgId , orgName, orgProjectStatus, orgProjectActionStatus,orgProjectMilstoneStatus,orgProjectMilstonePriority } = this.state;
 
       return(
         <Grid container alignItems="center" justify="center" spacing={24} sm={12}>
-             {orgProjectStatus && <Grid item xs={12} sm={4}>
-                <Paper className={classes.paper}>
-                    <ProjectStatusWidget orgProjectStatus={orgProjectStatus}/>
-                </Paper>
-              </Grid>}
-
-              {orgProjectStatus &&<Grid item xs={12} sm={4}>
-                <Paper className={classes.paper}>
-                    <DepartmentLoadWidget orgProjectStatus={orgProjectStatus}/>
-                </Paper>
-              </Grid>}
-
-              {orgProjectMilstoneStatus && <Grid item xs={12} sm={4}>
-                <Paper className={classes.paper}>
-                    <MileStoneWidget orgProjectMilstoneStatus={orgProjectMilstoneStatus} />
-                </Paper>
-              </Grid>}
-
-              {orgProjectActionStatus && <Grid item xs={12} sm={4}>
-                <Paper className={classes.paper}>
-                    <ActionWidget orgProjectActionStatus={orgProjectActionStatus} />
+             <Grid item xs={12} sm={4}>
+                <Paper className={classes.paper} >
+                      {orgProjectStatus ? <ProjectStatusWidget orgProjectStatus={orgProjectStatus}/> : <CircularProgress  />}
                 </Paper>
               </Grid>
-              }
 
-              {orgProjectActionStatus && <Grid item xs={12} sm={4}>
+              <Grid item xs={12} sm={4}>
                 <Paper className={classes.paper}>
-                    <ProjectNewVsCompletedWidget orgProjectActionStatus={orgProjectActionStatus} />
+                {orgProjectStatus ? <DepartmentLoadWidget orgProjectStatus={orgProjectStatus}/> : <CircularProgress  />}
                 </Paper>
               </Grid>
-              }
-              {orgProjectActionStatus &&<Grid item xs={12} sm={4}>
+
+              <Grid item xs={12} sm={4}>
                 <Paper className={classes.paper}>
-                    
+                {orgProjectMilstoneStatus ? <MileStoneWidget orgProjectMilstoneStatus={orgProjectMilstoneStatus} /> : <CircularProgress  />}
                 </Paper>
-              </Grid>}
+              </Grid>
+
+              <Grid item xs={12} sm={4}>
+                <Paper className={classes.paper}>
+                {orgProjectActionStatus ? <ActionWidget orgProjectActionStatus={orgProjectActionStatus} /> : <CircularProgress  />}
+                </Paper>
+              </Grid>
+              
+
+              <Grid item xs={12} sm={4}>
+                <Paper className={classes.paper}>
+                  {orgProjectActionStatus ? <ProjectNewVsCompletedWidget orgProjectActionStatus={orgProjectActionStatus} /> : <CircularProgress  />}
+                </Paper>
+              </Grid>
+
+              <Grid item xs={12} sm={4}>
+                <Paper className={classes.paper}>
+                    {orgProjectMilstonePriority ? <MileStonePriorityWidget orgProjectMilstonePriority={orgProjectMilstonePriority} /> : <CircularProgress  />}
+                </Paper>
+              </Grid>
               
         
         

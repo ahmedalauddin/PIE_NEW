@@ -400,19 +400,26 @@ module.exports = {
       })
       .then(result => {
         logger.debug(`${callerType} orgnizationProjectActionStatus successful, count: ${result.length}`);
-        const data={};
+        const progressData={};
+        const priorityData={}; //priority
         result.forEach(r=>{
           r.jsonData.data.forEach(rd=>{
                 const progressKey= progressTxt(rd.progress);
-                if(!data[progressKey]){
-                  data[progressKey]=1;
+                if(!progressData[progressKey]){
+                  progressData[progressKey]=1;
                 }else{
-                  data[progressKey]=1+data[progressKey];
+                  progressData[progressKey]=1+progressData[progressKey];
+                }
+
+                if(!priorityData[rd.priority]){
+                  priorityData[rd.priority]=1;
+                }else{
+                  priorityData[rd.priority]=1+priorityData[rd.priority];
                 }
 
             })
           })
-        res.status(201).send(data);
+        res.status(201).send({progressData,priorityData});
       })
       .catch(error => {
         logger.error(`${callerType} orgnizationProjectActionStatus error: ${error.stack}`);
