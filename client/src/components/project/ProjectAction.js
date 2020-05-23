@@ -454,6 +454,7 @@ class ProjectAction extends React.Component {
                       <TextField
                         required
                         id="title-required"
+                        style={{margin:0}}
                         label="Title"
                         fullWidth
                         onChange={this.handleChange("title")}
@@ -466,6 +467,7 @@ class ProjectAction extends React.Component {
                       <TextField
                         id="description"
                         label="Description"
+                        style={{margin:0}}
                         multiline
                         rowsMax="6"
                         value={this.state.description}

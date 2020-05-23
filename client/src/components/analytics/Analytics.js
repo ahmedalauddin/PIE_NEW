@@ -67,6 +67,23 @@ const MenuProps = {
 };
 
 
+const defalutValueProjectFilter={ id:0,projectName: "All Project"};
+
+const monthes=[
+  {id:0,name: "All"},
+  {id:1, name:"January"},
+  {id:2, name:"February"},
+  {id:3, name:"March"},
+  {id:4, name:"April"},
+  {id:5, name:"May"},
+  {id:6, name:"June"},
+  {id:7, name:"July"},
+  {id:8, name:"August"},
+  {id:9, name:"September"},
+  {id:10, name:"October"},
+  {id:11, name:"November"},
+  {id:12, name:"December"}   
+];
 
 class Analytics extends React.Component {
   constructor(props) {
@@ -79,7 +96,6 @@ class Analytics extends React.Component {
     selectedCards:[],
     selected: [],
     ProjectActions: [],
-    ProjectActionPersons: [],
     actionid: null,
     readyToEdit: false,
     fromOrganization: null,
@@ -92,11 +108,13 @@ class Analytics extends React.Component {
     closedStatus:0,
     orgName:"",
     orgId:0,
-    projects:[
-      "Major Component RTS",
-      "Project Management Methodology",
-      "On going APM Activities"
-    ]
+    projects:[defalutValueProjectFilter],
+    projectId:0,
+    msg:"",
+    readyToEdit: false,
+    actionid: 0,
+    actionProjectId:0,
+    selectedMonth:0
 
   };
 
@@ -104,15 +122,13 @@ class Analytics extends React.Component {
     this.fetchData();
   }
 
-  async fetchData(selectedCardsParams){
+  async fetchData(){
     const orgId= getOrgId();
     const orgName= getOrgName();
 
     if(orgId>0){
-      const { selectedCards } = selectedCardsParams?{selectedCards:selectedCardsParams} : this.state;
-
+     
       const data={
-        statusList:selectedCards,
         orgId
       }
       fetch(`/api/action-org`,{
@@ -122,16 +138,23 @@ class Analytics extends React.Component {
       })
       .then(res => res.json())
       .then(actionProjects => {
-        let projects ={}
+        const projects =[defalutValueProjectFilter];
+        const _p={};
         actionProjects.forEach(ap=>{
-          projects[ap.projectName]={}
+          _p[ap.projectId]=ap.projectName;
         })
-        projects=Object.keys(projects);
-        console.log("actionProjects",actionProjects,projects)
-        this.setState({ ProjectActions: actionProjects,orgName,orgId })
+        Object.keys(_p).forEach(k=>projects.push({ id:k,projectName: _p[k]}))
+        this.setState({ ProjectActions: actionProjects,orgName,orgId,projects })
       });
 
-      fetch(`/api/actions-count-org/${orgId}`)
+     // this.fetchCounts();
+    }
+  }
+
+  /*async fetchCounts(){
+    const orgId= getOrgId();
+    const projectId =
+    fetch(`/api/actions-count-org/${orgId}`)
       .then(res => res.json())
       .then(statusCount => {
         console.log("statusCount",statusCount);
@@ -150,8 +173,7 @@ class Analytics extends React.Component {
 
         this.setState({openStatus,newStatus,closedStatus})
       });
-    }
-  }
+  }*/
 
   
 
@@ -168,7 +190,7 @@ class Analytics extends React.Component {
       selectedCards.push(status);
     }
     this.setState({selectedCards})
-    this.fetchData(selectedCards);
+    //this.fetchData(selectedCards);
   }
   
   isSelected = id => this.state.selected.indexOf(id) !== -1;
@@ -199,37 +221,84 @@ class Analytics extends React.Component {
     this.setState({ selected: [] });
   };
 
-  renderFilter(){
+  renderFilter() {
     const { classes } = this.props;
-    const { selectedCards , openStatus, newStatus, closedStatus, projects} =this.state;
+    const {  projects, projectId,selectedMonth } = this.state;
     return (
       <Grid container justify="center" direction="column" alignItems="center" className="panel-dashboard">
-        <Grid item xs={12} md={10} className="dashboard-filter-menu" style={{margin:0,padding:0}} >
-          <Card className={classes.card} style={{ overflow: "visible" }} style={{margin:0,padding:0}} >
+        <Grid item xs={12} md={10} className="dashboard-filter-menu" style={{ margin: 0, padding: 0 }} >
+          <Card className={classes.card} style={{ overflow: "visible" }} style={{ margin: 0, padding: 0 }} >
             <CardContent className="list-project-panellist">
               <Grid
                 container
                 direction="row-reverse"
                 justify="space-between"
                 alignItems="center"
-                style={{margin:0,padding:0}}
+                style={{ margin: 0, padding: 0 }}
               >
-             
-          
-          
-          <Grid item>
-            <FormControl className={classes.formControl}>
-              <Button
-                variant="contained"
-                color="primary"
-                className={classes.secondary}
-              >
-                Update Results
-              </Button>
-            </FormControl>
+
+                {/* <Grid item>
+                  <FormControl className={classes.formControl}>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      className={classes.secondary}
+                    >
+                      Update Results
+                    </Button>
+                  </FormControl>
+                </Grid> */}
+
+                <Grid item>
+                  <FormControl className={classes.formControl}>
+                      <Select
+                              style={{width:"20rem"}}
+                              value={projectId}
+                              onChange={(event)=>this.setState({projectId: event.target.value,page: 0,})}
+                              inputProps={{
+                                name: "projectName",
+                                id: "id"
+                              }}
+                            >
+                              {projects.map(p => {
+                                return (
+                                  <MenuItem key={p.id} value={p.id}>
+                                    {p.projectName}
+                                  </MenuItem>
+                                );
+                              })}
+                        </Select>
+
+                    <FormHelperText>Filter by project</FormHelperText>
+                  </FormControl>
+                </Grid>
+
+                <Grid item>
+                  <FormControl className={classes.formControl}>
+                      <Select
+                              style={{width:"20rem"}}
+                              value={selectedMonth}
+                              onChange={(event)=>this.setState({selectedMonth: event.target.value,page: 0,})}
+                              inputProps={{
+                                name: "name",
+                                id: "id"
+                              }}
+                            >
+                              {monthes.map(p => {
+                                return (
+                                  <MenuItem key={p.id} value={p.id}>
+                                    {p.name}
+                                  </MenuItem>
+                                );
+                              })}
+                        </Select>
+
+                    <FormHelperText>Filter by Month</FormHelperText>
+                  </FormControl>
+                </Grid>
+
 
               </Grid>
-            </Grid>
             </CardContent>
           </Card>
 
@@ -238,9 +307,94 @@ class Analytics extends React.Component {
     )
   }
 
+  getProjectActions(){
+    const { ProjectActions,projectId,selectedCards,selectedMonth } = this.state;
+    
+    let temp=ProjectActions;
+    if(projectId >0){
+      temp=ProjectActions.filter(p=>p.projectId==projectId);
+    }
+
+    if(selectedMonth>0){
+      //moment(ProjectAction.createdAt).format("YYYY-MM-DD")
+      temp=temp.filter(p=>Number(moment(p.createdAt).format("MM"))==selectedMonth);
+    }
+
+    if(selectedCards.length>0 && selectedCards.indexOf('All')==-1){
+      temp=temp.filter(p=>selectedCards.indexOf(p.status)>-1);
+    }
+    
+
+    return temp;
+
+
+  }
+
+  getProjectActionsForStatus(){
+    const { ProjectActions,projectId,selectedCards } = this.state;
+    
+    let temp=ProjectActions;
+    if(projectId >0){
+      temp=ProjectActions.filter(p=>p.projectId==projectId);
+    }
+
+    return temp;
+  }
+
+  setEditRedirect = (actionid,projectId) => {
+    this.setState({
+      readyToEdit: true,
+      actionid: actionid,
+      actionProjectId : projectId
+    });
+  };
+
+
+  async deactivate(id) {
+    if (id > 0) {
+      // Deactivate a Action
+      this.setState({
+        delLoader: id
+      })
+      let removePath = "/api/action-project-deactivate/" + id;
+      await fetch(removePath, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(this.state)
+      })
+        .then(data => {
+          const data2 = this.state.ProjectActions.filter(i => i.id !== id)
+         this.setState({
+            ProjectActions:data2
+          })
+            
+          this.setState({ msg: "Action deleted.", delLoader: 0, openSnackbar: true });
+        })
+        .catch(err => {
+          this.setState({ msg: "Error occurred.", delLoader: 0, openSnackbar: true });
+        });
+    }
+  }
+
   renderStatusCount(){
     const { classes } = this.props;
-    const { selectedCards , openStatus, newStatus, closedStatus} =this.state;
+    const ProjectActions=this.getProjectActionsForStatus();
+
+    const { selectedCards } =this.state;
+
+    let openStatus=0;
+    let newStatus=0;
+    let closedStatus=0;
+    ProjectActions.forEach(s=>{
+      if(s.status=='Open'){
+        openStatus++;
+      }else if(s.status=='New'){
+        newStatus++;
+      }else if(s.status=='Closed'){
+        closedStatus++;
+      }
+    })
+
     return (
 
       <Grid
@@ -299,11 +453,14 @@ class Analytics extends React.Component {
     )
   }
 
+  
   renderTable() {
     const { classes } = this.props;
-    const { ProjectActions, ProjectActionPersons, order, orderBy, selected, rowsPerPage, page } = this.state;
-    const emptyRows =
-      rowsPerPage - Math.min(rowsPerPage, ProjectActions.length - page * rowsPerPage);
+    const { order, orderBy, selected, rowsPerPage, page } = this.state;
+    
+    const ProjectActions=this.getProjectActions();
+
+    const emptyRows = rowsPerPage - Math.min(rowsPerPage, ProjectActions.length - page * rowsPerPage);
 
     return (
       <>
@@ -331,7 +488,7 @@ class Analytics extends React.Component {
                       key={ProjectAction.id}
                       selected={isSelected}
                     >
-                      <TableCell align="left" >{ProjectAction.projectName}</TableCell>
+                      {/* <TableCell align="left" >{ProjectAction.projectName}</TableCell> */}
                       <TableCell align="left" >{ProjectAction.title}</TableCell>
                       <TableCell align="left" >{ProjectAction.description}</TableCell>
 
@@ -341,6 +498,33 @@ class Analytics extends React.Component {
                       <TableCell align="left"  >{ProjectAction.status} </TableCell>
                     
                       <TableCell align="left" style={{width: "6rem"}} >{moment(ProjectAction.createdAt).format("YYYY-MM-DD")}</TableCell>
+
+                      <TableCell component="th" scope="row" padding="none">
+
+                      {checkPermision('Projects Additional Actions','delete') &&  <span>
+                        {
+                          this.state.delLoader != 0 && this.state.delLoader == ProjectAction.id ?
+                            <CircularProgress />
+                            :
+                            <IconButton
+                              onClick={() => {
+                                this.deactivate(ProjectAction.id);
+                              }}
+                            >
+                              <DeleteIcon color="primary" />
+                            </IconButton>
+                        }
+                        </span>}
+
+                        <IconButton
+                          onClick={() => {
+                            this.setEditRedirect(ProjectAction.id,ProjectAction.projectId);
+                          }}
+                        >
+                          <EditIcon color="primary" />
+                        </IconButton>
+
+                      </TableCell>
                      
                     </TableRow>
                   );
@@ -386,7 +570,21 @@ class Analytics extends React.Component {
 
   render() {
     const { classes } = this.props;
-    const { orgName,orgId } =this.state;
+    const { orgName,orgId,readyToEdit,actionProjectId,actionid } =this.state;
+
+    if (readyToEdit) {
+      return (
+        <Redirect
+          to={{
+            pathname: "/ProjectAction",
+            state: {
+              projectId: actionProjectId,
+              actionid: actionid
+            }
+          }}
+        />
+      );
+    }
     
     return (
       <React.Fragment>
@@ -411,6 +609,16 @@ class Analytics extends React.Component {
           </Grid>
         </div>
 
+        <Snackbar
+          open={this.state.openSnackbar}
+          onClose={this.handleClose}
+          TransitionComponent={this.state.Transition}
+          ContentProps={{
+            'aria-describedby': 'message-id',
+          }}
+          message={<span id="message-id">{this.state.msg}</span>}
+        />
+
 
       </React.Fragment>
     );
@@ -421,12 +629,13 @@ class Analytics extends React.Component {
 
 const rows = [
   // { id: "edit", numeric: false, disablePadding: false, label: "" },
-  { id: "projectName", numeric: false, disablePadding: false, label: "Project" },
+  // { id: "projectName", numeric: false, disablePadding: false, label: "Project" },
   { id: "title", numeric: false, disablePadding: false, label: "Title" },
   { id: "description", numeric: false, disablePadding: false, label: "Description" },
   { id: "assignedto", numeric: false, disablePadding: false, label: "Assignee" },
   { id: "status", numeric: false, disablePadding: false, label: "Status" },
-  { id: "created", numeric: false, disablePadding: false, label: "Date Added" }
+  { id: "created", numeric: false, disablePadding: false, label: "Date Added" },
+  { id: "actions", numeric: false, disablePadding: false, label: "Action" }
  
 ];
 

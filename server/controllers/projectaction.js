@@ -343,16 +343,16 @@ module.exports = {
     
   },
   orgnizationActions(req, res) {
-    const statusList = req.body.statusList;
+   // const statusList = req.body.statusList;
     const orgId = req.body.orgId;
     console.log(req.body)
-    let sql =  `SELECT pa.*,p.title as projectName, concat(ps.firstName,' ',ps.lastName) as personName FROM ProjectActions pa
+    let sql =  `SELECT pa.*,p.title as projectName, p.id as projectId, concat(ps.firstName,' ',ps.lastName) as personName FROM ProjectActions pa
                   left join Projects p on p.id=pa.projId
                   left join Persons ps on ps.id =pa.assigneeId
                   where pa.disabled=0 and p.orgId=${orgId}`;
-    if(statusList.length>0){
+    /*if(statusList.length>0){
       sql+=` and pa.status in ('${statusList.join("','")}')`
-    }
+    }*/
     console.log(sql);
     return models.sequelize.query(
       sql, {
