@@ -395,13 +395,13 @@ module.exports = {
                       FROM ProjectActions pa
                       inner join Projects p on p.id=pa.projId
                       where pa.disabled=0 and p.active=1 and p.orgId=${req.params.id}
-                      group by MONTHNAME(pa.createdAt)`;
+                      group by MONTHNAME(pa.createdAt) order by pa.createdAt`;
     
     const closeSql=`select MONTHNAME(pa.updatedAt) as monthName,count(pa.id) as total
                     FROM ProjectActions pa
                     inner join Projects p on p.id=pa.projId
                     where pa.disabled=0 and p.active=1 and pa.status ='Closed' and p.orgId=${req.params.id}
-                    group by MONTHNAME(pa.updatedAt)`;
+                    group by MONTHNAME(pa.updatedAt) order by pa.updatedAt`;
     try{
       const newResult=await models.sequelize.query( newSql, { type: models.sequelize.QueryTypes.SELECT })
 
