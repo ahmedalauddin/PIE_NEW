@@ -6,7 +6,7 @@ import Topbar from "../Topbar";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-import { getOrgId, getOrgName, getOrgDepartments, checkPermision } from "../../redux";
+import { getOrgId, getOrgName, getOrgDepartments, checkPermision, getUser } from "../../redux";
 import { Redirect } from "react-router-dom";
 import "../styles/ReactTags.css";
 import Paper from "@material-ui/core/Paper";
@@ -16,6 +16,9 @@ import InputLabel from "@material-ui/core/InputLabel";
 import FormControl from "@material-ui/core/FormControl";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
+import PageTitle from "../PageTitle";
+import moment from "moment";
+const profileLogo = require("../../images/profile.png");
 
 const styles = theme => ({
   root: {
@@ -140,6 +143,21 @@ const styles = theme => ({
   },
   spaceTop: {
     marginTop: 50
+  },
+  taskCommentDivScrollView: {
+    padding: theme.spacing.unit * 3,
+    textAlign: "left",
+    color: theme.palette.text.secondary,
+    height:"30rem",
+    minWidth:540,
+    overflow: "auto",
+    margin: 0,
+    padding: 2
+  },
+  profileLogo: {
+    width: 40,
+    height: 40,
+    marginRight: 10
   }
 });
 
@@ -214,6 +232,8 @@ class ProjectAction extends React.Component {
     snackbarMessage: "",
     message: "",
     delLoader:false,
+    comments:[],
+    comment:""
   };
 
   handleChange = name => event => {
@@ -225,9 +245,7 @@ class ProjectAction extends React.Component {
   };
 
   
-  handleStatusChange = event => {
-    this.setState({status: event.target.value});
-  };
+  
 
   handleDelete(i) {
     const { tags } = this.state;
@@ -236,7 +254,13 @@ class ProjectAction extends React.Component {
     });
   }
 
- 
+  toSentenceCase(string) {
+    var sentence = string.split(" ");
+    for (var i = 0; i < sentence.length; i++) {
+      sentence[i] = sentence[i][0].toUpperCase() + sentence[i].slice(1);
+    }
+    return sentence.join(" ");
+  }
 
   handleClose = () => {
     this.setState({ openSnackbar: false });
@@ -277,7 +301,13 @@ class ProjectAction extends React.Component {
       delLoader: true
     })
 
-
+    if(this.state.comment && this.state.comment.trim()){
+      this.state.comments.unshift({
+        personName:this.toSentenceCase(getUser().fullName),
+        comment:this.state.comment,
+        commentDate:new Date()
+      })
+    }
     if (actionid > 0) {
       // For updates
       apiPath = "/api/action-project/" + actionid;
@@ -383,10 +413,12 @@ class ProjectAction extends React.Component {
             description: action.description,
             assigneeId: action.assigneeId,
             status: action.status,
+            priority: action.priority,
             projectName: action.project && action.project.title,
             projectId: projectId,
             buttonText: "Update",
-            redirectTarget: "/project"
+            redirectTarget: "/project",
+            comments:action.comments?action.comments:[]
           });
         });
     } else {
@@ -405,6 +437,198 @@ class ProjectAction extends React.Component {
     // }
   }
 
+  renderDetail() {
+    const { classes } = this.props;
+    const { tags, suggestions } = this.state;
+    return (
+
+      <form onSubmit={this.handleSubmit} noValidate>
+        <Grid container spacing={24}>
+          <Grid item xs={12} sm={12}>
+            <TextField
+              required
+              id="title-required"
+              style={{ margin: 0 }}
+              label="Action Item"
+              fullWidth
+              onChange={this.handleChange("title")}
+              value={this.state.title}
+              className={classes.textFieldWide}
+            />
+          </Grid>
+          <Grid item xs={12} sm={12} >
+            <TextField
+              id="description"
+              label="Description"
+              style={{ margin: 0 }}
+              multiline
+              rowsMax="6"
+              value={this.state.description}
+              onChange={this.handleChange("description")}
+              className={classes.textFieldWide}
+              fullWidth
+              InputLabelProps={{
+                shrink: true
+              }}
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={12}>
+            <FormControl className={classes.formControl} style={{width:"60%"}} >
+              <InputLabel shrink htmlFor="Assignee">Assignee</InputLabel>
+              <Select
+                value={this.state.assigneeId && this.state.assigneeId}
+                onChange={this.handlePersonChange}
+                inputProps={{
+                  name: "assigneeId",
+                  id: "assigneeId"
+                }}
+              >
+                {this.state.persons && this.state.persons.map(person => {
+                  return (
+                    person.disabled === 1 ? '' : <MenuItem key={person.id} value={person.id}>
+                      {person.fullName}
+                    </MenuItem>
+                  );
+                })}
+              </Select>
+            </FormControl>
+          </Grid>
+
+          <Grid item xs={12} sm={12}>
+            <FormControl className={classes.formControl} style={{width:"60%"}} >
+              <InputLabel shrink htmlFor="Status">Status</InputLabel>
+              <Select
+                value={this.state.status && this.state.status}
+                onChange={(event) => this.setState({ status: event.target.value })}
+                inputProps={{
+                  name: "status",
+                  id: "status"
+                }}
+              >
+                <MenuItem key='New' value='New'>
+                  New
+                          </MenuItem>
+                <MenuItem key='Open' value='Open'>
+                  Open
+                          </MenuItem>
+                <MenuItem key='Closed' value='Closed'>
+                  Closed
+                              </MenuItem>
+
+              </Select>
+            </FormControl>
+          </Grid>
+
+          <Grid item xs={12} sm={12}>
+            <FormControl className={classes.formControl} style={{width:"60%"}}>
+              <InputLabel shrink htmlFor="priority">Priority</InputLabel>
+              <Select
+                value={this.state.priority && this.state.priority}
+                onChange={(event) => this.setState({ priority: event.target.value })}
+                inputProps={{
+                  name: "priority",
+                  id: "priority"
+                }}
+              >
+                <MenuItem key='High' value='High'>
+                  High
+                          </MenuItem>
+                <MenuItem key='Medium' value='Medium'>
+                  Medium
+                          </MenuItem>
+                <MenuItem key='Low' value='Low'>
+                  Low
+                              </MenuItem>
+
+              </Select>
+            </FormControl>
+          </Grid>
+
+          <Grid item xs={12} sm={12} >
+            <TextField
+              id="comment"
+              label="Enter Comment"
+              style={{ margin: 0 }}
+              multiline
+              rowsMax="6"
+              value={this.state.comment}
+              onChange={this.handleChange("comment")}
+              className={classes.textFieldWide}
+              fullWidth
+              
+            />
+          </Grid>
+
+          <Grid item sm={10}>
+            {checkPermision('Projects Additional Actions', 'modify') &&
+              <Typography component="p">
+                {
+                  this.state.delLoader ?
+                    <CircularProgress /> :
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={this.handleSubmit}
+                      className={classes.secondary}
+                    >
+                      {this.state.buttonText}
+                    </Button>
+                }
+              </Typography>
+            }
+            <br />
+          </Grid>
+        </Grid>
+
+
+
+      </form>
+
+    )
+  }
+  renderComment(cc, index) {
+    const { classes } = this.props;
+    return (
+      <div style={{padding:10, 
+        borderTop: 0,
+        borderLeft: 0,
+        borderRight: 0,
+        borderBottom: 1,
+        borderBottomColor: "black",
+        borderBottomWidth: "1px",
+        borderStyle:"solid"
+        }}>
+        <Grid container style={{ minWidth:520 }} direction="row" justify="space-between" alignItems="flex-end" className="dash">
+
+          <Grid container sm={12} xs={12} direction="row" >
+            <img src={profileLogo} alt="" className={classes.profileLogo} />
+
+            <Grid item sm={8} xs={8}  >
+            
+              <Grid container sm={12} xs={12} direction="row" >
+                <Typography variant="h7" color="primary" gutterBottom >
+                  {cc.personName}
+                </Typography>
+                <Typography style={{marginLeft:20}}  color="primary" gutterBottom >
+                  {moment(new Date(cc.commentDate)).format("YYYY-MM-DD hh:mm:ss")}
+                </Typography>
+              </Grid>
+
+              <Grid container sm={12} xs={12} direction="row" >
+                <Typography gutterBottom>
+                  {cc.comment}
+                </Typography>
+              </Grid>
+            </Grid>
+
+          </Grid>
+          
+        </Grid>
+        
+      </div>
+    )
+  }
   render() {
     const { classes } = this.props;
     const { tags, suggestions } = this.state;
@@ -426,129 +650,30 @@ class ProjectAction extends React.Component {
       }} />;
     }
 
-//     console.log('this.props.location.state==on ProjectActions',this.props.location.state);
-// console.log('this.state==on ProjectActions',this.state);
-// console.log('project==on ProjectActions',this.state.project);
     return (
       <React.Fragment>
         <CssBaseline />
         <Topbar />
         <div className={classes.root}>
-          <Grid container alignItems="center" justify="center" spacing={24} sm={12}>
+          <Grid container justify="center" direction="column" alignItems="center" className="panel-dashboard">
+            <PageTitle pageTitle={"Action Detail"} />
             <Grid item sm={10}>
-              <Paper className={classes.paper}>
-                <form onSubmit={this.handleSubmit} noValidate>
-                  <Typography
-                    variant="h7"
-                    color="secondary"
-                    gutterBottom
-                  >
-                    Action Detail<br/>
-                  </Typography>
-                  {/* <Typography variant="h7">
-                    Project: {this.state.project.title}
-                  </Typography> */}
-                  
-                  <Grid container spacing={24}>
-                    <Grid item sm={10}>
-                      <TextField
-                        required
-                        id="title-required"
-                        style={{margin:0}}
-                        label="Title"
-                        fullWidth
-                        onChange={this.handleChange("title")}
-                        value={this.state.title}
-                        className={classes.textFieldWide}
-                        margin="normal"
-                      />
-                    </Grid>
-                    <Grid item sm={10}>
-                      <TextField
-                        id="description"
-                        label="Description"
-                        style={{margin:0}}
-                        multiline
-                        rowsMax="6"
-                        value={this.state.description}
-                        onChange={this.handleChange("description")}
-                        className={classes.textFieldWide}
-                        fullWidth
-                        margin="normal"
-                        InputLabelProps={{
-                          shrink: true
-                        }}
-                      />
-                    </Grid>
-
-                    <Grid item xs={12} sm={12}>
-                      <FormControl className={classes.formControl}>
-                        <InputLabel shrink htmlFor="Assignee">Assignee</InputLabel>
-                        <Select
-                          value={this.state.assigneeId && this.state.assigneeId}
-                          onChange={this.handlePersonChange}
-                          inputProps={{
-                            name: "assigneeId",
-                            id: "assigneeId"
-                          }}
-                        >
-                          {this.state.persons && this.state.persons.map(person => {
-                            return (
-                              person.disabled === 1 ? '' : <MenuItem key={person.id} value={person.id}>
-                                {person.fullName}
-                              </MenuItem>
-                            );
-                          })}
-                        </Select>
-                      </FormControl>
-                    </Grid>
-
-                    <Grid item xs={12} sm={12}>
-                      <FormControl className={classes.formControl}>
-                        <InputLabel shrink htmlFor="Status">Status</InputLabel>
-                        <Select
-                          value={this.state.status && this.state.status}
-                          onChange={this.handleStatusChange}
-                          inputProps={{
-                            name: "status",
-                            id: "status"
-                          }}
-                        >
-                          <MenuItem key='New' value='New'>
-                            New
-                          </MenuItem>
-                          <MenuItem key='Open' value='Open'>
-                            Open
-                          </MenuItem>
-                          <MenuItem key='Closed' value='Closed'>
-                            Closed
-                              </MenuItem>
-
-                        </Select>
-                      </FormControl>
-                    </Grid>
-                   
-                    <Grid item sm={10}>
-                    {checkPermision('Projects Additional Actions','modify') &&
-                      <Typography component="p">
-                      {
-                        this.state.delLoader ?
-                        <CircularProgress /> :
-                          <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={this.handleSubmit}
-                            className={classes.secondary}
-                          >
-                            {this.state.buttonText}
-                          </Button>
-                        }
-                      </Typography>
-                        }
-                      <br />
-                    </Grid>
+              <Paper className={classes.paper} >
+                <Grid container justify="space-between" direction="row" >
+                  <Grid item sm={6} >
+                    {this.renderDetail()}
                   </Grid>
-                </form>
+
+                  <Grid item sm={6} >
+
+                      <Typography variant="h6" color="primary" gutterBottom  style={{alignSelf:"flex-start"}}>
+                        Comment History
+                      </Typography>
+                    <div className={classes.taskCommentDivScrollView}  >
+                      {this.state.comments.map((cc, index) => this.renderComment(cc, index))}
+                    </div>
+                  </Grid>
+                </Grid>
               </Paper>
             </Grid>
           </Grid>

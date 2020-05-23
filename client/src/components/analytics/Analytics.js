@@ -507,12 +507,12 @@ class Analytics extends React.Component {
                     >
                       {/* <TableCell align="left" >{ProjectAction.projectName}</TableCell> */}
                       <TableCell align="left" >{ProjectAction.title}</TableCell>
-                      <TableCell align="left" >{ProjectAction.description}</TableCell>
+                      <TableCell align="left"  >{ProjectAction.status} </TableCell>
+                      <TableCell align="left" >{ProjectAction.priority}</TableCell>
 
                       <TableCell align="left" >{ProjectAction.personName} </TableCell>
 
 
-                      <TableCell align="left"  >{ProjectAction.status} </TableCell>
                     
                       <TableCell align="left" style={{width: "6rem"}} >{moment(ProjectAction.createdAt).format("YYYY-MM-DD")}</TableCell>
 
@@ -647,10 +647,10 @@ class Analytics extends React.Component {
 const rows = [
   // { id: "edit", numeric: false, disablePadding: false, label: "" },
   // { id: "projectName", numeric: false, disablePadding: false, label: "Project" },
-  { id: "title", numeric: false, disablePadding: false, label: "Title" },
-  { id: "description", numeric: false, disablePadding: false, label: "Description" },
-  { id: "assignedto", numeric: false, disablePadding: false, label: "Assignee" },
+  { id: "title", numeric: false, disablePadding: false, label: "Action Item" },
   { id: "status", numeric: false, disablePadding: false, label: "Status" },
+  { id: "priority", numeric: false, disablePadding: false, label: "Priority" },
+  { id: "assignedto", numeric: false, disablePadding: false, label: "Assignee" },
   { id: "created", numeric: false, disablePadding: false, label: "Date Added" },
   { id: "actions", numeric: false, disablePadding: false, label: "Action" }
  

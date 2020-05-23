@@ -38,6 +38,14 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
       onUpdate: DataTypes.NOW
+    },
+    priority: {
+      type: DataTypes.ENUM('High','Medium','Low'),
+      defaultValue: 'Medium',
+    },
+    comments: {
+      type: DataTypes.JSON,
+      allowNull: true
     }
   }, {});
   ProjectAction.associate = function(models) {

@@ -22,7 +22,7 @@ import { checkPermision } from "../../redux";
 
 const rows = [
   // { id: "edit", numeric: false, disablePadding: false, label: "" },
-  { id: "title", numeric: false, disablePadding: false, label: "Title" },
+  { id: "title", numeric: false, disablePadding: false, label: "Action Item" },
   {
     id: "description",
     numeric: false,
@@ -40,7 +40,7 @@ const rows = [
 
 const rowsWithProject = [
   // { id: "edit", numeric: false, disablePadding: false, label: "" },
-  { id: "title", numeric: false, disablePadding: false, label: "Title" },
+  { id: "title", numeric: false, disablePadding: false, label: "Action Item" },
   {
     id: "description",
     numeric: false,

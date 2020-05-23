@@ -165,3 +165,8 @@ ALTER TABLE ProjectActions MODIFY COLUMN `status` ENUM('Open','Closed','New') DE
 
 ALTER TABLE Projects ADD COLUMN `completedAt` DATETIME DEFAULT NULL;
 
+
+ALTER TABLE ProjectActions ADD COLUMN `priority` ENUM('High','Medium','Low') DEFAULT 'Medium';
+
+ALTER TABLE ProjectActions ADD COLUMN `comments` json DEFAULT NULL;
+
