@@ -48,7 +48,7 @@ class MileStoneWidget extends Component {
                 type: 'variablepie'
             },
             title: {
-                text: 'Milstones Status'
+                text: 'Milestones Status'
             },
             tooltip: {
                 headerFormat: '',

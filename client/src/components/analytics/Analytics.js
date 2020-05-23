@@ -114,7 +114,8 @@ class Analytics extends React.Component {
     readyToEdit: false,
     actionid: 0,
     actionProjectId:0,
-    selectedMonth:0
+    selectedMonth:0,
+    searchTxt:""
 
   };
 
@@ -308,7 +309,7 @@ class Analytics extends React.Component {
   }
 
   getProjectActions(){
-    const { ProjectActions,projectId,selectedCards,selectedMonth } = this.state;
+    const { ProjectActions,projectId,selectedCards,selectedMonth,searchTxt } = this.state;
     
     let temp=ProjectActions;
     if(projectId >0){
@@ -322,6 +323,10 @@ class Analytics extends React.Component {
 
     if(selectedCards.length>0 && selectedCards.indexOf('All')==-1){
       temp=temp.filter(p=>selectedCards.indexOf(p.status)>-1);
+    }
+
+    if(searchTxt && searchTxt.trim()){
+      temp=temp.filter(p=>JSON.stringify(p).toLowerCase().indexOf(searchTxt.trim().toLowerCase())>-1);
     }
     
 
@@ -380,7 +385,7 @@ class Analytics extends React.Component {
     const { classes } = this.props;
     const ProjectActions=this.getProjectActionsForStatus();
 
-    const { selectedCards } =this.state;
+    const { selectedCards,searchTxt } =this.state;
 
     let openStatus=0;
     let newStatus=0;
@@ -405,9 +410,9 @@ class Analytics extends React.Component {
         alignItems="center"
         style={{ margin: 0, padding: 0}}
       >
-        <Grid xs={4} md={4}></Grid>
+        
         <Grid item xs={2} sm={2} onClick={() => this.toggleStatus('Total')}  style={{paddingLeft:"0.5rem"}}>
-          <Paper className={classes.paper} style={{backgroundColor:"#f0de6e"}}>
+          <Paper className={classes.paper} style={{backgroundColor:"#f0de6e",margin: 0,padding: "0.3rem"}}>
             <Grid container direction="row" justify="space-between">
               <Typography className={classes.heading} style={{ alignSelf: "center" }}>Total({openStatus+newStatus+closedStatus})</Typography>
               <IconButton style={{ background: selectedCards.length>0  ? "#f0f0f0" : '#9fa2e3' }}>
@@ -417,7 +422,7 @@ class Analytics extends React.Component {
           </Paper>
         </Grid>
         <Grid item xs={2} sm={2} onClick={() => this.toggleStatus('Open')} style={{paddingLeft:"0.5rem"}}>
-          <Paper className={classes.paper} style={{backgroundColor:"#e980d9"}}>
+          <Paper className={classes.paper} style={{backgroundColor:"#e980d9",margin: 0,padding: "0.3rem"}}>
             <Grid container direction="row" justify="space-between">
               <Typography className={classes.heading} style={{ alignSelf: "center" }}>Open({openStatus})</Typography>
               <IconButton style={{ background: selectedCards.indexOf('Open') == -1 ? "#f0f0f0" : '#9fa2e3' }}>
@@ -427,7 +432,7 @@ class Analytics extends React.Component {
           </Paper>
         </Grid>
         <Grid item xs={2} sm={2} onClick={() => this.toggleStatus('New')} style={{paddingLeft:"0.5rem"}}>
-          <Paper className={classes.paper} style={{backgroundColor:"#f7a35c"}}>
+          <Paper className={classes.paper} style={{backgroundColor:"#f7a35c",margin: 0,padding: "0.3rem"}}>
             <Grid container direction="row" justify="space-between">
               <Typography className={classes.heading} style={{ alignSelf: "center" }}>New({newStatus})</Typography>
               <IconButton style={{ background: selectedCards.indexOf('New') == -1 ? "#f0f0f0" : '#9fa2e3' }}>
@@ -437,7 +442,7 @@ class Analytics extends React.Component {
           </Paper>
         </Grid>
         <Grid item xs={2} sm={2} onClick={() => this.toggleStatus('Closed')} style={{paddingLeft:"0.5rem"}}>
-          <Paper className={classes.paper} style={{backgroundColor:"#90ed7d"}}>
+          <Paper className={classes.paper} style={{backgroundColor:"#90ed7d",margin: 0,padding: "0.3rem"}}>
             <Grid container direction="row" justify="space-between">
               <Typography className={classes.heading} style={{ alignSelf: "center" }}>Closed({closedStatus})</Typography>
               <IconButton style={{ background: selectedCards.indexOf('Closed') == -1 ? "#f0f0f0" : '#9fa2e3' }}>
@@ -447,7 +452,19 @@ class Analytics extends React.Component {
           </Paper>
         </Grid>
 
+        <Grid xs={1} md={1}>
+        </Grid>
+        <Grid xs={3} md={3}>
 
+        <TextField
+              id="Search"
+              label="Search"
+              fullWidth
+              onChange={(event)=>this.setState({searchTxt:event.target.value})}
+              value={searchTxt}
+              margin="normal"
+            />
+        </Grid>
       </Grid>
 
     )

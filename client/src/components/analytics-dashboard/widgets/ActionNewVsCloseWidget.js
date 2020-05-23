@@ -1,23 +1,40 @@
 import React, { Component } from 'react';
 import * as Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
-class ProjectNewVsCompletedWidget extends Component {
+class ActionNewVsCloseWidget extends Component {
     render() {
-        const {orgProjectStatus} =this.props;
+        const {actionNewVsClose} =this.props;
+        const categories=actionNewVsClose.montes;
+
+
+        const newList=[]; 
+        const closeList=[]; 
+        let newCounter=0;
+        let closeCounter=0;
+        categories.forEach(c=>{
+            newCounter+=actionNewVsClose.newObject[c];
+
+            if(actionNewVsClose.closeObject[c]){
+                closeCounter+=actionNewVsClose.closeObject[c];
+            }
+
+            newList.push(newCounter);
+            closeList.push(closeCounter);
+        })
 
         const options = {
             chart: {
                 type: 'line'
             },
             title: {
-                text: 'New Vs Closed'
+                text: 'New vs Close'
             },
             xAxis: {
-                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+                categories
             },
             yAxis: {
                 title: {
-                    text: 'Milestones'
+                    text: 'Actions'
                 }
             },
             plotOptions: {
@@ -30,10 +47,10 @@ class ProjectNewVsCompletedWidget extends Component {
             },
             series: [{
                 name: 'New',
-                data: [7, 6, 9, 14, 18, 21, 25, 26, 23, 18, 13, 9]
+                data: newList
             }, {
-                name: 'Closed',
-                data: [3, 4, 5, 8, 11, 15, 17, 16, 14, 10, 6, 4]
+                name: 'Close',
+                data: closeList
             }]
         }
         return (
@@ -45,4 +62,4 @@ class ProjectNewVsCompletedWidget extends Component {
         );
     }
 }
-export default ProjectNewVsCompletedWidget;
+export default ActionNewVsCloseWidget;

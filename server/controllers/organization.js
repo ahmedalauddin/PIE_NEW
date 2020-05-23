@@ -389,6 +389,44 @@ module.exports = {
         res.status(400).send(error);
       });
   },
+  async orgnizationProjectActioNewVsClose(req, res) {
+   
+    const newSql =  `select MONTHNAME(pa.createdAt) as monthName,count(pa.id) as total
+                      FROM ProjectActions pa
+                      inner join Projects p on p.id=pa.projId
+                      where pa.disabled=0 and p.active=1 and p.orgId=${req.params.id}
+                      group by MONTHNAME(pa.createdAt)`;
+    
+    const closeSql=`select MONTHNAME(pa.updatedAt) as monthName,count(pa.id) as total
+                    FROM ProjectActions pa
+                    inner join Projects p on p.id=pa.projId
+                    where pa.disabled=0 and p.active=1 and pa.status ='Closed' and p.orgId=${req.params.id}
+                    group by MONTHNAME(pa.updatedAt)`;
+    try{
+      const newResult=await models.sequelize.query( newSql, { type: models.sequelize.QueryTypes.SELECT })
+
+      const closeResult=await models.sequelize.query( closeSql, { type: models.sequelize.QueryTypes.SELECT })
+      logger.debug(`${callerType} orgnizationProjectActioNewVsClose successful`);
+      const newObject={};
+      const closeObject={};
+      const montes={};
+      newResult.forEach(r=>{
+        newObject[r.monthName]=r.total;
+        montes[r.monthName]=r.total;
+      })
+
+      closeResult.forEach(r=>{
+        closeObject[r.monthName]=r.total;
+        montes[r.monthName]=r.total;
+      })
+
+      res.status(201).send({newObject,closeObject,montes:Object.keys(montes)});
+    }catch(error){
+      logger.error(`${callerType} orgnizationProjectActionStatus error: ${error.stack}`);
+      res.status(400).send(error);
+    }
+   
+  },
 
   orgnizationMilstoneStatus(req, res) {
    

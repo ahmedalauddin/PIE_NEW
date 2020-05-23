@@ -13,7 +13,7 @@ import ProjectStatusWidget from "./widgets/ProjectStatusWidget";
 import DepartmentLoadWidget from "./widgets/DepartmentLoadWidget";
 import MileStoneWidget from "./widgets/MileStoneWidget";
 import ActionWidget from "./widgets/ActionWidget";
-import ProjectNewVsCompletedWidget from "./widgets/ProjectNewVsCompletedWidget";
+import ActionNewVsCloseWidget from "./widgets/ActionNewVsCloseWidget";
 import MileStonePriorityWidget from "./widgets/MileStonePriorityWidget";
 import CircularProgress from '@material-ui/core/CircularProgress';
 
@@ -26,7 +26,8 @@ class AnalyticsDashboard extends Component {
       orgProjectStatus:null,
       orgProjectActionStatus:null,
       orgProjectMilstoneStatus:null,
-      orgProjectMilstonePriority:null
+      orgProjectMilstonePriority:null,
+      actionNewVsClose:null
     };
   }
 
@@ -43,9 +44,11 @@ class AnalyticsDashboard extends Component {
   fetchData = async ()=>{
     const orgId= getOrgId();
     const orgName= getOrgName();
+    this.setState({orgId,orgName});
+
     const res = await fetch(`/api/orgnization-project-status/${orgId}`);
     const orgProjectStatus = await res.json();
-    this.setState({orgProjectStatus,orgId,orgName});
+    this.setState({orgProjectStatus});
 
     const res2 = await fetch(`/api/orgnization-project-action-status/${orgId}`);
     const orgProjectActionStatus = await res2.json();
@@ -54,12 +57,18 @@ class AnalyticsDashboard extends Component {
     const res3 = await fetch(`/api/orgnization-milstone-status/${orgId}`);
     const orgProjectMilstoneReponse = await res3.json();
     this.setState({orgProjectMilstoneStatus:orgProjectMilstoneReponse.progressData,orgProjectMilstonePriority:orgProjectMilstoneReponse.priorityData});
+
+    const res4 = await fetch(`/api/orgnization-project-action-new-vs-close/${orgId}`);
+    const actionNewVsClose = await res4.json();
+    this.setState({actionNewVsClose});
+
+    
   }
 
 
   renderCards(){
     const { classes } = this.props;
-     const { orgId , orgName, orgProjectStatus, orgProjectActionStatus,orgProjectMilstoneStatus,orgProjectMilstonePriority } = this.state;
+     const { orgId , orgName, orgProjectStatus, orgProjectActionStatus,orgProjectMilstoneStatus,orgProjectMilstonePriority, actionNewVsClose } = this.state;
 
       return(
         <Grid container alignItems="center" justify="center" spacing={24} sm={12}>
@@ -90,7 +99,7 @@ class AnalyticsDashboard extends Component {
 
               <Grid item xs={12} sm={4}>
                 <Paper className={classes.paper}>
-                  {orgProjectActionStatus ? <ProjectNewVsCompletedWidget orgProjectActionStatus={orgProjectActionStatus} /> : <CircularProgress  />}
+                  {actionNewVsClose ? <ActionNewVsCloseWidget actionNewVsClose={actionNewVsClose} /> : <CircularProgress  />}
                 </Paper>
               </Grid>
 
