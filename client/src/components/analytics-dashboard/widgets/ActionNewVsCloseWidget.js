@@ -12,15 +12,17 @@ class ActionNewVsCloseWidget extends Component {
         let newCounter=0;
         let closeCounter=0;
         categories.forEach(c=>{
-            newCounter+=actionNewVsClose.newObject[c];
-
+            if(actionNewVsClose.newObject[c]){
+                newCounter+=actionNewVsClose.newObject[c];
+            }
             if(actionNewVsClose.closeObject[c]){
                 closeCounter+=actionNewVsClose.closeObject[c];
             }
 
             newList.push(newCounter);
             closeList.push(closeCounter);
-        })
+        });
+
 
         const options = {
             chart: {
@@ -40,9 +42,9 @@ class ActionNewVsCloseWidget extends Component {
             plotOptions: {
                 line: {
                     dataLabels: {
-                        enabled: true
+                        enabled: false
                     },
-                    enableMouseTracking: false
+                    enableMouseTracking: true
                 }
             },
             series: [{

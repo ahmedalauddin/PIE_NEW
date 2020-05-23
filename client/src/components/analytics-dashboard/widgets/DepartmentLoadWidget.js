@@ -36,7 +36,6 @@ class DepartmentLoadWidget extends Component {
             }
         })
 
-        console.log(deptload);
         const categories=Object.keys(deptload);
 
         const notApprovedArray=[];
