@@ -347,11 +347,11 @@ class Analytics extends React.Component {
     
     let temp=ProjectActions;
     if(projectId >0){
-      temp=ProjectActions.filter(p=>p.projectId==projectId);
+      temp=temp.filter(p=>p.projectId==projectId);
     }
 
     if(deptId > 0){
-      temp=ProjectActions.filter(p=>p.deptId==deptId);
+      temp=temp.filter(p=>p.deptId==deptId);
     }
 
     if(selectedMonth>0){
@@ -378,11 +378,11 @@ class Analytics extends React.Component {
     
     let temp=ProjectActions;
     if(projectId >0){
-      temp=ProjectActions.filter(p=>p.projectId==projectId);
+      temp=temp.filter(p=>p.projectId==projectId);
     }
 
     if(deptId > 0){
-      temp=ProjectActions.filter(p=>p.deptId==deptId);
+      temp=temp.filter(p=>p.deptId==deptId);
     }
 
     if(selectedMonth>0){
