@@ -69,6 +69,8 @@ const MenuProps = {
 
 const defalutValueProjectFilter={ id:0,projectName: "All Project"};
 
+const defalutValueDeptFilter={ id:0,deptName: "All Department"};
+
 const monthes=[
   {id:0,name: "All"},
   {id:1, name:"January"},
@@ -109,7 +111,9 @@ class Analytics extends React.Component {
     orgName:"",
     orgId:0,
     projects:[defalutValueProjectFilter],
+    depts:[defalutValueDeptFilter],
     projectId:0,
+    deptId:0,
     msg:"",
     readyToEdit: false,
     actionid: 0,
@@ -140,12 +144,18 @@ class Analytics extends React.Component {
       .then(res => res.json())
       .then(actionProjects => {
         const projects =[defalutValueProjectFilter];
+        const depts =[defalutValueDeptFilter];
         const _p={};
+        const _d={};
         actionProjects.forEach(ap=>{
           _p[ap.projectId]=ap.projectName;
+          if(ap.deptId){
+            _d[ap.deptId]=ap.deptName;
+          }
         })
         Object.keys(_p).forEach(k=>projects.push({ id:k,projectName: _p[k]}))
-        this.setState({ ProjectActions: actionProjects,orgName,orgId,projects })
+        Object.keys(_d).forEach(k=>depts.push({ id:k,deptName: _d[k]}))
+        this.setState({ ProjectActions: actionProjects,orgName,orgId,projects,depts })
       });
 
      // this.fetchCounts();
@@ -224,7 +234,7 @@ class Analytics extends React.Component {
 
   renderFilter() {
     const { classes } = this.props;
-    const {  projects, projectId,selectedMonth } = this.state;
+    const {  depts, deptId, projects, projectId,selectedMonth } = this.state;
     return (
       <Grid container justify="center" direction="column" alignItems="center" className="panel-dashboard">
         <Grid item xs={12} md={10} className="dashboard-filter-menu" style={{ margin: 0, padding: 0 }} >
@@ -255,7 +265,7 @@ class Analytics extends React.Component {
                       <Select
                               style={{width:"20rem"}}
                               value={projectId}
-                              onChange={(event)=>this.setState({projectId: event.target.value,page: 0,})}
+                              onChange={(event)=>this.setState({projectId: event.target.value,page: 0})}
                               inputProps={{
                                 name: "projectName",
                                 id: "id"
@@ -271,6 +281,30 @@ class Analytics extends React.Component {
                         </Select>
 
                     <FormHelperText>Filter by project</FormHelperText>
+                  </FormControl>
+                </Grid>
+
+                <Grid item>
+                  <FormControl className={classes.formControl}>
+                      <Select
+                              style={{width:"20rem"}}
+                              value={deptId}
+                              onChange={(event)=>this.setState({deptId: event.target.value,page: 0})}
+                              inputProps={{
+                                name: "deptName",
+                                id: "id"
+                              }}
+                            >
+                              {depts.map(d => {
+                                return (
+                                  <MenuItem key={d.id} value={d.id}>
+                                    {d.deptName}
+                                  </MenuItem>
+                                );
+                              })}
+                        </Select>
+
+                    <FormHelperText>Filter by department</FormHelperText>
                   </FormControl>
                 </Grid>
 
@@ -309,25 +343,29 @@ class Analytics extends React.Component {
   }
 
   getProjectActions(){
-    const { ProjectActions,projectId,selectedCards,selectedMonth,searchTxt } = this.state;
+    const { ProjectActions,projectId,selectedCards,selectedMonth,searchTxt,deptId } = this.state;
     
     let temp=ProjectActions;
     if(projectId >0){
       temp=ProjectActions.filter(p=>p.projectId==projectId);
     }
 
-    if(selectedMonth>0){
-      //moment(ProjectAction.createdAt).format("YYYY-MM-DD")
-      temp=temp.filter(p=>Number(moment(p.createdAt).format("MM"))==selectedMonth);
+    if(deptId > 0){
+      temp=ProjectActions.filter(p=>p.deptId==deptId);
     }
 
-    if(selectedCards.length>0 && selectedCards.indexOf('All')==-1){
-      temp=temp.filter(p=>selectedCards.indexOf(p.status)>-1);
+    if(selectedMonth>0){
+      temp=temp.filter(p=>Number(moment(p.createdAt).format("MM"))==selectedMonth);
     }
 
     if(searchTxt && searchTxt.trim()){
       temp=temp.filter(p=>JSON.stringify(p).toLowerCase().indexOf(searchTxt.trim().toLowerCase())>-1);
     }
+    
+    if(selectedCards.length>0 && selectedCards.indexOf('All')==-1){
+      temp=temp.filter(p=>selectedCards.indexOf(p.status)>-1);
+    }
+
     
 
     return temp;
@@ -336,11 +374,23 @@ class Analytics extends React.Component {
   }
 
   getProjectActionsForStatus(){
-    const { ProjectActions,projectId,selectedCards } = this.state;
+    const { ProjectActions,projectId,selectedMonth,searchTxt,deptId  } = this.state;
     
     let temp=ProjectActions;
     if(projectId >0){
       temp=ProjectActions.filter(p=>p.projectId==projectId);
+    }
+
+    if(deptId > 0){
+      temp=ProjectActions.filter(p=>p.deptId==deptId);
+    }
+
+    if(selectedMonth>0){
+      temp=temp.filter(p=>Number(moment(p.createdAt).format("MM"))==selectedMonth);
+    }
+
+    if(searchTxt && searchTxt.trim()){
+      temp=temp.filter(p=>JSON.stringify(p).toLowerCase().indexOf(searchTxt.trim().toLowerCase())>-1);
     }
 
     return temp;
@@ -596,7 +646,8 @@ class Analytics extends React.Component {
             pathname: "/ProjectAction",
             state: {
               projectId: actionProjectId,
-              actionid: actionid
+              actionid: actionid,
+              navFrom:'/analytics'
             }
           }}
         />

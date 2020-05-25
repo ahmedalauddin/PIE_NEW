@@ -18,6 +18,12 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
 import PageTitle from "../PageTitle";
 import moment from "moment";
+import ExpansionPanel from "@material-ui/core/ExpansionPanel";
+import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
+
+
 const profileLogo = require("../../images/profile.png");
 
 const styles = theme => ({
@@ -151,7 +157,7 @@ const styles = theme => ({
     height:"30rem",
     minWidth:540,
     overflow: "auto",
-    margin: 0,
+    marginTop: "2rem",
     padding: 2
   },
   profileLogo: {
@@ -166,8 +172,6 @@ const styles = theme => ({
 class ProjectAction extends React.Component {
   constructor(props) {
     super(props);
-    // Make sure to .bind the handleSubmit to the class.  Otherwise the API doesn't receive the
-    // state values.
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
    this.fetchPersons = this.fetchPersons.bind(this);
@@ -177,8 +181,6 @@ class ProjectAction extends React.Component {
     
   }
 
-  // Note that I'll need the individual fields for handleChange.  Use state to manage the inputs for the various
-  // fields.
   state = {
     title: "",
     description: "",
@@ -187,53 +189,13 @@ class ProjectAction extends React.Component {
     status: 'New',
     project: {},
     persons: [],
-    // title: "",
-    // type: "",
-    // level: "",
-    // org: "",
-    // orgId: 0,
-    // orgName: "",
-    // projectId: 0,
-    // projectName: "",
-    // departments: [],
-    // useProjectId: false,
-    // useOrganizationId: false,
-    // redirectTarget: "",
-    // deptId: 0,
-    // description: "",
-    // formula: "",
-    // startAt: "",
-    // endAt: "",
-    // msg: "",
-    // kpitype: "",
-    // readyToRedirect: false,
-    // buttonText: "Create",
-    // isEditing: false,
-    // redirect: false,
-    // isNew: false,
-    // expanded: false,
-    // hasError: false,
-    // labelWidth: 0,
-    // focus: false,
-    // message: "",
-    // nextItem: "",
-    // tags: [{id: "", text: ""}],
-    // suggestions: [
-    //   { id: "Cluster analysis", text: "Cluster analysis" },
-    //   { id: "Linear regression", text: "Linear regression" },
-    //   { id: "Monte Carlo simulations", text: "Monte Carlo simulations" },
-    //   { id: "Time-series analysis", text: "Time-series analysis" },
-    //   { id: "Natural language processing", text: "Natural language processing" },
-    //   { id: "Predictive analytics", text: "Predictive analytics" },
-    //   { id: "Logistic regression", text: "Logistic regression" },
-    //   { id: "Machine learning", text: "Machine learning" }
-    // ],
     openSnackbar: false,
     snackbarMessage: "",
     message: "",
     delLoader:false,
     comments:[],
-    comment:""
+    comment:"",
+    expanded:false
   };
 
   handleChange = name => event => {
@@ -243,9 +205,6 @@ class ProjectAction extends React.Component {
   handlePersonChange = event => {
     this.setState({assigneeId: event.target.value});
   };
-
-  
-  
 
   handleDelete(i) {
     const { tags } = this.state;
@@ -276,7 +235,7 @@ class ProjectAction extends React.Component {
     return <Redirect to="/Login" />;
   };
 
-  async handleSubmit(event) {
+  async handleSubmit(event,comment) {
     event.preventDefault();
     // Project ID and KPI id (if there is the latter, are passed in by location.state.
     // console.log('handelsbmit-this.props.location',this.props.location);
@@ -301,10 +260,10 @@ class ProjectAction extends React.Component {
       delLoader: true
     })
 
-    if(this.state.comment && this.state.comment.trim()){
+    if(comment && comment.trim()){
       this.state.comments.unshift({
         personName:this.toSentenceCase(getUser().fullName),
-        comment:this.state.comment,
+        comment:comment.trim(),
         commentDate:new Date()
       })
     }
@@ -323,45 +282,40 @@ class ProjectAction extends React.Component {
     }
     console.log('json--- on ProjectActions -- ',this.state );
 
-    const response = await fetch(apiPath, {
-        method: method,
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(this.state)
-      })
-        .then(response => response.json())
-        .then((response) => {
-          console.log('responseresponseresponseresponse0- on ProjectActions on ProjectActions---',response);
-          // Redirect to the Project component.
-          var redirectTarget = "/project/"
-          var redirectIdOrgOrProject = this.state.projectId;
-         
-        
-          
-          if(response && response.success === true){
-      
-            this.setState({ openSnackbar: true,message: response.message});
-            
-          }else{
-            var mssgfale = response.message ? response.message : 'Something went wrong';
-            this.setState({ openSnackbar: true,message: mssgfale,delLoader: false});
-            return false;
+    fetch(apiPath, {
+      method: method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(this.state)
+    })
+    .then(response => response.json())
+    .then((response) => {
+      if (response && response.success === true) {
+          const state={ openSnackbar: true, message: response.message, delLoader: false }
+          if(comment && comment.trim() ){
+            state['comment']='';
+          } 
+          this.setState(state);
+          if(!actionid){
+            setTimeout(()=>this.moveToBack(),2000);
           }
-
-          setTimeout(() => {
-          this.setState({
-            redirectTarget:  redirectTarget,
-            readyToRedirect: true,
-            // message: response.message,
-            redirectIdOrgOrProject: redirectIdOrgOrProject,
-            delLoader: false
-          });
-        },3000);
-        })
-        .catch(err => {
-          console.log('on ProjectActions  error',err);
-        });
-        console.log("Response: ", response)
+      } else {
+          var mssgfale = response.message ? response.message : 'Something went wrong';
+          this.setState({ openSnackbar: true, message: mssgfale, delLoader: false });
+          return false;
+      }
+      })
+      .catch(err => {
+        console.log('on ProjectActions  error', err);
+      });
   };
+
+  moveToBack() {
+    this.setState({           
+      readyToRedirect: true,
+      redirectIdOrgOrProject: this.state.projectId,
+      delLoader: false
+    });
+  }
 
   setOrganizationInfo = () => {
     // Get the organization from the filter.
@@ -428,23 +382,18 @@ class ProjectAction extends React.Component {
         buttonText: "Create"
       });
     }
-    // Have to set the state of the individual fields for the handleChange function for the TextFields.
-    // Do this using the project state.
-    // if(projectId > 0){ //Need this codition in case of when creating KPI for organisation and ProjectId is not in exist - Issue #48
-    // fetch("/api/projects/" + projectId)
-    //   .then(results => results.json())
-    //   .then(project => this.setState({ project }));
-    // }
+
   }
+
 
   renderDetail() {
     const { classes } = this.props;
     const { tags, suggestions } = this.state;
     return (
 
-      <form onSubmit={this.handleSubmit} noValidate>
-        <Grid container spacing={24}>
-          <Grid item xs={12} sm={12}>
+      <Grid container justify="space-between" direction="row" >
+        
+          <Grid item xs={7} sm={7} style={{padding:"1rem"}}>
             <TextField
               required
               id="title-required"
@@ -453,27 +402,11 @@ class ProjectAction extends React.Component {
               fullWidth
               onChange={this.handleChange("title")}
               value={this.state.title}
-              className={classes.textFieldWide}
-            />
-          </Grid>
-          <Grid item xs={12} sm={12} >
-            <TextField
-              id="description"
-              label="Description"
-              style={{ margin: 0 }}
-              multiline
-              rowsMax="6"
-              value={this.state.description}
-              onChange={this.handleChange("description")}
-              className={classes.textFieldWide}
-              fullWidth
-              InputLabelProps={{
-                shrink: true
-              }}
+              
             />
           </Grid>
 
-          <Grid item xs={12} sm={12}>
+          <Grid item xs={5} sm={5} style={{padding:"1rem"}}>
             <FormControl className={classes.formControl} style={{width:"60%"}} >
               <InputLabel shrink htmlFor="Assignee">Assignee</InputLabel>
               <Select
@@ -495,7 +428,24 @@ class ProjectAction extends React.Component {
             </FormControl>
           </Grid>
 
-          <Grid item xs={12} sm={12}>
+
+          <Grid item xs={7} sm={7} style={{padding:"1rem"}}>
+            <TextField
+              id="description"
+              label="Description"
+              style={{ margin: 0 }}
+              multiline
+              rowsMax="6"
+              value={this.state.description}
+              onChange={this.handleChange("description")}
+              fullWidth
+              InputLabelProps={{
+                shrink: true
+              }}
+            />
+          </Grid>
+
+          <Grid item xs={5} sm={5} style={{padding:"1rem"}}>
             <FormControl className={classes.formControl} style={{width:"60%"}} >
               <InputLabel shrink htmlFor="Status">Status</InputLabel>
               <Select
@@ -520,7 +470,42 @@ class ProjectAction extends React.Component {
             </FormControl>
           </Grid>
 
-          <Grid item xs={12} sm={12}>
+
+          <Grid container  direction="row" xs={7} sm={7} style={{paddingLeft:"1rem",paddingTop:"2rem"}}>
+            {checkPermision('Projects Additional Actions', 'modify') &&
+              <Typography component="p">
+                {
+                  this.state.delLoader ?
+                    <CircularProgress /> :
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={(event)=>this.handleSubmit(event)}
+                      className={classes.secondary}
+                    >
+                      {this.state.buttonText}
+                    </Button>
+                }
+              </Typography>
+            }
+                <Typography component="p" style={{marginLeft:"1rem"}}>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={()=>this.moveToBack()}
+                      className={classes.secondary}
+                    >
+                      {"Back"}
+                    </Button>
+                    </Typography>
+           
+          </Grid>
+
+          
+
+          
+
+          <Grid item xs={5} sm={5} style={{padding:"1rem"}}>
             <FormControl className={classes.formControl} style={{width:"60%"}}>
               <InputLabel shrink htmlFor="priority">Priority</InputLabel>
               <Select
@@ -545,7 +530,7 @@ class ProjectAction extends React.Component {
             </FormControl>
           </Grid>
 
-          <Grid item xs={12} sm={12} >
+          {/* <Grid item xs={12} sm={12} >
             <TextField
               id="comment"
               label="Enter Comment"
@@ -558,32 +543,10 @@ class ProjectAction extends React.Component {
               fullWidth
               
             />
-          </Grid>
-
-          <Grid item sm={10}>
-            {checkPermision('Projects Additional Actions', 'modify') &&
-              <Typography component="p">
-                {
-                  this.state.delLoader ?
-                    <CircularProgress /> :
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={this.handleSubmit}
-                      className={classes.secondary}
-                    >
-                      {this.state.buttonText}
-                    </Button>
-                }
-              </Typography>
-            }
-            <br />
-          </Grid>
-        </Grid>
-
-
-
-      </form>
+          </Grid> */}
+ 
+          
+      </Grid>
 
     )
   }
@@ -629,18 +592,55 @@ class ProjectAction extends React.Component {
       </div>
     )
   }
+
+  renderEnterComment() {
+    const { classes } = this.props;
+    const { comment } = this.state
+    return (
+          <Grid container direction="row" justify="space-between" alignItems="center" className="dash">
+
+          <Grid item sm={10} xs={10}  >
+            <TextField
+              id="comment"
+              label="Enter Comment"
+              multiline
+              className={classes.textFieldWide}
+              value={comment}
+              onChange={(event) => this.setState({ comment: event.target.value })}
+              style={{ width: "100%" }}
+              margin="normal"
+            />
+          </Grid>
+          <Typography component="p">
+            {
+              this.state.delLoader ?
+                <CircularProgress /> :
+                <Button
+                  variant="contained"
+                  color="primary"
+                  className={classes.secondary}
+                  onClick={(event)=>this.handleSubmit(event,comment)}
+                >
+                  Post Comment
+                  </Button>
+            }
+          </Typography>
+        </Grid>
+    )
+  }
   render() {
     const { classes } = this.props;
-    const { tags, suggestions } = this.state;
-
-
+    const { expanded } = this.state;
+    const currentPath=this.props.location.state.navFrom || '/paneldashboard'
+    var redirectTarget = this.props.location.state.navFrom || "/project/";
+    const actionid = this.props.location.state.actionid;
 
     if (this.state.hasError) {
       return <h1>An error occurred.</h1>;
     }
     if (this.state.readyToRedirect) {
       return <Redirect to={{
-        pathname: `${this.state.redirectTarget}`,
+        pathname: `${redirectTarget}`,
         state: {
           message: `${this.state.message}`,
           projId: this.state.redirectIdOrgOrProject,
@@ -650,31 +650,40 @@ class ProjectAction extends React.Component {
       }} />;
     }
 
+
+
     return (
       <React.Fragment>
         <CssBaseline />
-        <Topbar />
+        <Topbar currentPath={currentPath} />
         <div className={classes.root}>
           <Grid container justify="center" direction="column" alignItems="center" className="panel-dashboard">
             <PageTitle pageTitle={"Action Detail"} />
-            <Grid item sm={10}>
+            <Grid item sm={10} >
               <Paper className={classes.paper} >
-                <Grid container justify="space-between" direction="row" >
-                  <Grid item sm={6} >
-                    {this.renderDetail()}
-                  </Grid>
-
-                  <Grid item sm={6} >
-
-                      <Typography variant="h6" color="primary" gutterBottom  style={{alignSelf:"flex-start"}}>
-                        Comment History
-                      </Typography>
-                    <div className={classes.taskCommentDivScrollView}  >
-                      {this.state.comments.map((cc, index) => this.renderComment(cc, index))}
-                    </div>
-                  </Grid>
-                </Grid>
+                <form onSubmit={(event)=>this.handleSubmit(event)} noValidate>
+                      {this.renderDetail()} 
+                </form>
               </Paper>
+
+              {actionid>0 &&
+              <ExpansionPanel expanded={expanded} onChange={() => this.setState({ expanded: !expanded })} style={{marginTop:"1rem"}}>
+                <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                  <Typography className={classes.heading}>Action Comments</Typography>
+                </ExpansionPanelSummary>
+                <ExpansionPanelDetails>
+                  <Grid container>
+                    <Grid item lg={12}>
+                        {this.renderEnterComment()}
+                        <div className={classes.taskCommentDivScrollView}  >
+                          {this.state.comments.map((cc, index) => this.renderComment(cc, index))}
+                        </div>
+                    </Grid>
+                  </Grid>
+                </ExpansionPanelDetails>
+              </ExpansionPanel>
+                }
+
             </Grid>
           </Grid>
         </div>
