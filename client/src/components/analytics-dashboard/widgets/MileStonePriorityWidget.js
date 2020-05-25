@@ -33,7 +33,7 @@ class MileStonePriorityWidget extends Component {
                 type: 'pie'
             },
             title: {
-                text: 'Priority wise Milstones'
+                text: 'Priority wise Milestones'
             },
             tooltip: {
                 pointFormat: '{series.name}: <b>{point.y:.1f}</b>'
