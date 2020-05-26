@@ -94,7 +94,7 @@ class Analytics extends React.Component {
 
   state = {
     order: "asc",
-    orderBy: "projectName",
+    orderBy: "createdAt",
     selectedCards:[],
     selected: [],
     ProjectActions: [],
@@ -557,7 +557,14 @@ class Analytics extends React.Component {
                     >
                       {/* <TableCell align="left" >{ProjectAction.projectName}</TableCell> */}
                       <TableCell align="left" >{ProjectAction.title}</TableCell>
-                      <TableCell align="left"  >{ProjectAction.status} </TableCell>
+                      <TableCell align="left" style={{
+                        color:ProjectAction.status =='Open'?"#e980d9":ProjectAction.status =='New'?"#f7a35c":"#90ed7d",
+                        fontWeight:"bold"
+                        }}  >
+                        
+                        {ProjectAction.status} 
+                        
+                      </TableCell>
                       <TableCell align="left" >{ProjectAction.priority}</TableCell>
 
                       <TableCell align="left" >{ProjectAction.personName} </TableCell>
@@ -565,6 +572,8 @@ class Analytics extends React.Component {
 
                     
                       <TableCell align="left" style={{width: "6rem"}} >{moment(ProjectAction.createdAt).format("YYYY-MM-DD")}</TableCell>
+
+                      <TableCell align="left" style={{width: "6.5rem"}} >{moment(ProjectAction.updatedAt).format("YYYY-MM-DD")}</TableCell>
 
                       <TableCell component="th" scope="row" padding="none">
 
@@ -701,8 +710,9 @@ const rows = [
   { id: "title", numeric: false, disablePadding: false, label: "Action Item" },
   { id: "status", numeric: false, disablePadding: false, label: "Status" },
   { id: "priority", numeric: false, disablePadding: false, label: "Priority" },
-  { id: "assignedto", numeric: false, disablePadding: false, label: "Assignee" },
-  { id: "created", numeric: false, disablePadding: false, label: "Date Added" },
+  { id: "personName", numeric: false, disablePadding: false, label: "Assignee" },
+  { id: "createdAt", numeric: false, disablePadding: false, label: "Date Created" },
+  { id: "updatedAt", numeric: false, disablePadding: false, label: "Date Updated" },
   { id: "actions", numeric: false, disablePadding: false, label: "Action" }
  
 ];

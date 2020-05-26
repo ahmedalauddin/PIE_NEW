@@ -360,7 +360,7 @@ module.exports = {
               left join Projects p on p.id=pa.projId
               left join Departments d on d.id=p.deptId
               left join Persons ps on ps.id =pa.assigneeId
-              where pa.disabled=0 and p.orgId=${orgId}`;
+              where pa.disabled=0 and p.orgId=${orgId} order by pa.createdAt desc`;
     /*if(statusList.length>0){
       sql+=` and pa.status in ('${statusList.join("','")}')`
     }*/
