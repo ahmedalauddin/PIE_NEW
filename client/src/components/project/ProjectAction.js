@@ -456,15 +456,11 @@ class ProjectAction extends React.Component {
                   id: "status"
                 }}
               >
-                <MenuItem key='New' value='New'>
-                  New
-                          </MenuItem>
-                <MenuItem key='Open' value='Open'>
-                  Open
-                          </MenuItem>
-                <MenuItem key='Closed' value='Closed'>
-                  Closed
-                              </MenuItem>
+                <MenuItem key='New' value='New'> New </MenuItem>
+                <MenuItem key='In Progress' value='In Progress'> In Progress </MenuItem>
+                <MenuItem key='On Hold' value='On Hold'> On Hold </MenuItem>
+                <MenuItem key='Cancelled' value='Cancelled'> Cancelled </MenuItem>
+                <MenuItem key='Completed' value='Completed'> Completed </MenuItem>
 
               </Select>
             </FormControl>

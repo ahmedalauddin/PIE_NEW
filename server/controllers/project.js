@@ -125,7 +125,7 @@ module.exports = {
   // TODO: look at persons associated with the project, see the create method above.
   createOrUpdateProjectWithKpi(req, res) {
     // let _obj = util.inspect(req, { showHidden: false, depth: null });
-    logger.debug(`${callerType} createOrUpdateProjectWithKpi -> JSON: req.body: ${JSON.stringify(req.body)}`);
+    logger.debug(`${callerType} createOrUpdateProjectWithKpi -> `);
 
     const index = req.body.indexSubmitted;
     const projTitle = req.body.kpis[index].projTitle;
@@ -201,34 +201,33 @@ module.exports = {
           res.status(400).send(error);
         });
     } else {
-      let _obj = util.inspect(req, { showHidden: false, depth: null });
-      logger.debug(`${callerType} update -> request: ${_obj}`);
+     
       let _id = parseInt(req.body.id);
 
-      const updateCompletedAt={};
+      const updateObject={
+        title: req.body.title,
+        description: req.body.description,
+        businessGoal: req.body.businessGoal,
+        summary: req.body.summary,
+        mainKpiId: req.body.mainKpiId,
+        progress: req.body.progress,
+        startAt: req.body.startAt,
+        endAt: req.body.endAt,
+        statusId: req.body.statusId,
+        deptId: req.body.deptId,
+      };
       if(req.body.statusId==4){
         const sql =  `SELECT statusId FROM Projects where id=${_id}`;
         const result = await models.sequelize.query(sql, {type: models.sequelize.QueryTypes.SELECT})
         if(result.length>0 && result[0].statusId != 4){
-          updateCompletedAt.completedAt=new Date();
-          logger.info(`${callerType} updating  completedAt : ${p.id}`);
+          updateObject.completedAt=new Date();
+          logger.info(`${callerType} updating  completedAt : ${_id}`);
         }
       }
-
+      console.log(updateObject)
+      
       return Project.update(
-        {
-          title: req.body.title,
-          description: req.body.description,
-          businessGoal: req.body.businessGoal,
-          summary: req.body.summary,
-          mainKpiId: req.body.mainKpiId,
-          progress: req.body.progress,
-          startAt: req.body.startAt,
-          endAt: req.body.endAt,
-          statusId: req.body.statusId,
-          deptId: req.body.deptId,
-          ...updateCompletedAt
-        },
+        updateObject,
         {
           returning: true,
           where: { id: _id }
@@ -483,9 +482,7 @@ module.exports = {
       let activeCl = "";
       let personClause = "";
       logger.debug(`${callerType} Project: getProjectFilteredDashboard------------------------------------`);
-      logger.debug(`${callerType} Project: getProjectFilteredDashboard -> req.body: ${JSON.stringify(req.body)}`);
-      logger.debug(`${callerType} Project: getProjectFilteredDashboard -> allClients: ${allClients}, orgId: ${orgId}, filter: ${status}`);
-
+      
       //<editor-fold desc="Build filter SQL text for the where clauses">
       // Build clause to filter by client organization.
       if (!allClients) {

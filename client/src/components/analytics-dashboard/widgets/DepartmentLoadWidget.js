@@ -18,10 +18,10 @@ class DepartmentLoadWidget extends Component {
                 };
             }
 
-            if(data.status=='Approved'){
+            if(data.status=='New'){
                 deptload[data.department].approved+=data.total
             }
-            if(data.status=='Not Approved'){
+            if(data.status=='Cancelled'){
                 deptload[data.department].notApproved+=data.total
             }
             if(data.status=='In Progress'){
@@ -31,7 +31,7 @@ class DepartmentLoadWidget extends Component {
                 deptload[data.department].completed+=data.total
             }
             
-            if(data.status=='Postponed'){
+            if(data.status=='On Hold'){
                 deptload[data.department].postponed+=data.total
             }
         })
@@ -45,8 +45,8 @@ class DepartmentLoadWidget extends Component {
         const postponedArray=[];
 
         categories.forEach(c=>{
-            notApprovedArray.push(deptload[c].notApproved);
             approvedArray.push(deptload[c].approved);
+            notApprovedArray.push(deptload[c].notApproved);
             inProgressArray.push(deptload[c].inProgress);
             completedArray.push(deptload[c].completed);
             postponedArray.push(deptload[c].postponed);
@@ -70,7 +70,7 @@ class DepartmentLoadWidget extends Component {
                 }
             },
             legend: {
-                reversed: true
+                reversed: false
             },
             plotOptions: {
                 series: {
@@ -79,14 +79,14 @@ class DepartmentLoadWidget extends Component {
             },
             series: [
                 {
-                    name: 'Not Approved',
-                    data: notApprovedArray,
-                    color:'rgb(247, 163, 92)'
-                },
-                {
-                    name: 'Approved',
+                    name: 'New',
                     data: approvedArray,
                     color:'rgb(124, 181, 236)'
+                },
+                {
+                    name: 'Cancelled',
+                    data: notApprovedArray,
+                    color:'rgb(247, 163, 92)'
                 },
                 {
                     name: 'Inprogress',
@@ -99,7 +99,7 @@ class DepartmentLoadWidget extends Component {
                     color: 'rgb(128, 133, 233)'
                 }, 
                 {
-                    name: 'Postponed',
+                    name: 'On Hold',
                     data: postponedArray,
                     color:'rgb(67, 67, 72)'
                     

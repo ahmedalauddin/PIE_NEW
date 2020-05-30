@@ -170,3 +170,10 @@ ALTER TABLE ProjectActions ADD COLUMN `priority` ENUM('High','Medium','Low') DEF
 
 ALTER TABLE ProjectActions ADD COLUMN `comments` json DEFAULT NULL;
 
+UPDATE ProjectStatuses SET `label` = 'New' WHERE (`id` = '1');
+UPDATE ProjectStatuses SET `label` = 'Cancelled' WHERE (`id` = '2');
+UPDATE ProjectStatuses SET `label` = 'On Hold' WHERE (`id` = '5');
+
+ALTER TABLE ProjectActions MODIFY COLUMN `status` VARCHAR(50) DEFAULT 'New';
+update ProjectActions set status='Completed' where status='Closed'
+update ProjectActions set status='In Progress' where status='Open'

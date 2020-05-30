@@ -87,10 +87,14 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: DataTypes.NOW,
         onUpdate: DataTypes.NOW
       },
-      active: {
+      updatedAt: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+        onUpdate: DataTypes.NOW
+      },
+      completedAt: {
         type: DataTypes.BOOLEAN,
-        allowNull: true,
-        defaultValue: 1
+        allowNull: true
       },
       deptId: {
         type: DataTypes.INTEGER,

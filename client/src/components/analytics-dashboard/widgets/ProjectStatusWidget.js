@@ -11,15 +11,15 @@ class ProjectStatusWidget extends Component {
         let postponed=0;
 
         orgProjectStatus.forEach(data=>{
-            if(data.status=='Approved'){
+            if(data.status=='New'){
                 approved+=data.total
-            }else  if(data.status=='Not Approved'){
+            }else  if(data.status=='Cancelled'){
                 notApproved+=data.total
             }else  if(data.status=='In Progress'){
                 inProgress+=data.total
             }else  if(data.status=='Completed'){
                 completed+=data.total
-            }else  if(data.status=='Postponed'){
+            }else  if(data.status=='On Hold'){
                 postponed+=data.total
             }
         })
@@ -29,12 +29,12 @@ class ProjectStatusWidget extends Component {
             name: 'Project Status',
             data: [
                 {
-                    name:'Approved',
+                    name:'New',
                     y:approved,
                     color:'rgb(124, 181, 236)'
                 },
                 {
-                    name:'Not Approved',
+                    name:'Cancelled',
                     y:notApproved,
                     color:'rgb(247, 163, 92)'
                 },
@@ -49,7 +49,7 @@ class ProjectStatusWidget extends Component {
                     color: 'rgb(128, 133, 233)'
                 },
                 {
-                    name:'Postponed',
+                    name:'On Hold',
                     y:postponed,
                     color:'rgb(67, 67, 72)'
                 }                

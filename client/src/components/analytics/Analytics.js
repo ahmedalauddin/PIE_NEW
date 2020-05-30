@@ -158,33 +158,10 @@ class Analytics extends React.Component {
         this.setState({ ProjectActions: actionProjects,orgName,orgId,projects,depts })
       });
 
-     // this.fetchCounts();
     }
   }
 
-  /*async fetchCounts(){
-    const orgId= getOrgId();
-    const projectId =
-    fetch(`/api/actions-count-org/${orgId}`)
-      .then(res => res.json())
-      .then(statusCount => {
-        console.log("statusCount",statusCount);
-        let openStatus=0;
-        let newStatus=0;
-        let closedStatus=0;
-        statusCount.forEach(s=>{
-          if(s.status=='Open'){
-            openStatus=s.total;
-          }else if(s.status=='New'){
-            newStatus=s.total;
-          }else if(s.status=='Closed'){
-            closedStatus=s.total;
-          }
-        })
-
-        this.setState({openStatus,newStatus,closedStatus})
-      });
-  }*/
+  
 
   
 
@@ -441,11 +418,11 @@ class Analytics extends React.Component {
     let newStatus=0;
     let closedStatus=0;
     ProjectActions.forEach(s=>{
-      if(s.status=='Open'){
+      if(s.status=='In Progress'){
         openStatus++;
       }else if(s.status=='New'){
         newStatus++;
-      }else if(s.status=='Closed'){
+      }else if(s.status=='Completed'){
         closedStatus++;
       }
     })
@@ -471,12 +448,12 @@ class Analytics extends React.Component {
             </Grid>
           </Paper>
         </Grid>
-        <Grid item xs={2} sm={2} onClick={() => this.toggleStatus('Open')} style={{paddingLeft:"0.5rem"}}>
+        <Grid item xs={2} sm={2} onClick={() => this.toggleStatus('In Progress')} style={{paddingLeft:"0.5rem"}}>
           <Paper className={classes.paper} style={{backgroundColor:"#e980d9",margin: 0,padding: "0.3rem"}}>
             <Grid container direction="row" justify="space-between">
-              <Typography className={classes.heading} style={{ alignSelf: "center" }}>Open({openStatus})</Typography>
-              <IconButton style={{ background: selectedCards.indexOf('Open') == -1 ? "#f0f0f0" : '#9fa2e3' }}>
-                <CheckIcon color="primary" style={{ color: selectedCards.indexOf('Open') == -1 ? "grey" : '#303f9f' }} />
+              <Typography className={classes.heading} style={{ alignSelf: "center" }}>In Progress({openStatus})</Typography>
+              <IconButton style={{ background: selectedCards.indexOf('In Progress') == -1 ? "#f0f0f0" : '#9fa2e3' }}>
+                <CheckIcon color="primary" style={{ color: selectedCards.indexOf('In Progress') == -1 ? "grey" : '#303f9f' }} />
               </IconButton>
             </Grid>
           </Paper>
@@ -491,12 +468,12 @@ class Analytics extends React.Component {
             </Grid>
           </Paper>
         </Grid>
-        <Grid item xs={2} sm={2} onClick={() => this.toggleStatus('Closed')} style={{paddingLeft:"0.5rem"}}>
+        <Grid item xs={2} sm={2} onClick={() => this.toggleStatus('Completed')} style={{paddingLeft:"0.5rem"}}>
           <Paper className={classes.paper} style={{backgroundColor:"#90ed7d",margin: 0,padding: "0.3rem"}}>
             <Grid container direction="row" justify="space-between">
-              <Typography className={classes.heading} style={{ alignSelf: "center" }}>Closed({closedStatus})</Typography>
-              <IconButton style={{ background: selectedCards.indexOf('Closed') == -1 ? "#f0f0f0" : '#9fa2e3' }}>
-                <CheckIcon color="primary" style={{ color: selectedCards.indexOf('Closed') == -1 ? "grey" : '#303f9f' }} />
+              <Typography className={classes.heading} style={{ alignSelf: "center" }}>Completed({closedStatus})</Typography>
+              <IconButton style={{ background: selectedCards.indexOf('Completed') == -1 ? "#f0f0f0" : '#9fa2e3' }}>
+                <CheckIcon color="primary" style={{ color: selectedCards.indexOf('Completed') == -1 ? "grey" : '#303f9f' }} />
               </IconButton>
             </Grid>
           </Paper>
@@ -558,7 +535,7 @@ class Analytics extends React.Component {
                       {/* <TableCell align="left" >{ProjectAction.projectName}</TableCell> */}
                       <TableCell align="left" >{ProjectAction.title}</TableCell>
                       <TableCell align="left" style={{
-                        color:ProjectAction.status =='Open'?"#e980d9":ProjectAction.status =='New'?"#f7a35c":"#90ed7d",
+                        color:ProjectAction.status =='In Progress'?"#e980d9":ProjectAction.status =='New'?"#f7a35c":"#90ed7d",
                         fontWeight:"bold"
                         }}  >
                         

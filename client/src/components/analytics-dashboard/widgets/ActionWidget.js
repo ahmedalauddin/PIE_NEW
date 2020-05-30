@@ -11,15 +11,23 @@ class ActionWidget extends Component {
         let newActions=0;
         let openActions=0;
         let closeActions=0;
+        let cancelledActions=0;
+        let onHoldActions=0;
         orgProjectActionStatus.forEach(a=>{
             if(a.status=="New"){
                 newActions=a.total;
 
-            }else if(a.status=="Open"){
+            }else if(a.status=="In Progress"){
                 openActions=a.total;
 
-            }else if(a.status=="Close"){
+            }else if(a.status=="Completed"){
                 closeActions=a.total;
+            }
+            else if(a.status=="On Hold"){
+                onHoldActions=a.total;
+            }
+            else if(a.status=="Cancelled"){
+                cancelledActions=a.total;
             }
         })
         const  data= [{
@@ -27,13 +35,21 @@ class ActionWidget extends Component {
                     y: newActions,
                     color:'rgb(124, 181, 236)'
                 }, {
-                    name: 'Open',
+                    name: 'In Progress',
                     y: openActions,
                     color:'rgb(144, 237, 125)'
                 }, {
-                    name: 'Close',
+                    name: 'Completed',
                     y: closeActions,
                     color: 'rgb(128, 133, 233)'
+                }, {
+                    name: 'On Hold',
+                    y: closeActions,
+                    color: 'rgb(67, 67, 72)'
+                }, {
+                    name: 'Cancelled',
+                    y: closeActions,
+                    color: 'rgb(247, 163, 92)'
                 }]
         const options = {
             chart: {
