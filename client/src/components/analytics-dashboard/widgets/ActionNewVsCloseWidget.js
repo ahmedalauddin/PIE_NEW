@@ -29,7 +29,7 @@ class ActionNewVsCloseWidget extends Component {
                 type: 'line'
             },
             title: {
-                text: 'New vs Close'
+                text: 'New vs Completed'
             },
             xAxis: {
                 categories
@@ -51,7 +51,7 @@ class ActionNewVsCloseWidget extends Component {
                 name: 'New',
                 data: newList
             }, {
-                name: 'Close',
+                name: 'Completed',
                 data: closeList
             }]
         }
