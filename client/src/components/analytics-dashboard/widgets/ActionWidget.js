@@ -52,6 +52,9 @@ class ActionWidget extends Component {
                     color: 'rgb(247, 163, 92)'
                 }]
         const options = {
+            credits: {
+                enabled: false
+              },
             chart: {
                 plotBackgroundColor: null,
                 plotBorderWidth: null,

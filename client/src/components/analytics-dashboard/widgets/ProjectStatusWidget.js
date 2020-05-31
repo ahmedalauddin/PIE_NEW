@@ -60,6 +60,9 @@ class ProjectStatusWidget extends Component {
         }]
 
         const options = {
+            credits: {
+                enabled: false
+              },
             chart: {
                 type: 'column'
             },

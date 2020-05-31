@@ -26,6 +26,9 @@ class MileStonePriorityWidget extends Component {
                     color: 'rgb(128, 133, 233)'
                 }]
         const options = {
+            credits: {
+                enabled: false
+              },
             chart: {
                 plotBackgroundColor: null,
                 plotBorderWidth: null,

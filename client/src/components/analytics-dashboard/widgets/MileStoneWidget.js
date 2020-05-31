@@ -44,6 +44,9 @@ class MileStoneWidget extends Component {
             }); 
         })
         const options = {
+            credits: {
+                enabled: false
+              },
             chart: {
                 type: 'variablepie'
             },

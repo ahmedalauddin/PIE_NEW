@@ -54,6 +54,9 @@ class DepartmentLoadWidget extends Component {
         })
 
         const options = {
+            credits: {
+                enabled: false
+              },
             chart: {
                 type: 'bar'
             },
@@ -89,7 +92,7 @@ class DepartmentLoadWidget extends Component {
                     color:'rgb(247, 163, 92)'
                 },
                 {
-                    name: 'Inprogress',
+                    name: 'In Progress',
                     data: inProgressArray,
                     color:'rgb(144, 237, 125)'
                 }, 
