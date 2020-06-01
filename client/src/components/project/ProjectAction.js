@@ -167,7 +167,7 @@ const styles = theme => ({
   }
 });
 
-
+const defalutPorjectValue=[ {id:0,title: "Select Project"}];
 
 class ProjectAction extends React.Component {
   constructor(props) {
@@ -195,7 +195,10 @@ class ProjectAction extends React.Component {
     delLoader:false,
     comments:[],
     comment:"",
-    expanded:false
+    expanded:false,
+    dueDate:"",
+    dateAdded:null,
+    projects:defalutPorjectValue
   };
 
   handleChange = name => event => {
@@ -237,11 +240,9 @@ class ProjectAction extends React.Component {
 
   async handleSubmit(event,comment) {
     event.preventDefault();
-    // Project ID and KPI id (if there is the latter, are passed in by location.state.
-    // console.log('handelsbmit-this.props.location',this.props.location);
-    // console.log('handelsbmit-this.state.projectId',this.state.projectId);
-    
-    const projectId = this.props.location.state.projectId;
+ 
+   
+    const projectId = this.state.projectId || this.props.location.state.projectId;
     const actionid = this.props.location.state.actionid;
     let apiPath = "";
     let successMessage = "";
@@ -331,9 +332,7 @@ class ProjectAction extends React.Component {
   };
 
   fetchPersons = (projectId) => {
-    console.log('fetchPersons--',projectId);
     if (parseInt(projectId) > 0) { 
-      console.log()
       fetch(`/api/project-action-persons/${projectId}`)
         .then(res => res.json())
         .then(response => {
@@ -345,18 +344,34 @@ class ProjectAction extends React.Component {
     }
   };
 
+  fetchProjects = () => {
+    let orgId = getOrgId();
+    if (parseInt(orgId) > 0) { 
+      console.log()
+      fetch(`/api/orgnization-projects/${orgId}`)
+        .then(res => res.json())
+        .then(response => {
+          const projects=defalutPorjectValue.concat(response);
+          console.log('projects--',projects);
+
+          this.setState({projects});
+        });
+    }
+  };
+
+  
+
   componentDidMount() {
     
     this.setOrganizationInfo();
-    // Project ID and KPI id (if there is the former, are passed in by location.state).
- 
-    let projectId = 0;
-    let actionid = 0;
    
-    
-      actionid = this.props.location.state.actionid && this.props.location.state.actionid;
-      projectId = this.props.location.state.projectId;
-      this.fetchPersons(projectId);
+    let actionid = this.props.location.state.actionid && this.props.location.state.actionid;
+    let projectId = this.props.location.state.projectId;
+
+    let OrganizationAction=this.props.location.state.OrganizationAction
+    let actionItem=this.props.location.state.actionItem;
+
+    this.fetchPersons(projectId);
     if (parseInt(actionid) > 0) {
       fetch(`/api/action-project-id/${actionid}`)
         .then(res => res.json())
@@ -372,10 +387,21 @@ class ProjectAction extends React.Component {
             projectId: projectId,
             buttonText: "Update",
             redirectTarget: "/project",
-            comments:action.comments?action.comments:[]
+            comments:action.comments?action.comments:[],
+            dueDate:action.dueDate
           });
         });
-    } else {
+    } else if(OrganizationAction && actionItem){
+      const actionItemData=actionItem.substring(actionItem.indexOf('.')+1);
+      this.setState({
+        isEditing: true,
+        title:actionItemData,
+        buttonText: "Create",
+        assigneeId:OrganizationAction.assigneeId,
+        dateAdded:OrganizationAction.dateAdded
+      });
+      this.fetchProjects();
+    }else {
       this.setState({
         isEditing: true,
         projectId: projectId,
@@ -388,7 +414,9 @@ class ProjectAction extends React.Component {
 
   renderDetail() {
     const { classes } = this.props;
-    const { tags, suggestions } = this.state;
+    const { tags, suggestions,projects,projectId } = this.state;
+    const OrganizationAction=this.props.location.state.OrganizationAction;
+
     return (
 
       <Grid container justify="space-between" direction="row" >
@@ -467,7 +495,55 @@ class ProjectAction extends React.Component {
           </Grid>
 
 
-          <Grid container  direction="row" xs={7} sm={7} style={{paddingLeft:"1rem",paddingTop:"2rem"}}>
+          <Grid container  direction="row" xs={7} sm={7} style={{padding:"1rem"}}>
+            {OrganizationAction && <FormControl className={classes.formControl} style={{width:"100%"}} >
+                <InputLabel shrink htmlFor="Projects" required>Projects</InputLabel>
+                <Select
+                  value={projectId}
+                  onChange={(event)=>{this.setState({projectId: event.target.value});this.fetchPersons(event.target.value)}}
+                  inputProps={{
+                    name: "projectId",
+                    id: "projectId"
+                  }}
+                >
+                  {projects.map(project => {
+                    return (
+                      <MenuItem key={project.id} value={project.id}>
+                        {project.title}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              </FormControl>}
+          </Grid>
+
+          <Grid item xs={5} sm={5} style={{padding:"1rem"}}>
+            <FormControl className={classes.formControl} style={{width:"60%"}}>
+              <InputLabel shrink htmlFor="priority">Priority</InputLabel>
+              <Select
+                value={this.state.priority && this.state.priority}
+                onChange={(event) => this.setState({ priority: event.target.value })}
+                inputProps={{
+                  name: "priority",
+                  id: "priority"
+                }}
+              >
+                <MenuItem key='High' value='High'>
+                  High
+                          </MenuItem>
+                <MenuItem key='Medium' value='Medium'>
+                  Medium
+                          </MenuItem>
+                <MenuItem key='Low' value='Low'>
+                  Low
+                              </MenuItem>
+
+              </Select>
+            </FormControl>
+          </Grid>
+
+
+          <Grid container  direction="row" xs={7} sm={7} style={{padding:"1rem"}} >
             {checkPermision('Projects Additional Actions', 'modify') &&
               <Typography component="p">
                 {
@@ -497,33 +573,20 @@ class ProjectAction extends React.Component {
            
           </Grid>
 
-          
-
-          
-
           <Grid item xs={5} sm={5} style={{padding:"1rem"}}>
-            <FormControl className={classes.formControl} style={{width:"60%"}}>
-              <InputLabel shrink htmlFor="priority">Priority</InputLabel>
-              <Select
-                value={this.state.priority && this.state.priority}
-                onChange={(event) => this.setState({ priority: event.target.value })}
-                inputProps={{
-                  name: "priority",
-                  id: "priority"
-                }}
-              >
-                <MenuItem key='High' value='High'>
-                  High
-                          </MenuItem>
-                <MenuItem key='Medium' value='Medium'>
-                  Medium
-                          </MenuItem>
-                <MenuItem key='Low' value='Low'>
-                  Low
-                              </MenuItem>
-
-              </Select>
-            </FormControl>
+              <TextField
+               style={{width:"60%",margin:0,padding:0}}
+                required
+                  id="dueDate"
+                  label="Due Date"
+                  type="date"
+                  value={this.state.dueDate}
+                  onChange={(event)=>this.setState({dueDate: event.target.value})}
+                  className={classes.textFieldWide}
+                  InputLabelProps={{
+                    shrink: true
+                  }}
+                />
           </Grid>
 
           {/* <Grid item xs={12} sm={12} >
@@ -641,6 +704,7 @@ class ProjectAction extends React.Component {
           message: `${this.state.message}`,
           projId: this.state.redirectIdOrgOrProject,
           projectId:this.state.redirectIdOrgOrProject,
+          dateAdded:this.state.dateAdded
           
         }
       }} />;

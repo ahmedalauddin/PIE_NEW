@@ -46,6 +46,10 @@ module.exports = (sequelize, DataTypes) => {
     comments: {
       type: DataTypes.JSON,
       allowNull: true
+    },
+    dueDate: {
+      type: DataTypes.STRING,
+      allowNull: true
     }
   }, {});
   ProjectAction.associate = function(models) {

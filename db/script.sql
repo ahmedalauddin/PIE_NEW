@@ -177,3 +177,5 @@ UPDATE ProjectStatuses SET `label` = 'On Hold' WHERE (`id` = '5');
 ALTER TABLE ProjectActions MODIFY COLUMN `status` VARCHAR(50) DEFAULT 'New';
 update ProjectActions set status='Completed' where status='Closed';
 update ProjectActions set status='In Progress' where status='Open';
+
+ALTER TABLE ProjectActions ADD COLUMN `dueDate` VARCHAR(20) DEFAULT NULL;

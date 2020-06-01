@@ -105,7 +105,10 @@ class OrganizationActionTable extends React.Component {
     message: "",
     selectedMember:false,
     orgId:0,
-    highlightDates:[]
+    highlightDates:[],
+    readyToCreateProjectAction: false,
+    OrganizationAction:null,
+    actionItem:null
   };
 
   getDateFromString(dateString){
@@ -462,6 +465,15 @@ class OrganizationActionTable extends React.Component {
     )
   }
 
+  rendorAction(i, key, OrganizationAction) {
+    const { classes } = this.props;
+    return (
+      <Typography key={key} className={classes.secondaryHeadingLink} style={{ marginBottom: "1rem" }} 
+          onClick={() => this.setState({ readyToCreateProjectAction: true, OrganizationAction,actionItem:i.trim()})}>
+        {i.trim()}
+      </Typography>
+    )
+  }
   renderMemberList(divXs,divMd){
     const { classes } = this.props;
     const { OrganizationActions, order, orderBy, selected, rowsPerPage, page } = this.state;
@@ -504,9 +516,7 @@ class OrganizationActionTable extends React.Component {
                             <TableCell style={{width:"40%"}} align="left" className={classes.noTextDecoration}>
                               <Typography style={{width:"90%"}} className={classes.heading}>
                                 {OrganizationAction.description 
-                                    && OrganizationAction.description.split("\n").map((i,key) => {
-                                      return <p className="inlineBlock" key={key}>{i.trim()}</p>
-                                  })}
+                                    && OrganizationAction.description.split("\n").map((i,key) =>this.rendorAction(i,key,OrganizationAction))}
                                 </Typography>
                             </TableCell>
 
@@ -592,10 +602,25 @@ class OrganizationActionTable extends React.Component {
 
   render() {
     const { classes } = this.props;
-    const { OrganizationActions, order, orderBy, selected, rowsPerPage, page } = this.state;
+    const { OrganizationActions, order, orderBy, selected, rowsPerPage, page,readyToCreateProjectAction,OrganizationAction,actionItem } = this.state;
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, OrganizationActions.length - page * rowsPerPage);
     
     const { selectedMember } = this.state;
+
+    if(readyToCreateProjectAction){
+      return (
+        <Redirect
+          to={{
+            pathname: "/ProjectAction",
+            state: {
+              OrganizationAction,
+              actionItem,
+              navFrom:'/organizationactions'
+            }
+          }}
+        />
+      );
+    }
 
     return (
       <React.Fragment>

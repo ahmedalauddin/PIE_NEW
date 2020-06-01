@@ -536,7 +536,8 @@ class Analytics extends React.Component {
                       <TableCell align="left" >{ProjectAction.title}</TableCell>
                       <TableCell align="left" style={{
                         color:ProjectAction.status =='In Progress'?"#e980d9":ProjectAction.status =='New'?"#f7a35c":"#90ed7d",
-                        fontWeight:"bold"
+                        fontWeight:"bold",
+                        width:"5rem"
                         }}  >
                         
                         {ProjectAction.status} 
@@ -550,7 +551,7 @@ class Analytics extends React.Component {
                     
                       <TableCell align="left" style={{width: "6rem"}} >{moment(ProjectAction.createdAt).format("YYYY-MM-DD")}</TableCell>
 
-                      <TableCell align="left" style={{width: "6.5rem"}} >{moment(ProjectAction.updatedAt).format("YYYY-MM-DD")}</TableCell>
+                      <TableCell align="left" style={{width: "6.5rem"}} >{ProjectAction.dueDate}</TableCell>
 
                       <TableCell component="th" scope="row" padding="none">
 
@@ -689,7 +690,7 @@ const rows = [
   { id: "priority", numeric: false, disablePadding: false, label: "Priority" },
   { id: "personName", numeric: false, disablePadding: false, label: "Assignee" },
   { id: "createdAt", numeric: false, disablePadding: false, label: "Date Created" },
-  { id: "updatedAt", numeric: false, disablePadding: false, label: "Date Updated" },
+  { id: "dueDate", numeric: false, disablePadding: false, label: "Due Date" },
   { id: "actions", numeric: false, disablePadding: false, label: "Action" }
  
 ];

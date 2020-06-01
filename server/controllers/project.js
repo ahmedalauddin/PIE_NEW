@@ -833,5 +833,28 @@ module.exports = {
           res.status(400).send(error);
         });
     
+  },
+
+  orgnizationProjects(req, res) {
+   
+    const sql = `SELECT d.name as department,ps.label as status,p.*  
+                 FROM Projects p
+                left join Departments d on d.id=p.deptId
+                left join ProjectStatuses ps on ps.id=p.statusId
+                where p.orgId=${req.params.id} and p.active=1`;
+
+    return models.sequelize.query(
+      sql, {
+        type: models.sequelize.QueryTypes.SELECT
+      })
+      .then(result => {
+        logger.debug(`${callerType} orgnizationProjects successful, count: ${result.length}`);
+        res.status(201).send(result);
+      })
+      .catch(error => {
+        logger.error(`${callerType} orgnizationProjects error: ${error.stack}`);
+        res.status(400).send(error);
+      });
   }
+
 };
