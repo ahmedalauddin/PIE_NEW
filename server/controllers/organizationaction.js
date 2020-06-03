@@ -168,6 +168,7 @@ module.exports = {
     const id = req.params.actionId;
     const status = req.body.status;
     const assigneeId = req.body.assigneeId;
+    const projectActions = req.body.projectActions;
     logger.debug(`${callerType} Update -> Update Organization Action for Organization id : ${id}`);
  
       return models.OrganizationAction.update({
@@ -175,6 +176,7 @@ module.exports = {
         description: description,
         assigneeId: assigneeId,
         status:status,
+        projectActions
       },
       {
         returning: true,

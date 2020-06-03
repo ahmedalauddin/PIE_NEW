@@ -240,7 +240,9 @@ class ProjectAction extends React.Component {
 
   async handleSubmit(event,comment) {
     event.preventDefault();
- 
+    
+    let OrganizationAction=this.props.location.state.OrganizationAction
+    let actionItem=this.props.location.state.actionItem;
    
     const projectId = this.state.projectId || this.props.location.state.projectId;
     const actionid = this.props.location.state.actionid;
@@ -289,13 +291,24 @@ class ProjectAction extends React.Component {
       body: JSON.stringify(this.state)
     })
     .then(response => response.json())
-    .then((response) => {
+    .then(async (response) => {
       if (response && response.success === true) {
           const state={ openSnackbar: true, message: response.message, delLoader: false }
           if(comment && comment.trim() ){
             state['comment']='';
           } 
           this.setState(state);
+
+          if(OrganizationAction){
+            OrganizationAction.projectActions=!OrganizationAction.projectActions?[]:OrganizationAction.projectActions;
+            OrganizationAction.projectActions.push(actionItem);
+            await fetch("/api/action-organization/" + OrganizationAction.id, {
+              method: "PUT",
+              headers: {"Content-Type": "application/json"},
+              body: JSON.stringify(OrganizationAction)
+            })
+          }
+
           if(!actionid){
             setTimeout(()=>this.moveToBack(),2000);
           }
@@ -414,7 +427,7 @@ class ProjectAction extends React.Component {
 
   renderDetail() {
     const { classes } = this.props;
-    const { tags, suggestions,projects,projectId } = this.state;
+    const { tags, suggestions,projects,projectId,projectName } = this.state;
     const OrganizationAction=this.props.location.state.OrganizationAction;
 
     return (
@@ -515,6 +528,17 @@ class ProjectAction extends React.Component {
                   })}
                 </Select>
               </FormControl>}
+              {projectName && 
+                <TextField
+                  id="title-required"
+                  style={{ margin: 0 }}
+                  label="Project"
+                  fullWidth
+                  contentEditable={false}
+                  value={projectName}
+                  
+                />
+              }
           </Grid>
 
           <Grid item xs={5} sm={5} style={{padding:"1rem"}}>

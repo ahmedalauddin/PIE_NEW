@@ -16,6 +16,7 @@ import { lighten } from "@material-ui/core/styles/colorManipulator";
 import { Link, Redirect } from "react-router-dom";
 import EditIcon from "@material-ui/icons/Edit";
 import RestoreIcon from "@material-ui/icons/Restore";
+import CheckIcon from "@material-ui/icons/Check";
 import IconButton from "@material-ui/core/IconButton/index";
 import { stableSort, getSorting, desc } from "../common/TableFunctions";
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -467,12 +468,24 @@ class OrganizationActionTable extends React.Component {
 
   rendorAction(i, key, OrganizationAction) {
     const { classes } = this.props;
-    return (
-      <Typography key={key} className={classes.secondaryHeadingLink} style={{ marginBottom: "1rem" }} 
-          onClick={() => this.setState({ readyToCreateProjectAction: true, OrganizationAction,actionItem:i.trim()})}>
-        {i.trim()}
-      </Typography>
-    )
+    const projectActions=OrganizationAction.projectActions || [];
+    if(projectActions.indexOf(i.trim())==-1){
+      return (
+        <Typography key={key} className={classes.secondaryHeadingLink} style={{ marginBottom: "1rem" }} 
+            onClick={() => this.setState({ readyToCreateProjectAction: true, OrganizationAction,actionItem:i.trim()})}>
+          {i.trim()}
+        </Typography>
+      )
+    }else {
+      return (
+        <Typography key={key}  style={{ marginBottom: "1rem" }}  >
+          {i.trim()}
+          <IconButton  >
+            <CheckIcon color="primary" />
+          </IconButton>
+        </Typography>
+      )
+    }
   }
   renderMemberList(divXs,divMd){
     const { classes } = this.props;

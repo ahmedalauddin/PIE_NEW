@@ -42,6 +42,10 @@ module.exports = (sequelize, DataTypes) => {
     dateAdded: {
       type: DataTypes.STRING,
       allowNull: false
+    },
+    projectActions: {
+      type: DataTypes.JSON,
+      allowNull: true
     }
   }, {});
     OrganizationAction.associate = function(models) {
