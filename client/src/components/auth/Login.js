@@ -357,56 +357,55 @@ class Login extends React.Component {
     }
 
     return(
-      <form onSubmit={this.handleSubmit} noValidate >
       <div className="main-body" style={{height:this.state.height}}>
-          <div className="main-wrapper">
+      <div className="main-wrapper">
           <div className="content-part">
-          <div className="container">
-          <div className="content-left">
-          <h4>ValueInfinity Innovation Platform </h4>
-          <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. </p>
-
-          </div>
-          <div className="content-right">
-          <h4>Please Log In</h4>
-          <form>
-                {this.state.msgText 
-                    && <p style={{color:'red'}}>
-                        {this.state.msgText}
-                      </p>
-                      }
-            <div className="form-group margin-bottom">
-            <input type="text" id="username" name="username" 
-                          placeholder="Email" 
-                          onChange={this.handleChange("email")}
-                          value={this.state.email} /> 
+            <div className="container">
+                <div className="content-left">
+                  <img href="#" src={require('../../images/logo.png')} />
+                  <h4>ValueInfinity Innovation Platform </h4>
+                  <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+                </div>
+                <div className="content-right">
+                  <div className="content-right-inner">
+                      <h4>Please Log In</h4>
+                      <form onSubmit={this.handleSubmit} noValidate>
+                        {this.state.msgText 
+                        && 
+                        <p style={{color:'red'}}>
+                            {this.state.msgText}
+                        </p>
+                        }
+                        <div className="form-group margin-bottom">
+                            <input type="text" id="username" name="username" 
+                              placeholder="Email" 
+                              onChange={this.handleChange("email")}
+                              value={this.state.email} /> 
+                        </div>
+                        <div className="form-group">
+                            <input type="password" id="pwd" name="pwd"
+                              placeholder="Password"   
+                              onChange={this.handleChange("password")}
+                              value={this.state.password} />  
+                        </div>
+                        <div className="form-error">
+                            <Link to={`/resetpassword`}>
+                            Forgot password?</Link>  
+                        </div>
+                        <button className="button" type="submit" value="Submit" onClick={this.handleSubmit}>submit </button>
+                      </form>
+                      <span className="number">V.01062020 </span>
+                  </div>
+                </div>
             </div>
-            <div className="form-group">
-            <input type="password" id="pwd" name="pwd"
-                        placeholder="Password"   
-                        onChange={this.handleChange("password")}
-                        value={this.state.password} /> 
-            </div>
-            <div className="form-error"><Link to={`/resetpassword`}>Forgot password?</Link>  </div>
-            <button className="button" type="submit" value="Submit" onClick={this.handleSubmit}>submit </button>
-            
-            
-          </form>
-
-          <span className="number">V.01062020 </span>
+            <footer>
+                <div className="container">
+                  <p> Copyright.2020 All Right Reserved | ValueInfinity Inc. </p>
+                </div>
+            </footer>
           </div>
-
-
-          </div>
-          </div>
-
-          <footer>
-          <div className="container">
-          <p> Copyright.2020 All Right Reserved | ValueInfinity Inc. </p>
-          </div>
-          </footer>
-          </div>
-</div></form>
+      </div>
+    </div>
     )
   }
 }
