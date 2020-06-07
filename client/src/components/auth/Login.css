@@ -29,7 +29,11 @@ color: blue;
 p {
 color: #000000;
 }
-
+a {
+  color: #000000;
+  cursor: pointer;
+  text-decoration: none;
+  }
 input:focus {
   outline-offset: 0px;
 }

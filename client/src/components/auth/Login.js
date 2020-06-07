@@ -388,10 +388,8 @@ class Login extends React.Component {
                               onChange={this.handleChange("password")}
                               value={this.state.password} />  
                         </div>
-                        <div className="form-error">
-                            <Link to={`/resetpassword`}>
+                            <Link to={`/resetpassword`} className="form-error">
                             Forgot password?</Link>  
-                        </div>
                         <button className="button" type="submit" value="Submit" onClick={this.handleSubmit}>submit </button>
                       </form>
                       <span className="number">V.01062020 </span>
@@ -400,7 +398,7 @@ class Login extends React.Component {
             </div>
             <footer>
                 <div className="container">
-                  <p> Copyright.2020 All Right Reserved | ValueInfinity Inc. </p>
+                  <p> <a href="https://www.value-infinity.com/" target="_blank">Copyright.2020 All Right Reserved | ValueInfinity Inc.</a> </p>
                 </div>
             </footer>
           </div>
