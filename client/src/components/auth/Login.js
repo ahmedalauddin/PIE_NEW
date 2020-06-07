@@ -24,6 +24,8 @@ import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { store, setUser, setOrg, isAdministrator, setProjectListFilter, isLoggedIn,checkPermision } from "../../redux";
 
+import './Login.css'
+
 class Login extends React.Component {
   // Note that I'll need the individual fields for handleChange.  Use state to manage the inputs for the various
   // fields.
@@ -42,7 +44,8 @@ class Login extends React.Component {
     expanded: false,
     labelWidth: 0,
     msgText: "",
-    disableButton:false
+    disableButton:false,
+    width: 0, height: 0
   };
 
   constructor(props) {
@@ -51,6 +54,7 @@ class Login extends React.Component {
     // state values.
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
   
   }
 
@@ -188,9 +192,20 @@ class Login extends React.Component {
       });
   }
 
-  componentDidMount() { }
+  componentDidMount() {
+    this.updateWindowDimensions();
+    window.addEventListener('resize', this.updateWindowDimensions);
+  }
+  
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.updateWindowDimensions);
+  }
 
-  render() {
+  updateWindowDimensions() {
+    this.setState({ width: window.innerWidth, height: window.innerHeight });
+  }
+
+  renderOld() {
     const { classes } = this.props;
     const currentPath = this.props.location.pathname;
     
@@ -302,6 +317,98 @@ class Login extends React.Component {
 
     );
   }
+
+  render(){
+    const { classes } = this.props;
+    const currentPath = this.props.location.pathname;
+    
+
+    if (this.state.readyToRedirect) {
+      return <Redirect to={this.state.redirectTarget} />;
+    }
+
+    if (isLoggedIn()) {
+      let redirectTarget = "";
+      if (!isAdministrator()) {
+          
+        if(checkPermision('Dashboard','read')){
+          redirectTarget = "/paneldashboard";
+        }else if(checkPermision('Mind Map','read')){
+          redirectTarget = "/mindmaplist";
+        }else if(checkPermision('Regrouping','read')){
+          redirectTarget = "/organizationactions";
+        }else if(checkPermision('Search','read')){
+          redirectTarget = "/search";
+        }else if(checkPermision('Analytics','read')){
+          redirectTarget = "/analytics";
+        }else if(checkPermision('Organization','read')){
+          redirectTarget = "/organization";
+        }else if(checkPermision('About','read')){
+          redirectTarget = "/about";
+        }
+      } else {
+        redirectTarget = "/clientorg";
+      }
+      this.setState({
+        isUserLoggedIn: true,
+        readyToRedirect: true,
+        redirectTarget: redirectTarget
+      });
+    }
+
+    return(
+      <form onSubmit={this.handleSubmit} noValidate >
+      <div className="main-body" style={{height:this.state.height}}>
+          <div className="main-wrapper">
+          <div className="content-part">
+          <div className="container">
+          <div className="content-left">
+          <h4>ValueInfinity Innovation Platform </h4>
+          <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. </p>
+
+          </div>
+          <div className="content-right">
+          <h4>Please Log In</h4>
+          <form>
+                {this.state.msgText 
+                    && <p style={{color:'red'}}>
+                        {this.state.msgText}
+                      </p>
+                      }
+            <div className="form-group margin-bottom">
+            <input type="text" id="username" name="username" 
+                          placeholder="Email" 
+                          onChange={this.handleChange("email")}
+                          value={this.state.email} /> 
+            </div>
+            <div className="form-group">
+            <input type="password" id="pwd" name="pwd"
+                        placeholder="Password"   
+                        onChange={this.handleChange("password")}
+                        value={this.state.password} /> 
+            </div>
+            <div className="form-error"><Link to={`/resetpassword`}>Forgot password?</Link>  </div>
+            <button className="button" type="submit" value="Submit" onClick={this.handleSubmit}>submit </button>
+            
+            
+          </form>
+
+          <span className="number">V.01062020 </span>
+          </div>
+
+
+          </div>
+          </div>
+
+          <footer>
+          <div className="container">
+          <p> Copyright.2020 All Right Reserved | ValueInfinity Inc. </p>
+          </div>
+          </footer>
+          </div>
+</div></form>
+    )
+  }
 }
 
-export default withStyles(styles)(Login);
+export default Login;
