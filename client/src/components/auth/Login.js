@@ -364,7 +364,7 @@ class Login extends React.Component {
                 <div className="content-left">
                   <img href="#" src={require('../../images/logo.png')} />
                   <h4>ValueInfinity Innovation Platform </h4>
-                  <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+                  <p></p>
                 </div>
                 <div className="content-right">
                   <div className="content-right-inner">
