@@ -46,7 +46,7 @@ import DatePicker from "react-datepicker";
 
 import "../../stylesheets/react-datepicker.css";
 import { Paper } from "@material-ui/core";
-
+import AddIcon from "@material-ui/icons/Add";
 
 
 const ITEM_HEIGHT = 48;
@@ -659,6 +659,12 @@ class Analytics extends React.Component {
                   
                   {this.renderStatusCount()}
                   {this.renderTable()}
+
+                  {checkPermision('Projects Additional Actions', 'write') &&
+                        <Fab  color="primary" aria-label="Add" onClick={()=> this.setState({readyToEdit:true})} className={classes.fab}>
+                          <AddIcon />
+                        </Fab>
+                      }
                 </CardContent></Card></Grid>
 
           </Grid>

@@ -495,7 +495,7 @@ class ProjectPanelList extends Component {
                         onChangeRowsPerPage={this.handleChangeRowsPerPage}
                       />
 
-                      {checkPermision('Projects', 'read') &&
+                      {checkPermision('Projects', 'write') &&
                         <Fab component={Link} color="primary" aria-label="Add" to={`/project`} className={classes.fab}>
                           <AddIcon />
                         </Fab>

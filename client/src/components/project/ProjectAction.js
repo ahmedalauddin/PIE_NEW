@@ -413,13 +413,16 @@ class ProjectAction extends React.Component {
         assigneeId:OrganizationAction.assigneeId,
         dateAdded:OrganizationAction.dateAdded
       });
-      this.fetchProjects();
     }else {
       this.setState({
         isEditing: true,
         projectId: projectId,
         buttonText: "Create"
       });
+    }
+
+    if(!projectId){
+      this.fetchProjects();
     }
 
   }
@@ -509,7 +512,7 @@ class ProjectAction extends React.Component {
 
 
           <Grid container  direction="row" xs={7} sm={7} style={{padding:"1rem"}}>
-            {OrganizationAction && <FormControl className={classes.formControl} style={{width:"100%"}} >
+            {!projectName && projects.length>1 && <FormControl className={classes.formControl} style={{width:"100%"}} >
                 <InputLabel shrink htmlFor="Projects" required>Projects</InputLabel>
                 <Select
                   value={projectId}
