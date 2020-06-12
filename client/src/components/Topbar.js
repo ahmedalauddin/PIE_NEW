@@ -470,13 +470,9 @@ class Topbar extends Component {
           <Grid container spacing={24} alignItems="baseline">
             <Grid item xs={12} className={classes.flex}>
               <React.Fragment>
-                <div className={classes.productLogo} style={{width:"17%",margin:0}}>
-                  <Typography>
-                    <Link style={{color: 'black', textDecorationLine:'none'}} activeStyle={{color: 'black'}} to={`/`}>ValueInfinity Innovation Platform</Link>
-                  </Typography>
-                </div>
+                <img href="#" src={require('../images/logo-black-ico.png')} style={{height: "2.3rem",width: "auto",marginTop: "1rem"}} />
               
-                <div className={classes.tabContainer+' '+this.state.mobileShow} style={{width:"75%",margin:0}}>
+                <div className={classes.tabContainer+' '+this.state.mobileShow} style={{width:"94%",margin:0}}>
                   <Tabs
                     value={this.current(menuType) || this.state.value}
                     indicatorColor="primary"

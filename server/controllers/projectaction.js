@@ -122,6 +122,7 @@ module.exports = {
     const priority = req.body.priority;
     const comments = req.body.comments;
     const dueDate = req.body.dueDate;
+    const progress = req.body.progress;
     logger.debug(`${callerType} create -> New Project Action for project id : ${projectId}`);
  
       return models.ProjectAction.create({
@@ -132,7 +133,8 @@ module.exports = {
         assigneeId: assigneeId,
         priority,
         comments,
-        dueDate
+        dueDate,
+        progress
       })
         .then(ProjectAction => {
          logger.debug(`${callerType} created ProjectAction`);
@@ -280,6 +282,7 @@ module.exports = {
     const priority = req.body.priority;
     const comments = req.body.comments;
     const dueDate = req.body.dueDate;
+    const progress = req.body.progress;
     logger.debug(`${callerType} Update -> Update Project Action for id : ${id}`);
  
       return models.ProjectAction.update({
@@ -289,7 +292,8 @@ module.exports = {
         status:status,
         priority,
         comments,
-        dueDate
+        dueDate,
+        progress
       },
       {
         returning: true,

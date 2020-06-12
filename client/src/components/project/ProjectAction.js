@@ -168,6 +168,7 @@ const styles = theme => ({
 });
 
 const defalutPorjectValue=[ {id:0,title: "Select Project"}];
+const progressList=['0%','10%','20%','30%','40%','50%','60%','70%','80%','90%','100%']
 
 class ProjectAction extends React.Component {
   constructor(props) {
@@ -198,7 +199,8 @@ class ProjectAction extends React.Component {
     expanded:false,
     dueDate:"",
     dateAdded:null,
-    projects:defalutPorjectValue
+    projects:defalutPorjectValue,
+    progress:"0%"
   };
 
   handleChange = name => event => {
@@ -401,7 +403,8 @@ class ProjectAction extends React.Component {
             buttonText: "Update",
             redirectTarget: "/project",
             comments:action.comments?action.comments:[],
-            dueDate:action.dueDate
+            dueDate:action.dueDate,
+            progress:action.progress 
           });
         });
     } else if(OrganizationAction && actionItem){
@@ -451,26 +454,26 @@ class ProjectAction extends React.Component {
           </Grid>
 
           <Grid item xs={5} sm={5} style={{padding:"1rem"}}>
-            <FormControl className={classes.formControl} style={{width:"60%"}} >
-              <InputLabel shrink htmlFor="Assignee">Assignee</InputLabel>
+            <FormControl className={classes.formControl} style={{width:"60%"}}>
+              <InputLabel shrink htmlFor="progress">Progress</InputLabel>
               <Select
-                value={this.state.assigneeId && this.state.assigneeId}
-                onChange={this.handlePersonChange}
+                value={this.state.progress}
+                onChange={(event) => this.setState({ progress: event.target.value })}
                 inputProps={{
-                  name: "assigneeId",
-                  id: "assigneeId"
+                  name: "progress",
+                  id: "progress"
                 }}
               >
-                {this.state.persons && this.state.persons.map(person => {
-                  return (
-                    person.disabled === 1 ? '' : <MenuItem key={person.id} value={person.id}>
-                      {person.fullName}
-                    </MenuItem>
-                  );
-                })}
+                {progressList.map(p=> <MenuItem key={p} value={p}>{p}</MenuItem>)}
+                
+               
+                
+
               </Select>
             </FormControl>
           </Grid>
+
+          
 
 
           <Grid item xs={7} sm={7} style={{padding:"1rem"}}>
@@ -570,6 +573,46 @@ class ProjectAction extends React.Component {
           </Grid>
 
 
+         
+
+          <Grid item xs={7} sm={7} style={{padding:"1rem"}}>
+            <FormControl className={classes.formControl} style={{width:"100%"}} >
+              <InputLabel shrink htmlFor="Assignee">Assignee</InputLabel>
+              <Select
+                value={this.state.assigneeId && this.state.assigneeId}
+                onChange={this.handlePersonChange}
+                inputProps={{
+                  name: "assigneeId",
+                  id: "assigneeId"
+                }}
+              >
+                {this.state.persons && this.state.persons.map(person => {
+                  return (
+                    person.disabled === 1 ? '' : <MenuItem key={person.id} value={person.id}>
+                      {person.fullName}
+                    </MenuItem>
+                  );
+                })}
+              </Select>
+            </FormControl>
+          </Grid>
+
+          <Grid item xs={5} sm={5} style={{padding:"1rem"}}>
+              <TextField
+               style={{width:"60%",margin:0,padding:0}}
+                required
+                  id="dueDate"
+                  label="Due Date"
+                  type="date"
+                  value={this.state.dueDate}
+                  onChange={(event)=>this.setState({dueDate: event.target.value})}
+                  className={classes.textFieldWide}
+                  InputLabelProps={{
+                    shrink: true
+                  }}
+                />
+          </Grid>
+
           <Grid container  direction="row" xs={7} sm={7} style={{padding:"1rem"}} >
             {checkPermision('Projects Additional Actions', 'modify') &&
               <Typography component="p">
@@ -598,22 +641,6 @@ class ProjectAction extends React.Component {
                     </Button>
                     </Typography>
            
-          </Grid>
-
-          <Grid item xs={5} sm={5} style={{padding:"1rem"}}>
-              <TextField
-               style={{width:"60%",margin:0,padding:0}}
-                required
-                  id="dueDate"
-                  label="Due Date"
-                  type="date"
-                  value={this.state.dueDate}
-                  onChange={(event)=>this.setState({dueDate: event.target.value})}
-                  className={classes.textFieldWide}
-                  InputLabelProps={{
-                    shrink: true
-                  }}
-                />
           </Grid>
 
           {/* <Grid item xs={12} sm={12} >

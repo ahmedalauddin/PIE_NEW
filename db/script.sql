@@ -181,3 +181,5 @@ update ProjectActions set status='In Progress' where status='Open';
 ALTER TABLE ProjectActions ADD COLUMN `dueDate` VARCHAR(20) DEFAULT NULL;
 
 ALTER TABLE OrganizationActions ADD COLUMN `projectActions` json DEFAULT NULL;
+
+ALTER TABLE ProjectActions ADD COLUMN `progress` VARCHAR(20) DEFAULT '0%';

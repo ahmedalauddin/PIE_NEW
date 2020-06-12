@@ -50,6 +50,10 @@ module.exports = (sequelize, DataTypes) => {
     dueDate: {
       type: DataTypes.STRING,
       allowNull: true
+    },
+    progress:{
+      type: DataTypes.STRING,
+      defaultValue: '0%',
     }
   }, {});
   ProjectAction.associate = function(models) {

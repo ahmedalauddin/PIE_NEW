@@ -28,7 +28,7 @@ import CheckIcon from "@material-ui/icons/Check";
 import Button from "@material-ui/core/Button";
 import Fab from "@material-ui/core/Fab/index";
 import moment from "moment";
-import { styles } from "../styles/DashboardStyles";
+import { styles } from "./Styles";
 import CssBaseline from "@material-ui/core/CssBaseline/index";
 import Topbar from "../Topbar";
 import TextField from '@material-ui/core/TextField';
@@ -40,7 +40,6 @@ import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
 import Chip from "@material-ui/core/Chip";
 import FormHelperText from "@material-ui/core/FormHelperText";
-import OrganizationMemberAction from "../organization/OrganizationMemberAction";
 
 import DatePicker from "react-datepicker";
 
@@ -86,6 +85,29 @@ const monthes=[
   {id:11, name:"November"},
   {id:12, name:"December"}   
 ];
+
+class CircularProgressWithLabel extends React.Component  {
+  render(){
+
+  
+    return (
+    <Grid position="relative" display="inline-flex">
+      <CircularProgress  {...this.props}  />
+     
+      <span style={{ alignSelf: "center",
+                      flexBasis: "15%",
+                      flexShrink: 0,
+                      fontWeight:"bold",
+                      top: "-15px",
+                      position: "relative",
+                      right: this.props.right || "24px",
+                      fontSize: this.props.fontSize || "0.9375rem",
+                      color:this.props.color
+    }}>{this.props.label}</span>
+    </Grid>
+  )
+}
+}
 
 class Analytics extends React.Component {
   constructor(props) {
@@ -213,8 +235,7 @@ class Analytics extends React.Component {
     const { classes } = this.props;
     const {  depts, deptId, projects, projectId,selectedMonth } = this.state;
     return (
-      <Grid container justify="center" direction="column" alignItems="center" className="panel-dashboard">
-        <Grid item xs={12} md={10} className="dashboard-filter-menu" style={{ margin: 0, padding: 0 }} >
+      
           <Card className={classes.card} style={{ overflow: "visible" }} style={{ margin: 0, padding: 0 }} >
             <CardContent className="list-project-panellist">
               <Grid
@@ -314,8 +335,7 @@ class Analytics extends React.Component {
             </CardContent>
           </Card>
 
-        </Grid>
-      </Grid>
+        
     )
   }
 
@@ -439,42 +459,70 @@ class Analytics extends React.Component {
       >
         
         <Grid item xs={2} sm={2} onClick={() => this.toggleStatus('Total')}  style={{paddingLeft:"0.5rem"}}>
-          <Paper className={classes.paper} style={{backgroundColor:"#f0de6e",margin: 0,padding: "0.3rem"}}>
+          <Paper className={classes.paper} style={{backgroundColor:"#47C1BF",margin: 0,padding: "0.3rem"}}>
             <Grid container direction="row" justify="space-between">
-              <Typography className={classes.heading} style={{ alignSelf: "center" }}>Total({openStatus+newStatus+closedStatus})</Typography>
-              <IconButton style={{ background: selectedCards.length>0  ? "#f0f0f0" : '#9fa2e3' }}>
-                <CheckIcon color="primary" style={{ color: selectedCards.length>0 ? "grey" : '#303f9f' }} />
-              </IconButton>
+              <Typography className={classes.heading} style={{ alignSelf: "center" }}>Total</Typography>
+             
+
+              <CircularProgressWithLabel  
+                style={{ color: selectedCards.length>0 ? "white" : '#303f9f' }} 
+                color={ selectedCards.length>0 ? "white" : '#303f9f'}
+                value={100}
+                label={openStatus+newStatus+closedStatus}
+                variant="static"
+                />
             </Grid>
           </Paper>
         </Grid>
         <Grid item xs={2} sm={2} onClick={() => this.toggleStatus('In Progress')} style={{paddingLeft:"0.5rem"}}>
-          <Paper className={classes.paper} style={{backgroundColor:"#e980d9",margin: 0,padding: "0.3rem"}}>
+          <Paper className={classes.paper} style={{backgroundColor:"#007ACE",margin: 0,padding: "0.3rem"}}>
             <Grid container direction="row" justify="space-between">
-              <Typography className={classes.heading} style={{ alignSelf: "center" }}>In Progress({openStatus})</Typography>
-              <IconButton style={{ background: selectedCards.indexOf('In Progress') == -1 ? "#f0f0f0" : '#9fa2e3' }}>
-                <CheckIcon color="primary" style={{ color: selectedCards.indexOf('In Progress') == -1 ? "grey" : '#303f9f' }} />
-              </IconButton>
+              <Typography className={classes.heading} style={{ alignSelf: "center" }}>In<span style={{color:"#007ACE"}} >a</span>Progress</Typography>
+              
+              
+      
+
+              <CircularProgressWithLabel  
+                style={{ color: selectedCards.indexOf('In Progress') == -1 ? "white" : '#303f9f' }}
+                color={ selectedCards.indexOf('In Progress') == -1 ? "white" : '#303f9f'} 
+                value={100}
+                label={openStatus}
+                variant="static"
+                />
+
+
             </Grid>
           </Paper>
         </Grid>
         <Grid item xs={2} sm={2} onClick={() => this.toggleStatus('New')} style={{paddingLeft:"0.5rem"}}>
-          <Paper className={classes.paper} style={{backgroundColor:"#f7a35c",margin: 0,padding: "0.3rem"}}>
+          <Paper className={classes.paper} style={{backgroundColor:"#5C6AC4",margin: 0,padding: "0.3rem"}}>
             <Grid container direction="row" justify="space-between">
-              <Typography className={classes.heading} style={{ alignSelf: "center" }}>New({newStatus})</Typography>
-              <IconButton style={{ background: selectedCards.indexOf('New') == -1 ? "#f0f0f0" : '#9fa2e3' }}>
-                <CheckIcon color="primary" style={{ color: selectedCards.indexOf('New') == -1 ? "grey" : '#303f9f' }} />
-              </IconButton>
+              <Typography className={classes.heading} style={{ alignSelf: "center" }}>New</Typography>
+              
+
+              
+              <CircularProgressWithLabel  
+                style={{ color: selectedCards.indexOf('New') == -1 ? "white" : '#303f9f' }} 
+                color={ selectedCards.indexOf('New') == -1 ? "white" : '#303f9f'}
+                value={100}
+                label={newStatus}
+                variant="static"
+                />
+
             </Grid>
           </Paper>
         </Grid>
         <Grid item xs={2} sm={2} onClick={() => this.toggleStatus('Completed')} style={{paddingLeft:"0.5rem"}}>
-          <Paper className={classes.paper} style={{backgroundColor:"#90ed7d",margin: 0,padding: "0.3rem"}}>
+          <Paper className={classes.paper} style={{backgroundColor:"#50B83C",margin: 0,padding: "0.3rem"}}>
             <Grid container direction="row" justify="space-between">
-              <Typography className={classes.heading} style={{ alignSelf: "center" }}>Completed({closedStatus})</Typography>
-              <IconButton style={{ background: selectedCards.indexOf('Completed') == -1 ? "#f0f0f0" : '#9fa2e3' }}>
-                <CheckIcon color="primary" style={{ color: selectedCards.indexOf('Completed') == -1 ? "grey" : '#303f9f' }} />
-              </IconButton>
+              <Typography className={classes.heading} style={{ alignSelf: "center" }}>Completed</Typography>
+              <CircularProgressWithLabel  
+                style={{ color: selectedCards.indexOf('Completed') == -1 ? "white" : '#303f9f' }}
+                color={ selectedCards.indexOf('Completed') == -1 ? "white" : '#303f9f'}
+                value={100}
+                label={closedStatus}
+                variant="static"
+                />
             </Grid>
           </Paper>
         </Grid>
@@ -534,11 +582,7 @@ class Analytics extends React.Component {
                     >
                       {/* <TableCell align="left" >{ProjectAction.projectName}</TableCell> */}
                       <TableCell align="left" >{ProjectAction.title}</TableCell>
-                      <TableCell align="left" style={{
-                        color:ProjectAction.status =='In Progress'?"#e980d9":ProjectAction.status =='New'?"#f7a35c":"#90ed7d",
-                        fontWeight:"bold",
-                        width:"5rem"
-                        }}  >
+                      <TableCell align="left"  >
                         
                         {ProjectAction.status} 
                         
@@ -549,9 +593,22 @@ class Analytics extends React.Component {
 
 
                     
-                      <TableCell align="left" style={{width: "6rem"}} >{moment(ProjectAction.createdAt).format("YYYY-MM-DD")}</TableCell>
+                      <TableCell align="left"  >{moment(ProjectAction.createdAt).format("YYYY-MM-DD")}</TableCell>
 
-                      <TableCell align="left" style={{width: "6.5rem"}} >{ProjectAction.dueDate}</TableCell>
+                      <TableCell align="left"  >{ProjectAction.dueDate}</TableCell>
+
+                      <TableCell align="left"  >
+                      <CircularProgressWithLabel  
+                        style={{ color: '#303f9f' }}
+                        color='#303f9f'
+                        value={Number(ProjectAction.progress.substring(0,ProjectAction.progress.indexOf("%")))}
+                        label={ProjectAction.progress}
+                        variant="static"
+                        right="33px"
+                        fontSize="0.8125rem"
+                        />
+
+                      </TableCell>
 
                       <TableCell component="th" scope="row" padding="none">
 
@@ -648,12 +705,12 @@ class Analytics extends React.Component {
         <div className={classes.root}>
           <Grid container justify="center" direction="column" alignItems="center" className="panel-dashboard">
             <PageTitle pageTitle={orgName +" Action Tracker"} />
-
+            <Grid xs={12} md={12} alignItems="center" justify="center" style={{marginLeft: 40,marginRight:40}}>
             {this.renderFilter()}
-
+            </Grid>
             <div style={{ height: 20 }}></div>
 
-            <Grid xs={12} md={10} alignItems="center" justify="center">
+            <Grid xs={12} md={12} alignItems="center" justify="center" style={{marginLeft: 40,marginRight:40}}>
               <Card className={classes.card}>
                 <CardContent className="list-project-panellist">
                   
@@ -695,8 +752,9 @@ const rows = [
   { id: "status", numeric: false, disablePadding: false, label: "Status" },
   { id: "priority", numeric: false, disablePadding: false, label: "Priority" },
   { id: "personName", numeric: false, disablePadding: false, label: "Assignee" },
-  { id: "createdAt", numeric: false, disablePadding: false, label: "Date Created" },
+  { id: "createdAt", numeric: false, disablePadding: false, label: "Created On" },
   { id: "dueDate", numeric: false, disablePadding: false, label: "Due Date" },
+  { id: "progress", numeric: false, disablePadding: false, label: "Progress" },
   { id: "actions", numeric: false, disablePadding: false, label: "Action" }
  
 ];
