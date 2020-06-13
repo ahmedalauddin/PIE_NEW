@@ -24,4 +24,4 @@ function SimpleLineChart(props) {
   );
 }
 
-export default withTheme()(SimpleLineChart);
+export default withTheme(SimpleLineChart);

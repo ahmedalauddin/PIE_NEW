@@ -46,7 +46,7 @@ import DatePicker from "react-datepicker";
 import "../../stylesheets/react-datepicker.css";
 import { Paper } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
-
+import Box from '@material-ui/core/Box';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -86,6 +86,27 @@ const monthes=[
   {id:12, name:"December"}   
 ];
 
+function CircularProgressWithCore(props) {
+  return (
+    <Box position="relative" display="inline-flex">
+      <CircularProgress variant="static" {...props} />
+      <Box
+        top={0}
+        left={0}
+        bottom={0}
+        right={0}
+        position="absolute"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <Typography variant="caption" component="div" {...props} >{props.label != undefined? props.label : `${Math.round(
+          props.value,
+        )}%`}</Typography>
+      </Box>
+    </Box>
+  );
+}
 class CircularProgressWithLabel extends React.Component  {
   render(){
 
@@ -464,9 +485,8 @@ class Analytics extends React.Component {
               <Typography className={classes.heading} style={{ alignSelf: "center" }}>Total</Typography>
              
 
-              <CircularProgressWithLabel  
-                style={{ color: selectedCards.length>0 ? "white" : '#303f9f' }} 
-                color={ selectedCards.length>0 ? "white" : '#303f9f'}
+              <CircularProgressWithCore  
+                style={{ color: selectedCards.length>0 ? "white" : '#303f9f',fontWeight:"bold" }} 
                 value={100}
                 label={openStatus+newStatus+closedStatus}
                 variant="static"
@@ -480,16 +500,12 @@ class Analytics extends React.Component {
               <Typography className={classes.heading} style={{ alignSelf: "center" }}>In<span style={{color:"#007ACE"}} >a</span>Progress</Typography>
               
               
-      
-
-              <CircularProgressWithLabel  
-                style={{ color: selectedCards.indexOf('In Progress') == -1 ? "white" : '#303f9f' }}
-                color={ selectedCards.indexOf('In Progress') == -1 ? "white" : '#303f9f'} 
+              <CircularProgressWithCore  
+                style={{ color: selectedCards.indexOf('In Progress') == -1 ? "white" : '#303f9f',fontWeight:"bold" }} 
                 value={100}
                 label={openStatus}
                 variant="static"
                 />
-
 
             </Grid>
           </Paper>
@@ -500,10 +516,8 @@ class Analytics extends React.Component {
               <Typography className={classes.heading} style={{ alignSelf: "center" }}>New</Typography>
               
 
-              
-              <CircularProgressWithLabel  
-                style={{ color: selectedCards.indexOf('New') == -1 ? "white" : '#303f9f' }} 
-                color={ selectedCards.indexOf('New') == -1 ? "white" : '#303f9f'}
+              <CircularProgressWithCore  
+                style={{ color: selectedCards.indexOf('New') == -1 ? "white" : '#303f9f',fontWeight:"bold" }} 
                 value={100}
                 label={newStatus}
                 variant="static"
@@ -516,13 +530,15 @@ class Analytics extends React.Component {
           <Paper className={classes.paper} style={{backgroundColor:"#50B83C",margin: 0,padding: "0.3rem"}}>
             <Grid container direction="row" justify="space-between">
               <Typography className={classes.heading} style={{ alignSelf: "center" }}>Completed</Typography>
-              <CircularProgressWithLabel  
-                style={{ color: selectedCards.indexOf('Completed') == -1 ? "white" : '#303f9f' }}
-                color={ selectedCards.indexOf('Completed') == -1 ? "white" : '#303f9f'}
+
+              <CircularProgressWithCore  
+                style={{ color: selectedCards.indexOf('Completed') == -1 ? "white" : '#303f9f',fontWeight:"bold" }} 
                 value={100}
                 label={closedStatus}
                 variant="static"
                 />
+
+
             </Grid>
           </Paper>
         </Grid>
@@ -598,14 +614,8 @@ class Analytics extends React.Component {
                       <TableCell align="left"  >{ProjectAction.dueDate}</TableCell>
 
                       <TableCell align="left"  >
-                      <CircularProgressWithLabel  
-                        style={{ color: '#303f9f' }}
-                        color='#303f9f'
+                      <CircularProgressWithCore  
                         value={Number(ProjectAction.progress.substring(0,ProjectAction.progress.indexOf("%")))}
-                        label={ProjectAction.progress}
-                        variant="static"
-                        right="33px"
-                        fontSize="0.8125rem"
                         />
 
                       </TableCell>

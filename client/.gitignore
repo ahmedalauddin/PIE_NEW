@@ -4,10 +4,10 @@
 **/node_modules
 node_modules
 client/node_modules
-
+node_modules_bak
 # testing
 /coverage
-
+*.zip
 # WebStorm
 .idea*
 
