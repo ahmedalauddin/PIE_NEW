@@ -67,6 +67,13 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: "assigneeId",
       onDelete: "cascade"
     });
+
+    ProjectAction.belongsToMany(models.Person, {
+      through: "ProjectActionPersons",
+      as: "assigneeIds",
+      foreignKey: "projectActionId",
+      otherKey: "assigneeId"
+    });
   };
   return ProjectAction;
 };

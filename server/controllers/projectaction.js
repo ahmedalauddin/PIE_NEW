@@ -98,6 +98,10 @@ module.exports = {
       {
         model: models.Person,
         as: "person"
+      },
+      {
+        model: models.Person,
+        as: "assigneeIds"
       }
     ]
   })
@@ -297,24 +301,31 @@ module.exports = {
       },
       {
         returning: true,
+        plain: true,
         where: {
           id: id
         }
       })
-        .then(ProjectAction => {
-         logger.debug(`${callerType} Updated ProjectAction`);
-         
-        })
-        .then(() => {
-          if(assigneeId){
-            var userAssignee = models.Person.findByPk(assigneeId,{raw:true}).then((respons)=>{
-              var to = respons.email;
-              var subject = "Valueinfinity - Action Updated.";
-              var text = "Hi "+respons.firstName+", An existing Action '"+title+"' is updated recently that is assigned to you."
-              mailer.sendMail(to,subject,text);
-            })
+        .then(async () => {
+         const projectActionId=req.params.actionId;
+         logger.debug(`${callerType} Updated ProjectAction ${projectActionId}`);
 
-            
+          await models.ProjectActionPerson.destroy({where: {projectActionId}});
+
+          if(req.body.assigneeIds){
+            for(var i=0;i<req.body.assigneeIds.length;i++){
+              const assigneeId=req.body.assigneeIds[i];
+              await models.ProjectActionPerson.create({projectActionId,assigneeId});
+              try{
+                const respons=await models.Person.findByPk(assigneeId,{raw:true});
+                var to = respons.email;
+                var subject = "Valueinfinity - Action Updated.";
+                var text = "Hi "+respons.firstName+", An existing Action '"+title+"' is updated recently that is assigned to you."
+                mailer.sendMail(to,subject,text);
+              }catch(e){logger.error(`error in send project action mail ::: ${e}`)}
+              
+            }
+           
           }
           res.status(201).send({
             success: true,

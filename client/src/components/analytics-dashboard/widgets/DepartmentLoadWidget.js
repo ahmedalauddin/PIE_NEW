@@ -58,10 +58,11 @@ class DepartmentLoadWidget extends Component {
                 enabled: false
               },
             chart: {
-                type: 'bar'
+                type: 'bar',
+                height:"250px",
             },
             title: {
-                text: 'Department Load'
+                text: ''
             },
             xAxis: {
                 categories
@@ -73,7 +74,11 @@ class DepartmentLoadWidget extends Component {
                 }
             },
             legend: {
-                reversed: false
+                reversed: false,
+                align: 'right',
+                verticalAlign: 'top',
+                layout: 'vertical',
+                
             },
             plotOptions: {
                 series: {

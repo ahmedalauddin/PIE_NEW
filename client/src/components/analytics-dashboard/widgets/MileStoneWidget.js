@@ -48,10 +48,11 @@ class MileStoneWidget extends Component {
                 enabled: false
               },
             chart: {
-                type: 'variablepie'
+                type: 'variablepie',
+                height:"250px"
             },
             title: {
-                text: 'Milestones Status'
+                text: ''
             },
             tooltip: {
                 headerFormat: '',

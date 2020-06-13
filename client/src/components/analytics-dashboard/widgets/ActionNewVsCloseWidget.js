@@ -29,10 +29,11 @@ class ActionNewVsCloseWidget extends Component {
                 enabled: false
               },
             chart: {
-                type: 'line'
+                type: 'line',
+                height:"250px"
             },
             title: {
-                text: 'New vs Completed'
+                text: ''
             },
             xAxis: {
                 categories

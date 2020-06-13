@@ -135,7 +135,7 @@ class DashboardFilter extends Component {
 
   render() {
     const { classes } = this.props;
-
+console.log("this.state.status",this.state.status);
     if (this.state.hasError) {
       return <h1>An error occurred.</h1>;
     }

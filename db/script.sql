@@ -183,3 +183,20 @@ ALTER TABLE ProjectActions ADD COLUMN `dueDate` VARCHAR(20) DEFAULT NULL;
 ALTER TABLE OrganizationActions ADD COLUMN `projectActions` json DEFAULT NULL;
 
 ALTER TABLE ProjectActions ADD COLUMN `progress` VARCHAR(20) DEFAULT '0%';
+
+
+DROP TABLE IF EXISTS `mvp2`.`ProjectActionPersons`;
+CREATE TABLE  `mvp2`.`ProjectActionPersons` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `assigneeId` int NOT NULL,
+  `projectActionId` int NOT NULL,
+  `createdAt` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY (`assigneeId`,`projectActionId`),
+  CONSTRAINT `p-a-key_fk1` FOREIGN KEY (`assigneeId`) REFERENCES `Persons` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `p-a-key_fk2` FOREIGN KEY (`projectActionId`) REFERENCES `ProjectActions` (`id`) ON DELETE CASCADE
+) ;
+
+insert into ProjectActionPersons SELECT null,assigneeId, id,now(),now() FROM Projectactions where assigneeId is not null;
+

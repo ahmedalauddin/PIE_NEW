@@ -31,11 +31,11 @@ class AnalyticsDashboard extends Component {
     };
   }
 
-  componentDidCatch(error, info) {
-    console.log("error: " + error + ", info: " + info);
-    this.setState({ hasError: true });
-    return <Redirect to="/Login" />;
-  };
+  // componentDidCatch(error, info) {
+  //   console.log("error: " + error + ", info: " + info);
+  //   this.setState({ hasError: true });
+  //   return <Redirect to="/Login" />;
+  // };
 
   componentDidMount() {
     this.fetchData();
@@ -73,24 +73,37 @@ class AnalyticsDashboard extends Component {
       return(
         <Grid container alignItems="center" justify="center" spacing={24} sm={12}>
              <Grid item xs={12} sm={4}>
+                <Paper style={{margin:1,padding:10}}>
+                  <Typography className={classes.heading} >Project Status</Typography>
+                </Paper>
                 <Paper className={classes.paper} >
+                      
                       {orgProjectStatus ? <ProjectStatusWidget orgProjectStatus={orgProjectStatus}/> : <CircularProgress  />}
                 </Paper>
               </Grid>
 
               <Grid item xs={12} sm={4}>
+                <Paper style={{margin:1,padding:10}}>
+                  <Typography className={classes.heading} >Department Load</Typography>
+                </Paper>
                 <Paper className={classes.paper}>
                 {orgProjectStatus ? <DepartmentLoadWidget orgProjectStatus={orgProjectStatus}/> : <CircularProgress  />}
                 </Paper>
               </Grid>
 
               <Grid item xs={12} sm={4}>
+                <Paper style={{margin:1,padding:10}}>
+                  <Typography className={classes.heading} >Milestones Status</Typography>
+                </Paper>
                 <Paper className={classes.paper}>
                 {orgProjectMilstoneStatus ? <MileStoneWidget orgProjectMilstoneStatus={orgProjectMilstoneStatus} /> : <CircularProgress  />}
                 </Paper>
               </Grid>
 
               <Grid item xs={12} sm={4}>
+                <Paper style={{margin:1,padding:10}}>
+                  <Typography className={classes.heading} >Actions Status</Typography>
+                </Paper>
                 <Paper className={classes.paper}>
                 {orgProjectActionStatus ? <ActionWidget orgProjectActionStatus={orgProjectActionStatus} /> : <CircularProgress  />}
                 </Paper>
@@ -98,12 +111,18 @@ class AnalyticsDashboard extends Component {
               
 
               <Grid item xs={12} sm={4}>
+                <Paper style={{margin:1,padding:10}}>
+                  <Typography className={classes.heading} >New vs Completed</Typography>
+                </Paper>
                 <Paper className={classes.paper}>
                   {actionNewVsClose ? <ActionNewVsCloseWidget actionNewVsClose={actionNewVsClose} /> : <CircularProgress  />}
                 </Paper>
               </Grid>
 
               <Grid item xs={12} sm={4}>
+                <Paper style={{margin:1,padding:10}}>
+                    <Typography className={classes.heading} >Priority wise Milestones</Typography>
+                </Paper>
                 <Paper className={classes.paper}>
                     {orgProjectMilstonePriority ? <MileStonePriorityWidget orgProjectMilstonePriority={orgProjectMilstonePriority} /> : <CircularProgress  />}
                 </Paper>

@@ -22,8 +22,7 @@ import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
-
-
+import Chip from "@material-ui/core/Chip";
 const profileLogo = require("../../images/profile.png");
 
 const styles = theme => ({
@@ -176,10 +175,9 @@ class ProjectAction extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
    this.fetchPersons = this.fetchPersons.bind(this);
-   this.handlePersonChange = this.handlePersonChange.bind(this);
+   
     this.setOrganizationInfo = this.setOrganizationInfo.bind(this);
-    this.handleDelete = this.handleDelete.bind(this);
-    
+  
   }
 
   state = {
@@ -200,23 +198,14 @@ class ProjectAction extends React.Component {
     dueDate:"",
     dateAdded:null,
     projects:defalutPorjectValue,
-    progress:"0%"
+    progress:"0%",
+    assigneeIds:[]
   };
 
   handleChange = name => event => {
     this.setState({ [name]: event.target.value });
   };
 
-  handlePersonChange = event => {
-    this.setState({assigneeId: event.target.value});
-  };
-
-  handleDelete(i) {
-    const { tags } = this.state;
-    this.setState({
-      tags: tags.filter((tag, index) => index !== i),
-    });
-  }
 
   toSentenceCase(string) {
     var sentence = string.split(" ");
@@ -391,6 +380,9 @@ class ProjectAction extends React.Component {
       fetch(`/api/action-project-id/${actionid}`)
         .then(res => res.json())
         .then(action => {
+          const assigneeIds = [];
+          action.assigneeIds && action.assigneeIds.forEach(a=>assigneeIds.push(a.id));
+
           this.setState({
             id: actionid,
             title: action.title,
@@ -404,7 +396,8 @@ class ProjectAction extends React.Component {
             redirectTarget: "/project",
             comments:action.comments?action.comments:[],
             dueDate:action.dueDate,
-            progress:action.progress 
+            progress:action.progress,
+            assigneeIds  
           });
         });
     } else if(OrganizationAction && actionItem){
@@ -433,9 +426,9 @@ class ProjectAction extends React.Component {
 
   renderDetail() {
     const { classes } = this.props;
-    const { tags, suggestions,projects,projectId,projectName } = this.state;
+    const { tags, suggestions,projects,projectId,projectName,assigneeIds } = this.state;
     const OrganizationAction=this.props.location.state.OrganizationAction;
-
+console.log("assigneeIds",assigneeIds);
     return (
 
       <Grid container justify="space-between" direction="row" >
@@ -577,18 +570,30 @@ class ProjectAction extends React.Component {
 
           <Grid item xs={7} sm={7} style={{padding:"1rem"}}>
             <FormControl className={classes.formControl} style={{width:"100%"}} >
-              <InputLabel shrink htmlFor="Assignee">Assignee</InputLabel>
+              <InputLabel shrink htmlFor="assigneeId">Assignee</InputLabel>
               <Select
-                value={this.state.assigneeId && this.state.assigneeId}
-                onChange={this.handlePersonChange}
+                multiple
+                value={assigneeIds}
+                onChange={(event)=>this.setState({assigneeIds: event.target.value})}
                 inputProps={{
                   name: "assigneeId",
                   id: "assigneeId"
                 }}
+
+                renderValue={assigneeIds => (
+                  <div className={classes.chips}>
+                    {assigneeIds.map((id,index) =>
+                      this.state.persons.find(p=>p.id=id) &&
+                      <Chip key={index} 
+                      label={this.state.persons.find(p=>p.id=id).fullName} 
+                      className={classes.chip} />
+                    )}
+                  </div>
+                )}
               >
                 {this.state.persons && this.state.persons.map(person => {
                   return (
-                    person.disabled === 1 ? '' : <MenuItem key={person.id} value={person.id}>
+                    <MenuItem key={person.id} value={person.id}>
                       {person.fullName}
                     </MenuItem>
                   );

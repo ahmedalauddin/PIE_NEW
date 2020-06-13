@@ -63,11 +63,10 @@ class ProjectStatusWidget extends Component {
             credits: {
                 enabled: false
               },
-            chart: {
-                type: 'column'
-            },
+          
             title: {
-                text: 'Project Status'
+                // text: 'Project Status',
+                text: ''
             },
             xAxis: {
                 type: 'category',
@@ -111,11 +110,17 @@ class ProjectStatusWidget extends Component {
                     }
                 }
             },
-            series
+            series,
+
+            chart:{
+                type: 'column',
+                height:"250px",
+            }
         }
         return (
-            <div className="line-series">
+            <div className="line-series" >
                 <HighchartsReact
+                    
                     highcharts={Highcharts}
                     options={options} />
             </div>
