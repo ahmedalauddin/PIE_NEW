@@ -23,6 +23,7 @@ import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import Chip from "@material-ui/core/Chip";
+import Input from "@material-ui/core/Input";
 const profileLogo = require("../../images/profile.png");
 
 const styles = theme => ({
@@ -168,6 +169,21 @@ const styles = theme => ({
 
 const defalutPorjectValue=[ {id:0,title: "Select Project"}];
 const progressList=['0%','10%','20%','30%','40%','50%','60%','70%','80%','90%','100%']
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+  getContentAnchorEl: null,
+  anchorOrigin: {
+    vertical: "bottom",
+    horizontal: "left",
+  }
+};
 
 class ProjectAction extends React.Component {
   constructor(props) {
@@ -428,6 +444,12 @@ class ProjectAction extends React.Component {
 
   }
 
+  getPersonName(id){
+    const {persons} =this.state;
+    const p=persons.find(pp=>pp.id==id);
+
+    return (p && p.fullName) || "";
+  }
 
   renderDetail() {
     const { classes } = this.props;
@@ -579,22 +601,22 @@ console.log("assigneeIds",assigneeIds);
               <Select
                 multiple
                 value={assigneeIds}
+                input={<Input id="assigneeId" />}
                 onChange={(event)=>this.setState({assigneeIds: event.target.value})}
-                inputProps={{
-                  name: "assigneeId",
-                  id: "assigneeId"
-                }}
+               
 
                 renderValue={assigneeIds => (
                   <div className={classes.chips}>
-                    {assigneeIds.map((id,index) =>
-                      this.state.persons.find(p=>p.id=id) &&
-                      <Chip key={index} 
-                      label={this.state.persons.find(p=>p.id=id).fullName} 
+                    {assigneeIds.map((id) =>
+                     
+                      <Chip key={id} 
+                      label={this.getPersonName(id)} 
                       className={classes.chip} />
                     )}
                   </div>
                 )}
+
+                MenuProps={MenuProps}
               >
                 {this.state.persons && this.state.persons.map(person => {
                   return (
