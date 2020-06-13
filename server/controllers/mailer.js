@@ -20,7 +20,7 @@ async sendMail(to,subject,text) {
     secureConnection: false,
     auth: {
       user: "support@value-infinity.com",
-      pass: "RAyman888$"
+      pass: "Bor82990"
     }
   });
 
