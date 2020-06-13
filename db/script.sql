@@ -198,5 +198,5 @@ CREATE TABLE  `mvp2`.`ProjectActionPersons` (
   CONSTRAINT `p-a-key_fk2` FOREIGN KEY (`projectActionId`) REFERENCES `ProjectActions` (`id`) ON DELETE CASCADE
 ) ;
 
-insert into ProjectActionPersons SELECT null,assigneeId, id,now(),now() FROM Projectactions where assigneeId is not null;
+insert into ProjectActionPersons SELECT null,assigneeId, id,now(),now() FROM ProjectActions where assigneeId is not null;
 
