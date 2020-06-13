@@ -250,6 +250,11 @@ class ProjectAction extends React.Component {
       return false;
     }
 
+    if(!projectId){
+      this.setState({ openSnackbar: true,message: "Please Check Required Fields.",});
+      return false;
+    }
+
     this.setState({
       delLoader: true
     })

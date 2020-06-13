@@ -150,7 +150,6 @@ class ProjectActionTable extends React.Component {
     orderBy: "title",
     selected: [],
     ProjectActions: [],
-    ProjectActionPersons: [],
     actionid: null,
     readyToEdit: false,
     fromOrganization: null,
@@ -175,11 +174,11 @@ class ProjectActionTable extends React.Component {
           fromOrganization: false
         }));
 
-        fetch(`/api/project-action-persons/${projectId}`)
+       /* fetch(`/api/project-action-persons/${projectId}`)
         .then(res => res.json())
         .then(ProjectActionPersons => this.setState({
           ProjectActionPersons: ProjectActionPersons
-        }));
+        }));*/
   }
 
   setEditRedirect = actionid => {
@@ -284,7 +283,7 @@ class ProjectActionTable extends React.Component {
 
   render() {
     const { classes } = this.props;
-    const { ProjectActions, ProjectActionPersons, order, orderBy, selected, rowsPerPage, page } = this.state;
+    const { ProjectActions, order, orderBy, selected, rowsPerPage, page } = this.state;
     const emptyRows =
       rowsPerPage - Math.min(rowsPerPage, ProjectActions.length - page * rowsPerPage);
 
@@ -306,18 +305,7 @@ class ProjectActionTable extends React.Component {
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map(ProjectAction => {
                   const isSelected = this.isSelected(ProjectAction.id);
-                  var newPersonName = '';
-                  var newPerson = null;
-                  newPerson = ProjectAction.person && ProjectActionPersons.filter(PAPerson => PAPerson.id === ProjectAction.person.id);
-                  // console.log('newPerson--',newPerson);
-                  if(newPerson && newPerson.length > 0){
-                    // console.log('first Console',newPerson[0]);
-                    if(!newPerson[0].disabled){
-                      // console.log('second Console',newPerson[0]);
-                      newPersonName = newPerson[0].fullName;
-                    }
-                       
-                  }
+                 
                   
                   return (
                     <TableRow
@@ -328,23 +316,13 @@ class ProjectActionTable extends React.Component {
                       selected={isSelected}
                     >
                       
-                      <TableCell align="left" onClick={() => {
-                            this.setEditRedirect(ProjectAction.id);
-                          }}>{ProjectAction.title}</TableCell>
-                      <TableCell align="left" onClick={() => {
-                            this.setEditRedirect(ProjectAction.id);
-                          }}>{ProjectAction.description}</TableCell>
+                      <TableCell align="left" >{ProjectAction.title}</TableCell>
+                      <TableCell align="left" >{ProjectAction.description}</TableCell>
 
-                      <TableCell align="left" onClick={() => {
-                            this.setEditRedirect(ProjectAction.id);
-                          }}>{newPersonName}
-                            </TableCell>
+                      <TableCell align="left" >{ProjectAction.assigneeIds && ProjectAction.assigneeIds.map(a=>a.fullName).join()}</TableCell>
 
 
-                      <TableCell align="left" onClick={() => {
-                            this.setEditRedirect(ProjectAction.id);
-                          }}>{ProjectAction.status}
-                            </TableCell>
+                      <TableCell align="left">{ProjectAction.status}</TableCell>
                      
                       {<TableCell align="left" onClick={() => {
                             this.setEditRedirect(ProjectAction.id);
