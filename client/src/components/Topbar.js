@@ -470,7 +470,7 @@ class Topbar extends Component {
           <Grid container spacing={24} alignItems="baseline">
             <Grid item xs={12} className={classes.flex}>
               <React.Fragment>
-                <img href="#" src={require('../images/logo-black-ico.png')} style={{height: "2.3rem",width: "auto",marginTop: "1rem"}} />
+                <img href="#" src={require('../images/new-logo.png')} style={{height: "2.3rem",width: "auto",marginTop: "1rem"}} />
               
                 <Grid container direction="row" alignItems="center" justify="center" className={classes.tabContainer+' '+this.state.mobileShow} style={{width:"94%",margin:0}}>
                   <Tabs

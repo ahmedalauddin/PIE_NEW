@@ -76,34 +76,30 @@ export const styles = theme => ({
   details: {
     alignItems: "center",
   },
-  column: {
-    flexBasis: "20rem"
-  },
   columntitle: {
-    flexBasis: "25rem"
+    width: "16rem",
+    padding:0
   },
-  columnclient: {
-    flexBasis: "15rem"
+  columnendPersonName: {
+    width: "12rem",
+    padding:0
   },
-
-  columnstatus: {
-    flexBasis: "10rem"
+  columnendstatus: {
+    width: "8rem",
+    padding:0
   },
-  columntarget: {
-    flexBasis: "14rem"
+  columnendpriority: {
+    width: "8rem",
+    padding:0
   },
-  columnstartdate: {
-    flexBasis: "13rem"
+  columnendNormal: {
+    padding:0
   },
-  columnenddate: {
-    flexBasis: "13rem"
+  columnendWide: {
+    width: "11rem",
+    padding:0
   },
-  columnactions: {
-    flexBasis: "9rem"
-  },
-  narrowColumn: {
-    flexBasis: "20rem"
-  },
+  
   link: {
     color: theme.palette.primary.main,
     textDecoration: "none",

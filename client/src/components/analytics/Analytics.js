@@ -574,37 +574,37 @@ class Analytics extends React.Component {
                       selected={isSelected}
                     >
                       {/* <TableCell align="left" >{ProjectAction.projectName}</TableCell> */}
-                      <TableCell align="left" >{ProjectAction.title}</TableCell>
-                      <TableCell align="left"  >
+                      <TableCell align="left" className={classes.columntitle} >{ProjectAction.title}</TableCell>
+                      <TableCell align="left" className={classes.columnendstatus}  >
                         
                         {ProjectAction.status} 
                         
                       </TableCell>
-                      <TableCell align="left" >{ProjectAction.priority}</TableCell>
+                      <TableCell align="left" className={classes.columnendpriority} >{ProjectAction.priority}</TableCell>
 
-                      <TableCell align="left" >{ProjectAction.personName} </TableCell>
+                      <TableCell align="left" className={classes.columnendPersonName} >{ProjectAction.personName} </TableCell>
 
 
                     
-                      <TableCell align="left"  >{moment(ProjectAction.createdAt).format("YYYY-MM-DD")}</TableCell>
+                      <TableCell align="left" className={classes.columnendNormal} >{moment(ProjectAction.createdAt).format("YYYY-MM-DD")}</TableCell>
 
-                      <TableCell align="left"  >{ProjectAction.dueDate}</TableCell>
+                      <TableCell align="left" className={classes.columnendNormal} >{ProjectAction.dueDate}</TableCell>
 
-                      <TableCell align="left"  >
+                      <TableCell align="left"  className={classes.columnendNormal}>
                       <CustomeCircular  
                         value={Number(ProjectAction.progress.substring(0,ProjectAction.progress.indexOf("%")))}
                         />
 
                       </TableCell>
 
-                      <TableCell component="th" scope="row" padding="none">
+                      <TableCell component="th" scope="row" padding="none" className={classes.columnendNormal}>
 
                       {checkPermision('Projects Additional Actions','delete') &&  <span>
                         {
                           this.state.delLoader != 0 && this.state.delLoader == ProjectAction.id ?
                             <CircularProgress />
                             :
-                            <IconButton
+                            <IconButton className={classes.columnendNormal}
                               onClick={() => {
                                 this.deactivate(ProjectAction.id);
                               }}
@@ -614,7 +614,7 @@ class Analytics extends React.Component {
                         }
                         </span>}
 
-                        <IconButton
+                        <IconButton 
                           onClick={() => {
                             this.setEditRedirect(ProjectAction.id,ProjectAction.projectId);
                           }}
@@ -764,7 +764,7 @@ class EnhancedTableHead extends React.Component {
               <TableCell
                 key={row.id}
                 align={row.numeric ? "right" : "left"}
-                padding={row.disablePadding ? "none" : "default"}
+                padding={"none"}
                 sortDirection={orderBy === row.id ? order : false}
               >
                 <Tooltip

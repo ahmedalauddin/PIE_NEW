@@ -78,6 +78,7 @@ class DepartmentLoadWidget extends Component {
                 align: 'right',
                 verticalAlign: 'top',
                 layout: 'vertical',
+                enabled: false
                 
             },
             plotOptions: {

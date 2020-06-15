@@ -326,7 +326,7 @@ module.exports = {
                 var to = respons.email;
                 var subject = "Valueinfinity - Action Updated.";
                 var text = "Hi "+respons.firstName+", An existing Action '"+title+"' is updated recently that is assigned to you."
-                mailer.sendMail(to,subject,text);
+                //mailer.sendMail(to,subject,text);
               }catch(e){logger.error(`error in send project action mail ::: ${e}`)}
               
             }

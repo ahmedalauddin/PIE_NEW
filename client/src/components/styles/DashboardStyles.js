@@ -79,7 +79,7 @@ export const styles = theme => ({
     flexBasis: "20rem"
   },
   columntitle: {
-    flexBasis: "25rem"
+    flexBasis: "22rem"
   },
   columnclient: {
     flexBasis: "15rem"
@@ -98,7 +98,7 @@ export const styles = theme => ({
     flexBasis: "13rem"
   },
   columnactions: {
-    flexBasis: "9rem"
+    flexBasis: "12rem"
   },
   narrowColumn: {
     flexBasis: "20rem"
