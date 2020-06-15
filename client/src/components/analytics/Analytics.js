@@ -582,7 +582,16 @@ class Analytics extends React.Component {
                       </TableCell>
                       <TableCell align="left" className={classes.columnendpriority} >{ProjectAction.priority}</TableCell>
 
-                      <TableCell align="left" className={classes.columnendPersonName} >{ProjectAction.personName} </TableCell>
+                      <TableCell align="left" className={classes.columnendPersonName} >
+                              <ul style={{paddingLeft:15,margin:0}}>
+                                      {
+                                          ProjectAction.personName && ProjectAction.personName.split(",").map((p,key) => <li key={key} >{p.trim()}</li> )
+                                      }
+                                    </ul>
+                        
+                       
+                        
+                        </TableCell>
 
 
                     
