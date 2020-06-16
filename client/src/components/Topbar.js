@@ -470,9 +470,11 @@ class Topbar extends Component {
           <Grid container spacing={24} alignItems="baseline">
             <Grid item xs={12} className={classes.flex}>
               <React.Fragment>
-                <img href="#" src={require('../images/new-logo.png')} style={{height: "2.3rem",width: "auto",marginTop: "1rem"}} />
               
-                <Grid container direction="row" alignItems="center" justify="center" className={classes.tabContainer+' '+this.state.mobileShow} style={{width:"94%",margin:0}}>
+                <Grid container direction="row" alignItems="center" justify="space-between" className={classes.tabContainer+' '+this.state.mobileShow} style={{width:"100%",margin:0}}>
+                  <div style={{width:"5rem",textAlign:"right"}}>
+                    <img href="#" src={require('../images/new-logo.png')} style={{height: "3rem",width: "auto"}} />
+                  </div>
                   <Tabs
                     value={this.current(menuType) || this.state.value}
                     indicatorColor="primary"
@@ -484,12 +486,13 @@ class Topbar extends Component {
                       <Tab key={index} component={Link} to={{pathname: item.pathname, search: this.props.location.search}} classes={{root: classes.tabItem}} label={item.label} />
                     ))}
                   </Tabs>
+                  {isLogin && !this.props.loggedOut &&  
+                  <div  className={classes.profileLogoMenuContainer} align={"right"} onClick={(event)=>this.openPopover(event)}>
+                      <img src={profileLogo} alt="" className={classes.profileLogoMenu} />
+                    
+                  </div>}
                 </Grid>
-                {isLogin && !this.props.loggedOut &&  
-                <div  className={classes.profileLogoMenuContainer} align={"right"} onClick={(event)=>this.openPopover(event)}>
-                    <img src={profileLogo} alt="" className={classes.profileLogoMenu} />
-                   
-                </div>}
+                
                 {isLogin && !this.props.loggedOut && this.renderPopOver()}
                 
               </React.Fragment>

@@ -73,57 +73,57 @@ class AnalyticsDashboard extends Component {
       return(
         <Grid container alignItems="center" justify="center" spacing={24} sm={12}>
              <Grid item xs={12} sm={4}>
-                <Paper style={{margin:1,padding:10}}>
+                <Paper style={{margin:1,padding:10}} className={classes.paperWidget}>
                   <Typography className={classes.heading} >Project Status</Typography>
                 </Paper>
-                <Paper className={classes.paper} >
+                <Paper className={classes.paperWidget} >
                       
                       {orgProjectStatus ? <ProjectStatusWidget orgProjectStatus={orgProjectStatus}/> : <CircularProgress  />}
                 </Paper>
               </Grid>
 
               <Grid item xs={12} sm={4}>
-                <Paper style={{margin:1,padding:10}}>
+                <Paper style={{margin:1,padding:10}} className={classes.paperWidget}>
                   <Typography className={classes.heading} >Department Load</Typography>
                 </Paper>
-                <Paper className={classes.paper}>
+                <Paper className={classes.paperWidget}>
                 {orgProjectStatus ? <DepartmentLoadWidget orgProjectStatus={orgProjectStatus}/> : <CircularProgress  />}
                 </Paper>
               </Grid>
 
               <Grid item xs={12} sm={4}>
-                <Paper style={{margin:1,padding:10}}>
+                <Paper style={{margin:1,padding:10}} className={classes.paperWidget}>
                   <Typography className={classes.heading} >Milestones Status</Typography>
                 </Paper>
-                <Paper className={classes.paper}>
+                <Paper className={classes.paperWidget}>
                 {orgProjectMilstoneStatus ? <MileStoneWidget orgProjectMilstoneStatus={orgProjectMilstoneStatus} /> : <CircularProgress  />}
                 </Paper>
               </Grid>
 
               <Grid item xs={12} sm={4}>
-                <Paper style={{margin:1,padding:10}}>
+                <Paper style={{margin:1,padding:10}} className={classes.paperWidget}>
                   <Typography className={classes.heading} >Actions Status</Typography>
                 </Paper>
-                <Paper className={classes.paper}>
+                <Paper className={classes.paperWidget}>
                 {orgProjectActionStatus ? <ActionWidget orgProjectActionStatus={orgProjectActionStatus} /> : <CircularProgress  />}
                 </Paper>
               </Grid>
               
 
               <Grid item xs={12} sm={4}>
-                <Paper style={{margin:1,padding:10}}>
+                <Paper style={{margin:1,padding:10}} className={classes.paperWidget}>
                   <Typography className={classes.heading} >New vs Completed</Typography>
                 </Paper>
-                <Paper className={classes.paper}>
+                <Paper className={classes.paperWidget}>
                   {actionNewVsClose ? <ActionNewVsCloseWidget actionNewVsClose={actionNewVsClose} /> : <CircularProgress  />}
                 </Paper>
               </Grid>
 
               <Grid item xs={12} sm={4}>
-                <Paper style={{margin:1,padding:10}}>
+                <Paper style={{margin:1,padding:10}} className={classes.paperWidget}>
                     <Typography className={classes.heading} >Priority wise Milestones</Typography>
                 </Paper>
-                <Paper className={classes.paper}>
+                <Paper className={classes.paperWidget}>
                     {orgProjectMilstonePriority ? <MileStonePriorityWidget orgProjectMilstonePriority={orgProjectMilstonePriority} /> : <CircularProgress  />}
                 </Paper>
               </Grid>

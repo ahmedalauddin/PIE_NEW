@@ -31,6 +31,11 @@ import ccss from "../custom.css";
 import ProjectActionTable from "./ProjectActionTable";
 import ProjectDocumentTable from "./ProjectDocumentTable";
 
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import SwipeableViews from 'react-swipeable-views';
+import PageTitle from "../PageTitle";
+
 function TabContainer({ children, dir }) {
   return (
     <Typography component="div" dir={dir} style={{ padding: 8 * 3 }}>
@@ -75,7 +80,8 @@ class Project extends React.Component {
       message: "",
       show : true,
       projectProgress:0,
-      projId:null
+      projId:null,
+      selectedTab:0
     };
   }
 
@@ -155,7 +161,7 @@ class Project extends React.Component {
   }
 
   render() {
-    const { classes } = this.props;
+    const { classes,theme  } = this.props;
     const currentPath = this.props.location.pathname;
     const { expanded,orgName,projId } = this.state;
     
@@ -173,24 +179,67 @@ class Project extends React.Component {
 
         {this.state.show && 
         <div className={classes.root}>
-          <Grid container alignItems="center" justify="center" spacing={24} lg={12}>
+          <Grid container justify="center" direction="column" alignItems="center" className="panel-dashboard">
+          <PageTitle pageTitle={`Organization: ${orgName}`} />
             <Grid item lg={10}>
-              <Paper className={classes.paper}>
-                <Typography
-                  color="secondary"
-                  gutterBottom
+              <Paper className={classes.paper} square>
+              
+                
+                <Tabs
+                  value={this.state.selectedTab}
+                  indicatorColor="primary"
+                  textColor="primary"
+                  onChange={(event, value)=>this.setState({selectedTab:value})}
                 >
-                  Project Detail
-                </Typography>
-                <Typography variant="h7">
-                  Organization: {orgName}
-                </Typography>
-                <ProjectDetail projectId={projId} messages={this.showMessages} progress={this.state.projectProgress} renderNewProject={(id) => this.renderNewProject(id)} />
+                <Tab label="Project Detail" /> 
+                <Tab label="Milestones and Actions" disabled={!checkPermision('Projects Milestones','read')}/>                     
+                <Tab label="Additional Actions" disabled={!checkPermision('Projects Additional Actions','read')} />
+              </Tabs>
+
+              <SwipeableViews
+                index={this.state.selectedTab}
+                onChangeIndex={(index )=>this.setState({selectedTab:index})}
+              >
+                <TabContainer >
+                    <ProjectDetail projectId={projId} messages={this.showMessages} progress={this.state.projectProgress} renderNewProject={(id) => this.renderNewProject(id)} />
+                </TabContainer>
+                
+                <TabContainer >
+                        <div className="gantt-container">
+                          <Gantt projectId={projId} messages={this.showMessages} refresh={this.state.updatedTime} updateProjectProgress={this.updateProjectProgress} />
+                        </div>
+                </TabContainer>
+                
+                      
+                <TabContainer >
+
+                    <Grid container>
+                          <Grid item lg={12}>
+
+                          {checkPermision('Projects Additional Actions','write') && 
+                            <Button variant="contained" color="primary" className={classes.button} component={Link} size="small"
+                              aria-label="Add" to={{ pathname: "/ProjectAction", state: { projectId: projId } }} >
+                              Add New
+                            <AddIcon className={classes.rightIcon} />
+                            </Button>}
+
+
+                        
+                          <ProjectActionTable projectId={projId} messages={this.showMessages} />
+                          </Grid>
+                        </Grid>
+                </TabContainer>
+
+              
+                
+              </SwipeableViews>
+              
               </Paper>
             </Grid>
             {projId === 0 || projId === '' ? '' :
-              <Grid item lg={10} className="page-project">
-                {checkPermision('Projects KPIs','read') &&
+              <Grid item lg={10} className="page-project" style={{marginTop:"1rem"}}>
+
+              {checkPermision('Projects KPIs','read') &&
                 <ExpansionPanel expanded={expanded === "panelKpis"} onChange={this.handlePanelChange("panelKpis")}>
                   <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                     <Typography className={classes.heading}>KPIs</Typography>
@@ -219,7 +268,7 @@ class Project extends React.Component {
                 </ExpansionPanel>
                 }
 
-                {checkPermision('Projects People','read') &&
+               {checkPermision('Projects People','read') &&
                 <ExpansionPanel expanded={expanded === "panelPersons"} onChange={this.handlePanelChange("panelPersons")}>
                   <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                     <Typography className={classes.heading}>People</Typography>
@@ -237,43 +286,7 @@ class Project extends React.Component {
                 </ExpansionPanel>
               }
 
-                {checkPermision('Projects Milestones','read') &&
-                <ExpansionPanel expanded={expanded === "panelMilestones"} onChange={this.handlePanelChange("panelMilestones")}>
-                  <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                    <Typography className={classes.heading}>Milestones and Actions</Typography>
-                  </ExpansionPanelSummary>
-                  <ExpansionPanelDetails>
-                    <div className="gantt-container">
-                      <Gantt projectId={projId} messages={this.showMessages} refresh={this.state.updatedTime} updateProjectProgress={this.updateProjectProgress} />
-                    </div>
-                  </ExpansionPanelDetails>
-                </ExpansionPanel>
-                  }
-
-              {checkPermision('Projects Additional Actions','read') &&  
-                <ExpansionPanel expanded={expanded === "projectAction"} onChange={this.handlePanelChange("projectAction")}>
-                  <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                    <Typography className={classes.heading}>Additional Actions</Typography>
-                  </ExpansionPanelSummary>
-                  <ExpansionPanelDetails>
-                  <Grid container>
-                      <Grid item lg={12}>
-
-                      {checkPermision('Projects Additional Actions','write') && 
-                        <Button variant="contained" color="primary" className={classes.button} component={Link} size="small"
-                          aria-label="Add" to={{ pathname: "/ProjectAction", state: { projectId: projId } }} >
-                          Add New
-                        <AddIcon className={classes.rightIcon} />
-                        </Button>}
-
-
-                    
-                      <ProjectActionTable projectId={projId} messages={this.showMessages} />
-                      </Grid>
-                    </Grid>
-                  </ExpansionPanelDetails>
-                </ExpansionPanel>
-                }
+                
 
                 {checkPermision('Projects Documents','read') &&  
                 <ExpansionPanel expanded={expanded === "projectDocument"} onChange={this.handlePanelChange("projectDocument")}>
@@ -296,6 +309,8 @@ class Project extends React.Component {
                   </ExpansionPanelDetails>
                 </ExpansionPanel>
                   }
+
+               
 
               </Grid>
             }

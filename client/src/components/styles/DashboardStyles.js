@@ -49,6 +49,12 @@ export const styles = theme => ({
     textAlign: "left",
     color: theme.palette.text.secondary
   },
+  paperWidget: {
+    padding: theme.spacing.unit * 3,
+    textAlign: "left",
+    color: theme.palette.text.secondary,
+    boxShadow:"0px 1px 5px 0px #303f9f, 0px 2px 2px 0px rgba(0,0,0,0.14), 0px 3px 1px -2px rgba(0,0,0,0.12);"
+  },
   heading: {
     fontSize: theme.typography.pxToRem(15),
     flexBasis: "15%",
