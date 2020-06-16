@@ -1,18 +1,3 @@
-#!/usr/bin/env node
-
-/**
- * Project:  valueinfinity-mvp
- * File:     /bin/www
- * Created:  2019-01-27 13:43:44
- * Author:   Brad Kaufman
- * -----
- * Modified: 2019-02-20 14:58:10
- * Editor:   Darrin Tisdale
- */
-/* eslint-disable no-console */
-
-// dependencies
-
 var app = require("../app");
 var https = require('https');
 var http = require("http");
@@ -32,13 +17,12 @@ if(config.isHosted()){
   server = https.createServer(options,app);
   server.listen(443);
 
-  var httpApp = express();
-  httpApp.all('*', function(req, res) {  
-      console.log("redirecting to https")
+  var redirectApp = express();
+  redirectApp.all('*', function(req, res) {  
       res.redirect('https://' + req.headers.host + req.url);
   })
-  httpApp.set("port", 80);
-  var httpServer = http.createServer(options,httpApp);
+  redirectApp.set("port", 80);
+  var httpServer = http.createServer(redirectApp);
   httpServer.listen(80);
 
   console.log("Application Hosted")
@@ -74,7 +58,6 @@ function onError(error) {
 
   var bind = typeof port === "string" ? "Pipe " + port : "Port " + port;
 
-  // handle specific listen errors with friendly messages
   switch (error.code) {
   case "EACCES":
     console.error(bind + " requires elevated privileges");
