@@ -91,10 +91,10 @@ const styles = theme => ({
     alignItems: "center",
   },
   column: {
-    flexBasis: "15%",
+    flexBasis: "22%",
   },
   wideColumn: {
-    flexBasis: "33%",
+    flexBasis: "26%",
   },
   wideColumnExpand: {
     flexBasis: "29%",
@@ -294,7 +294,7 @@ class OrgDashboard extends Component {
                                     KPIs
                                   </Typography>
                                 </div>
-                                <div className={classes.column}>
+                                <div className={classes.column} style={{paddingLeft:10}}>
                                   <Typography className={classes.secondaryHeading}>
                                     Actions
                                   </Typography>
@@ -333,7 +333,7 @@ class OrgDashboard extends Component {
                                     
                                   </Typography>
                                 </div>
-                                <div className={classes.column}>
+                                <div className={classes.column} style={{paddingLeft:0,margin:0}}>
                                   <IconButton variant="contained" color="primary" className={classes.button} component={Link} size="small"
                                       aria-label="Add" to={{pathname: "/organization", state: {organizationId: organization.id} }} >
                                       <EditIcon color="primary" />

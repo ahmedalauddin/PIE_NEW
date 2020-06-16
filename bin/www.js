@@ -12,46 +12,61 @@
 /* eslint-disable no-console */
 
 // dependencies
+
 var app = require("../app");
+var https = require('https');
 var http = require("http");
 var config = require("../server/config/config");
+var path = require('path');
+const fs = require('fs');
+const express = require("express");
 
-// get the port from the configuration
-var port = normalizePort(config.get("server.port"));
 
+var server=null;
 if(config.isHosted()){
-  port=80;
+  const options = {
+    key: fs.readFileSync(path.join(__dirname,'ssl','private.key')),
+    cert: fs.readFileSync(path.join(__dirname,'ssl','certificate.crt'))
+  };
+  app.set("port", 443);
+  server = https.createServer(options,app);
+  server.listen(443);
+
+  var httpApp = express();
+  httpApp.all('*', function(req, res) {  
+      console.log("redirecting to https")
+      res.redirect('https://' + req.headers.host + req.url);
+  })
+  httpApp.set("port", 80);
+  var httpServer = http.createServer(options,httpApp);
+  httpServer.listen(80);
+
+  console.log("Application Hosted")
+}else{
+  var port = normalizePort(config.get("server.port"));
+  app.set("port", port);
+  server = http.createServer(app);
+  server.listen(port);
 }
 
-app.set("port", port);
 
-// create http server
-var server = http.createServer(app);
 
-// listen on port
-server.listen(port);
-
-// set up handlers
 server.on("error", onError);
 
-// member functions
 function normalizePort(val) {
   var port = parseInt(val, 10);
 
   if (isNaN(port)) {
-    // named pipe
     return val;
   }
 
   if (port >= 0) {
-    // port number
     return port;
   }
 
   return false;
 }
 
-// event listener for errors
 function onError(error) {
   if (error.syscall !== "listen") {
     throw error;
