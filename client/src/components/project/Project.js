@@ -33,7 +33,6 @@ import ProjectDocumentTable from "./ProjectDocumentTable";
 
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import SwipeableViews from 'react-swipeable-views';
 import PageTitle from "../PageTitle";
 
 function TabContainer({ children, dir }) {
@@ -196,22 +195,19 @@ class Project extends React.Component {
                 <Tab label="Additional Actions" disabled={!checkPermision('Projects Additional Actions','read')} />
               </Tabs>
 
-              <SwipeableViews
-                index={this.state.selectedTab}
-                onChangeIndex={(index )=>this.setState({selectedTab:index})}
-              >
-                <TabContainer >
+              
+               {this.state.selectedTab ==0 && <TabContainer >
                     <ProjectDetail projectId={projId} messages={this.showMessages} progress={this.state.projectProgress} renderNewProject={(id) => this.renderNewProject(id)} />
-                </TabContainer>
+                </TabContainer>}
                 
-                <TabContainer >
+                {this.state.selectedTab ==1 &&<TabContainer >
                         <div className="gantt-container">
                           <Gantt projectId={projId} messages={this.showMessages} refresh={this.state.updatedTime} updateProjectProgress={this.updateProjectProgress} />
                         </div>
-                </TabContainer>
+                </TabContainer>}
                 
                       
-                <TabContainer >
+                {this.state.selectedTab ==2 &&<TabContainer >
 
                     <Grid container>
                           <Grid item lg={12}>
@@ -228,11 +224,11 @@ class Project extends React.Component {
                           <ProjectActionTable projectId={projId} messages={this.showMessages} />
                           </Grid>
                         </Grid>
-                </TabContainer>
+                </TabContainer>}
 
               
                 
-              </SwipeableViews>
+            
               
               </Paper>
             </Grid>

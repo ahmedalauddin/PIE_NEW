@@ -21,37 +21,16 @@ import moment from "moment";
 import { checkPermision } from "../../redux";
 
 const rows = [
-  // { id: "edit", numeric: false, disablePadding: false, label: "" },
   { id: "title", numeric: false, disablePadding: false, label: "Action Item" },
-  {
-    id: "description",
-    numeric: false,
-    disablePadding: false,
-    label: "Description"
-  },
-  { id: "assignedto", numeric: false, disablePadding: false, label: "Assignee" },
   { id: "status", numeric: false, disablePadding: false, label: "Status" },
-  { id: "created", numeric: false, disablePadding: false, label: "Date Added" },
-   { id: "actions", numeric: false, disablePadding: false, label: "Actions" }
-  // { id: "type", numeric: false, disablePadding: false, label: "Type" },
-  // // { id: "tags", numeric: false, disablePadding: false, label: "Tags" },
-  // // { id: "delete", numeric: false, disablePadding: false, label: "Actions" }
+  { id: "priority", numeric: false, disablePadding: false, label: "Priority" },
+  { id: "assignedto", numeric: false, disablePadding: false, label: "Assignee" },
+  { id: "createdAt", numeric: false, disablePadding: false, label: "Created On" },
+  { id: "dueDate", numeric: false, disablePadding: false, label: "Due Date" },
+  { id: "actions", numeric: false, disablePadding: false, label: "Actions" }
 ];
 
-const rowsWithProject = [
-  // { id: "edit", numeric: false, disablePadding: false, label: "" },
-  { id: "title", numeric: false, disablePadding: false, label: "Action Item" },
-  {
-    id: "description",
-    numeric: false,
-    disablePadding: false,
-    label: "Description"
-  },
-  { id: "project", numeric: false, disablePadding: false, label: "Project" },
-  { id: "type", numeric: false, disablePadding: false, label: "Type" },
-  { id: "tags", numeric: false, disablePadding: false, label: "Tags" },
-  { id: "delete", numeric: false, disablePadding: false, label: "Actions" }
-];
+
 
 
 class EnhancedTableHead extends React.Component {
@@ -60,8 +39,8 @@ class EnhancedTableHead extends React.Component {
   };
 
   render() {
-    const { order, orderBy, numSelected, rowCount, showProject } = this.props;
-    const rowArray = showProject ? rowsWithProject : rows;
+    const { order, orderBy, numSelected, rowCount } = this.props;
+    const rowArray =  rows;
 
     return (
       <TableHead>
@@ -71,7 +50,7 @@ class EnhancedTableHead extends React.Component {
               <TableCell
                 key={row.id}
                 align={row.numeric ? "right" : "left"}
-                padding={row.disablePadding ? "none" : "default"}
+                padding={"none"}
                 sortDirection={orderBy === row.id ? order : false}
               >
                 <Tooltip
@@ -102,8 +81,7 @@ EnhancedTableHead.propTypes = {
   onRequestSort: PropTypes.func.isRequired,
   order: PropTypes.string.isRequired,
   orderBy: PropTypes.string.isRequired,
-  rowCount: PropTypes.number.isRequired,
-  showProject: PropTypes.number.isRequired
+  rowCount: PropTypes.number.isRequired
 };
 
 const styles = theme => ({
@@ -136,6 +114,29 @@ const styles = theme => ({
   },
   title: {
     flex: "0 0 auto"
+  },
+  columntitle: {
+    width: "16rem",
+    padding:0
+  },
+  columnendPersonName: {
+    width: "12rem",
+    padding:0
+  },
+  columnendstatus: {
+    width: "8rem",
+    padding:0
+  },
+  columnendpriority: {
+    width: "8rem",
+    padding:0
+  },
+  columnendNormal: {
+    padding:0
+  },
+  columnendWide: {
+    width: "11rem",
+    padding:0
   }
 });
 
@@ -297,7 +298,6 @@ class ProjectActionTable extends React.Component {
               order={order}
               orderBy={orderBy}
               onRequestSort={this.handleRequestSort}
-              showProject={this.state.fromOrganization}
               rowCount={ProjectActions.length}
             />
             <TableBody>
@@ -316,20 +316,25 @@ class ProjectActionTable extends React.Component {
                       selected={isSelected}
                     >
                       
-                      <TableCell align="left" >{ProjectAction.title}</TableCell>
-                      <TableCell align="left" >{ProjectAction.description}</TableCell>
+                      <TableCell align="left" className={classes.columntitle} >{ProjectAction.title}</TableCell>
+                      <TableCell align="left" className={classes.columnendstatus} >{ProjectAction.status}</TableCell>
+                      <TableCell align="left" className={classes.columnendpriority} >{ProjectAction.priority}</TableCell>
+                      <TableCell align="left" className={classes.columnendPersonName} >
+                                <ul style={{paddingLeft:15,margin:0}}>
+                                      {
+                                          ProjectAction.assigneeIds && ProjectAction.assigneeIds.map((p,key) => <li key={key} >{p.fullName.trim()}</li> )
+                                      }
+                                    </ul>
+                        
+                        </TableCell>
 
-                      <TableCell align="left" >{ProjectAction.assigneeIds && ProjectAction.assigneeIds.map(a=>a.fullName).join()}</TableCell>
 
-
-                      <TableCell align="left">{ProjectAction.status}</TableCell>
                      
-                      {<TableCell align="left" onClick={() => {
-                            this.setEditRedirect(ProjectAction.id);
-                          }}>{moment(ProjectAction.createdAt).format("YYYY-MM-DD")}</TableCell>}
+                      <TableCell align="left" className={classes.columnendNormal}>{moment(ProjectAction.createdAt).format("YYYY-MM-DD")}</TableCell>
+                      <TableCell align="left" className={classes.columnendNormal}>{ProjectAction.dueDate}</TableCell>
                      
 
-                       <TableCell component="th" scope="row" padding="none">
+                       <TableCell component="th" scope="row" padding="none" className={classes.columnendNormal}>
                       
                        {checkPermision('Projects Additional Actions','delete') &&  <span>
                         {
@@ -340,6 +345,7 @@ class ProjectActionTable extends React.Component {
                               onClick={() => {
                                 this.deactivate(ProjectAction.id);
                               }}
+                              className={classes.columnendNormal}
                             >
                               <DeleteIcon color="primary" />
                             </IconButton>
