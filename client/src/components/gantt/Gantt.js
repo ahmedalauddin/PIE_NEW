@@ -338,12 +338,16 @@ class Gantt extends React.Component {
           gantt.attachEvent("onGanttRender", function(){
             gantt.message("Gantt chart is completely rendered on the page...")
           }); */
-          console.log("gantTasks --->",gantTasks);
           gantt.init(this.ganttContainer);
           gantt.selectTask=(task)=>{
             console.log("selectTask --->",task);
           }
-
+         
+         /* gantTasks.data.forEach(t=>{
+            if(!t.parent){
+              t.type='project';
+            }  
+          });*/
           gantt.showLightbox=this.showDialogBox;
           gantt.clearAll();
           gantt.parse(gantTasks);
@@ -361,6 +365,7 @@ class Gantt extends React.Component {
     selectedGantTask.progressTxt=this.getTaskProgressInText(selectedGantTask.progress);
     selectedGantTask.start_date=new Date(selectedGantTask.start_date);
     selectedGantTask.end_date=new Date(selectedGantTask.end_date);
+    selectedGantTask.type=selectedGantTask.parent>0?'task':'project';
     
     this.setState({selectedGantTask,openDialog:true,taskNewComment:"",taskcomments:[]});
 
@@ -560,6 +565,30 @@ class Gantt extends React.Component {
                             </MenuItem>
                           );
                         })}
+                      </Select>
+                    </FormControl>
+                  </Grid>
+
+                  <Grid item xs={12} sm={4}>
+                    <FormControl className={classes.formControl}>
+                      <InputLabel shrink htmlFor="status-simple">
+                        Type
+                      </InputLabel>
+                      <Select
+                        value={this.state.selectedGantTask.type}
+                        onChange={(e) =>this.changeSelectedTaskChange('type',e.target.value)}
+                      >
+                       
+                            <MenuItem  value={"project"}>
+                                Project
+                            </MenuItem>
+                            <MenuItem  value={"task"}>
+                              Task
+                            </MenuItem>
+                            <MenuItem value={"milestone"}>
+                              Milestone
+                            </MenuItem>
+                         
                       </Select>
                     </FormControl>
                   </Grid>

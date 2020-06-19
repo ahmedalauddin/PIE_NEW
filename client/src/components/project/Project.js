@@ -80,7 +80,8 @@ class Project extends React.Component {
       show : true,
       projectProgress:0,
       projId:null,
-      selectedTab:0
+      selectedTab:0,
+      tabProcessing:false
     };
   }
 
@@ -162,7 +163,7 @@ class Project extends React.Component {
   render() {
     const { classes,theme  } = this.props;
     const currentPath = this.props.location.pathname;
-    const { expanded,orgName,projId } = this.state;
+    const { expanded,orgName,projId,tabProcessing } = this.state;
     
    
     if(!orgName){
@@ -188,11 +189,14 @@ class Project extends React.Component {
                   value={this.state.selectedTab}
                   indicatorColor="primary"
                   textColor="primary"
-                  onChange={(event, value)=>this.setState({selectedTab:value})}
+                  onChange={(event, value)=>{
+                    this.setState({selectedTab:value,tabProcessing:true})
+                    setTimeout(()=> this.setState({tabProcessing:false}),1000)
+                  }}
                 >
-                <Tab label="Project Detail" /> 
-                <Tab label="Milestones and Actions" disabled={!checkPermision('Projects Milestones','read')}/>                     
-                <Tab label="Additional Actions" disabled={!checkPermision('Projects Additional Actions','read')} />
+                <Tab label="Project Detail" disabled={tabProcessing} /> 
+                <Tab label="Milestones and Actions" disabled={tabProcessing || !checkPermision('Projects Milestones','read')}/>                     
+                <Tab label="Additional Actions" disabled={tabProcessing || !checkPermision('Projects Additional Actions','read')} />
               </Tabs>
 
               
