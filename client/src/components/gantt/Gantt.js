@@ -24,6 +24,9 @@ import DeleteIcon from "@material-ui/icons/Delete";
 
 const profileLogo = require("../../images/profile.png");
 
+gantt.plugins({ 
+  critical_path: true 
+}); 
 function monthScaleTemplate(date){
   let dateToStr = gantt.date.date_to_str("%M");
   let endDate = gantt.date.add(date, 3, "month");
@@ -61,8 +64,11 @@ class Gantt extends React.Component {
         {key: "3", label: "Low"}
       ],
       taskNewComment:"",
-      taskcomments:[]
+      taskcomments:[],
+      highlightCriticalPath:false
     };
+
+    
   }
 
   toSentenceCase(string) {
@@ -702,10 +708,12 @@ class Gantt extends React.Component {
   render() {
     this.setZoom("Quarters");
     const { classes } = this.props;
+    const { highlightCriticalPath } = this.state;
+    
     return (
       <div className={classes.root}>
-        <Grid container spacing={24}>
-          <Grid item xs={12}>
+        <Grid container spacing={24} justify="space-between">
+          <Grid item xs={6}>
             <FormControl className={classes.formControl}>
               <InputLabel shrink id="select-scale-label">Scale</InputLabel>
               <Select
@@ -723,6 +731,22 @@ class Gantt extends React.Component {
               </Select>
             </FormControl>
           </Grid>
+          <Grid item >
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={()=>{
+                    gantt.config.highlight_critical_path=!highlightCriticalPath;
+                    gantt.render(); 
+                    this.setState({highlightCriticalPath:!highlightCriticalPath});
+                  }}
+                  className={classes.secondary}
+                >
+              {highlightCriticalPath?'Hide Critical Path':'Show Critical Path'}
+              </Button>
+              </Grid>
+          </Grid>
+          <Grid container spacing={24}>
           <Grid item xs={12}>
             <div
               ref={ (input) => { this.ganttContainer = input } }
