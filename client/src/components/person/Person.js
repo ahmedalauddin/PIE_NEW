@@ -198,9 +198,8 @@ class Person extends React.Component {
     referrer: "",
     delLoader:false,
     roles:[ 'Select role'],
-    pageTitle:'User'
   };
-
+  
   handleChange = name => event => {
     this.setState({ [name]: event.target.value });
   };
@@ -208,16 +207,16 @@ class Person extends React.Component {
   handleExpandClick = () => {
     this.setState(state => ({ expanded: !state.expanded }));
   };
-
+  
   handleSelectChange = event => {
     this.setState({ [event.target.name]: event.target.value });
   };
 
-
+  
   handleClose = () => {
     this.setState({ openSnackbar: false });
   };
-
+  
   handleClick = Transition => () => {
     this.setState({ openSnackbar: true, Transition });
   };
@@ -227,7 +226,7 @@ class Person extends React.Component {
     this.setState({hasError: true});
     return <Redirect to="/Login" />;
   };
-
+  
   handleSubmit(event) {
     event.preventDefault();
     const personId = this.props.location.state.personId;
@@ -235,7 +234,7 @@ class Person extends React.Component {
     let apiPath = "";
     let successMessage = "";
     let method = "";
-
+    
     let name = this.state.lastName;
     
     if(name == undefined || name == ''){
@@ -267,12 +266,12 @@ class Person extends React.Component {
     if(data.role=='Select role'){
       data.role=null;
     }
-
+    
     if(data.deptId===0){
       data.deptId=null;
     }
 
-
+    
     setTimeout(() => {
       fetch(apiPath, {
         method: method,
@@ -283,15 +282,15 @@ class Person extends React.Component {
        
         data.json().then(res => {
              
-              this.setState({
-                    message: res.message,
+          this.setState({
+            message: res.message,
                     readyToRedirect: true,
                     delLoader: true
                   });
+                })
+                
               })
-
-      })
-      .catch(err => {
+              .catch(err => {
         console.log("Signup error: " + err);
         this.setState({
           message: "Error: " + err,
@@ -302,22 +301,20 @@ class Person extends React.Component {
 
     }, 2000);
   };
-
+  
   componentDidMount() {
-    if(isAdministrator()){
-      this.setState({pageTitle:'Customer User'})
-    }
+   
     let personId = this.props.location.state.personId;
     let orgId = this.props.location.state.organizationId;
     let referrer = this.props.location.state.referrer;
-
+    
     if(!orgId){
       orgId=getOrgId();
     }
-
+    
     if (parseInt(personId) > 0) {
       fetch(`/api/persons/${personId}`)
-        .then(res => res.json())
+      .then(res => res.json())
         .then(person => {
           this.setState({
             id: personId,
@@ -340,11 +337,11 @@ class Person extends React.Component {
         referrer: referrer
       });
     }
-
-    fetch("/api/departments/org/" + orgId)
-      .then(results => results.json())
-      .then(departments => this.setState({ departments:[{id:0,name:"Select department"}].concat(departments) }));
     
+    fetch("/api/departments/org/" + orgId)
+    .then(results => results.json())
+      .then(departments => this.setState({ departments:[{id:0,name:"Select department"}].concat(departments) }));
+      
       fetch("/api/auth/roletypes/" + orgId)
       .then(results => results.json())
       .then(response => {
@@ -361,6 +358,8 @@ class Person extends React.Component {
     const orgId = this.props.location.state.organizationId;
     const currentPath = this.props.location.pathname;
     const organizationName= this.props.location.state.organizationName || getOrgName();
+    const isAdminUser=isAdministrator();
+    
 
     if (this.state.hasError) {
       return <h1>An error occurred.</h1>;
@@ -389,7 +388,7 @@ class Person extends React.Component {
                     variant="h7"
                     color="secondary"
                     gutterBottom
-                  >{this.state.pageTitle}<br/>
+                  >{isAdminUser?'Customer Admin':'User'}<br/>
                   </Typography>
                   <Typography variant="h7">
                     Organization: {organizationName}
@@ -417,7 +416,7 @@ class Person extends React.Component {
                         margin="normal"
                       />
 
-                      <FormControl className={classes.formControl} className={classes.dropDown}>
+                     {!isAdminUser && <FormControl className={classes.formControl} className={classes.dropDown}>
                         <InputLabel shrink htmlFor="department-simple">
                           Role
                         </InputLabel>
@@ -433,7 +432,7 @@ class Person extends React.Component {
                             );
                           })}
                         </Select>
-                      </FormControl> 
+                      </FormControl> }
 
                     </Grid>
                     <Grid item xs={12} sm={6}>
@@ -447,7 +446,7 @@ class Person extends React.Component {
                         className={classes.textField}
                         margin="normal"
                       />
-                      <FormControl className={classes.formControl} className={classes.dropDown} >
+                      {!isAdminUser && <FormControl className={classes.formControl} className={classes.dropDown} >
                         <InputLabel shrink htmlFor="department-simple">
                           Department
                         </InputLabel>
@@ -467,7 +466,7 @@ class Person extends React.Component {
                             );
                           })}
                         </Select>
-                      </FormControl>
+                      </FormControl>}
 
                     </Grid>
                   

@@ -201,11 +201,14 @@ function getStandardMenu(){
 
   const StandardMenu = [];
   
-
+  StandardMenu.push({
+    label: "Dashboard",
+    pathname: "/analytics-dashboard"
+  });
   
   if(checkPermision('Dashboard','read')){
       StandardMenu.push({
-        label: "Dashboard",
+        label: "Project",
         pathname: "/paneldashboard"
       })
   }
@@ -297,8 +300,10 @@ function getAppbarValue(menuType, currentPath)  {
   } else if (menuType === "standard") {
     let menus=[];
     
+    menus.push('Dashboard')
+
     if (checkPermision('Dashboard','read') ) {
-      menus.push('Dashboard')
+      menus.push('Project')
     }
     if (checkPermision('Mind Map','read') ) {
       menus.push('Mind Map')
@@ -319,10 +324,13 @@ function getAppbarValue(menuType, currentPath)  {
     if (currentPath === "/logout") {
       menus.push('logout')
     }
-  
+
+    if (!currentPath ||  currentPath === "/analytics-dashboard") {
+      value = menus.indexOf('Dashboard');
+    }
 
     if (!currentPath ||  currentPath === "/paneldashboard") {
-      value = menus.indexOf('Dashboard');
+      value = menus.indexOf('Project');
     }
     if ( currentPath === "/mindmaplist") {
       value = menus.indexOf('Mind Map');

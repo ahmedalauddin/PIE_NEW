@@ -3,7 +3,7 @@
   "db": {
     "user": "root",
     "password": "test",
-    "name": "mvp2",
+    "name": "mvp24jun",
     "host": "localhost",
     "dialect": "mysql"
   },

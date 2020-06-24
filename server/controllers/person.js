@@ -496,7 +496,7 @@ module.exports = {
     }
     
     let sql = "select P.id, P.fullName, P.email, P.role, P.orgId, \
-              D.name as department, "+sqlFunction+" as projects \
+              D.name as department, "+sqlFunction+" as projects, P.isCustomerAdmin \
               from Persons P \
               left outer join Departments D on P.deptId = D.id \
               where (P.orgId = " + orgId + "  \

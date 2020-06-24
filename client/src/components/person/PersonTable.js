@@ -353,7 +353,7 @@ class PersonTable extends React.Component {
                       </TableCell>
                       <TableCell align="left" >{person.email}</TableCell>
                       <TableCell align="left" >{person.department}</TableCell>
-                      <TableCell align="left" >{person.role}</TableCell>
+                  <TableCell align="left" >{person.isCustomerAdmin && 'Admin'+(person.role ? ', ':'')}{person.role}</TableCell>
                       <TableCell align="left" >
                         <ul style={{padding:15}}>
                         {                          
