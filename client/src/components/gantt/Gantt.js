@@ -103,6 +103,7 @@ class Gantt extends React.Component {
   }
 
   saveSelectedTask=async (event)=>{
+    const {selectedGantTask} = this.state;
     this.setState({
       delLoader: true
     })
@@ -110,8 +111,8 @@ class Gantt extends React.Component {
     let gantTasks = gantt.serialize('json');
     let data=[];
     gantTasks.data.forEach(t=>{
-      if(t.id==this.state.selectedGantTask.id){
-        data.push(this.state.selectedGantTask);
+      if(t.id==selectedGantTask.id){
+        data.push(selectedGantTask);
       }else{
         data.push(t);
       }
@@ -345,6 +346,13 @@ class Gantt extends React.Component {
             gantt.message("Gantt chart is completely rendered on the page...")
           }); */
           gantt.init(this.ganttContainer);
+
+          gantt.templates.rightside_text = function(start, end, task){
+              if(task.type == gantt.config.types.milestone){
+                  return task.text;
+              }
+              return "";
+          };
           gantt.selectTask=(task)=>{
             console.log("selectTask --->",task);
           }
@@ -368,10 +376,11 @@ class Gantt extends React.Component {
   showDialogBox=(tid)=>{
     const projectId = this.props.projectId;
     let selectedGantTask=JSON.parse(JSON.stringify(gantt.getTask(tid)));
+
     selectedGantTask.progressTxt=this.getTaskProgressInText(selectedGantTask.progress);
     selectedGantTask.start_date=new Date(selectedGantTask.start_date);
     selectedGantTask.end_date=new Date(selectedGantTask.end_date);
-    selectedGantTask.type=selectedGantTask.parent>0?'task':'project';
+    //selectedGantTask.type=selectedGantTask.parent>0?'task':'project';
     
     this.setState({selectedGantTask,openDialog:true,taskNewComment:"",taskcomments:[]});
 
