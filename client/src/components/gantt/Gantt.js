@@ -137,7 +137,7 @@ class Gantt extends React.Component {
     
 
     gantTasks.data=data;
-    gantt.clearAll();
+    //gantt.clearAll();
     gantt.parse(gantTasks);
     gantt.render(); 
     this.calculateProgress();
