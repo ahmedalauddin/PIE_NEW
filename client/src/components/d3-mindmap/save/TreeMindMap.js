@@ -603,7 +603,7 @@ class TreeMindMap extends React.Component {
         .select("foreignObject.note")
         .attr("x", 20)
         .attr("y", 10)
-        .attr("width", noteTextWidth)
+        .attr("width", 120)
         .attr("height", noteHeight)
         .append("xhtml:p")
         .text(d => d.data.note)
@@ -1088,10 +1088,10 @@ class TreeMindMap extends React.Component {
     // The "foreignObject" object will display the name text on the node.
     nodeEnter
       .append("foreignObject")
-      .attr("width", 150)
+      .attr("width", 400)
       .attr("height", 50)
-      .attr("x", -80)
-      .attr("y", -50)
+      // .attr("x", -80)
+      // .attr("y", -50)
       .append("xhtml:p")
       .attr("class", "node-title")
       .text(d => d.data.name);

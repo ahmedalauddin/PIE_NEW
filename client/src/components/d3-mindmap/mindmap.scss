@@ -11,6 +11,17 @@
 }
 .node-title {
   font-family: Arial, Verdana;
+  position: relative;
+  left: 15px;
+  top: -12px;
+  font-size: 0.8rem;
+  white-space: nowrap; 
+  width: 100px; 
+  overflow: hidden;
+  text-overflow: ellipsis; 
+}
+.node-title:hover {
+  width: auto; 
 }
 .link {
   fill: none;

@@ -671,9 +671,11 @@ class TreeMindMap extends React.Component {
     node
       .classed("node-selected", true)
       .select("foreignObject")
+      .attr("width", 300)
       .select("p")
       .attr("contenteditable", true)
       .style("background-color", "#ddd")
+      .style("width", "auto")
       .on("blur", function() {
         updateJsonData();
       });
@@ -750,8 +752,10 @@ class TreeMindMap extends React.Component {
       .classed("node-editing", false)
       .classed("node-selected", false)
       .select("foreignObject")
+      .attr("width", 120)
       .select("p")
       .attr("contenteditable", false)
+      .style("width", "100px")
       .style("background-color", null);
 
     this.updateNodeValue(idOfSelectedNode, newTextValue);
@@ -938,10 +942,10 @@ class TreeMindMap extends React.Component {
     // The "foreignObject" object will display the name text on the node.
     nodeEnter
       .append("foreignObject")
-      .attr("width", 150)
+      .attr("width", 120)
       .attr("height", 50)
-      .attr("x", -80)
-      .attr("y", -50)
+      // .attr("x", -80)
+      // .attr("y", -50)
       .append("xhtml:p")
       .attr("class", "node-title")
       .text(d => d.data.name);
