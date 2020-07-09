@@ -19,20 +19,20 @@ class DepartmentLoadWidget extends Component {
             }
 
             if(data.status=='New'){
-                deptload[data.department].approved+=data.total
+                deptload[data.department].approved+=1
             }
             if(data.status=='Cancelled'){
-                deptload[data.department].notApproved+=data.total
+                deptload[data.department].notApproved+=1
             }
             if(data.status=='In Progress'){
-                deptload[data.department].inProgress+=data.total
+                deptload[data.department].inProgress+=1
             }
             if(data.status=='Completed'){
-                deptload[data.department].completed+=data.total
+                deptload[data.department].completed+=1
             }
             
             if(data.status=='On Hold'){
-                deptload[data.department].postponed+=data.total
+                deptload[data.department].postponed+=1
             }
         })
 

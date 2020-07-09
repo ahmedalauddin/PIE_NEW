@@ -604,7 +604,7 @@ class TreeMindMap extends React.Component {
         .attr("id", "links")
         .attr("fill", "none")
         .attr("stroke", "#555")
-        .attr("stroke-opacity", 0.4)
+        .attr("stroke-opacity", 0.2)
         .attr("stroke-width", 1.5);
 
       // 2.1 Create a container for all the nodes in the graph

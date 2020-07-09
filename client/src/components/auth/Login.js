@@ -362,7 +362,7 @@ class Login extends React.Component {
           <div className="content-part">
             <div className="container">
                 <div className="content-left">
-                  <img href="#" src={require('../../images/logo.png')} />
+                  <img href="#" src={require('../../images/new-logo.png')} />
                   <h4>ValueInfinity Innovation Platform </h4>
                   <p></p>
                 </div>
