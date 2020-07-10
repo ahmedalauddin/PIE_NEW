@@ -54,9 +54,9 @@ class AnalyticsDashboard extends Component {
     const orgProjectActionStatus = await res2.json();
     this.setState({orgProjectActionStatus});
 
-    const res3 = await fetch(`/api/orgnization-milstone-status/${orgId}`);
-    const orgProjectMilstoneReponse = await res3.json();
-    this.setState({orgProjectMilstoneStatus:orgProjectMilstoneReponse.progressData,orgProjectMilstonePriority:orgProjectMilstoneReponse.priorityData});
+    //const res3 = await fetch(`/api/orgnization-milstone-status/${orgId}`);
+    //const orgProjectMilstoneReponse = await res3.json();
+    //this.setState({orgProjectMilstoneStatus:orgProjectMilstoneReponse.progressData,orgProjectMilstonePriority:orgProjectMilstoneReponse.priorityData});
 
     const res4 = await fetch(`/api/orgnization-project-action-new-vs-close/${orgId}`);
     const actionNewVsClose = await res4.json();
@@ -96,7 +96,7 @@ class AnalyticsDashboard extends Component {
                   <Typography className={classes.heading} >Milestones Status</Typography>
                 </Paper>
                 <Paper className={classes.paperWidget}>
-                {orgProjectMilstoneStatus ? <MileStoneWidget orgProjectMilstoneStatus={orgProjectMilstoneStatus} /> : <CircularProgress  />}
+                {orgProjectStatus ? <MileStoneWidget orgProjectStatus={orgProjectStatus}  /> : <CircularProgress  />}
                 </Paper>
               </Grid>
 
@@ -124,7 +124,7 @@ class AnalyticsDashboard extends Component {
                     <Typography className={classes.heading} >Priority wise Milestones</Typography>
                 </Paper>
                 <Paper className={classes.paperWidget}>
-                    {orgProjectMilstonePriority ? <MileStonePriorityWidget orgProjectMilstonePriority={orgProjectMilstonePriority} /> : <CircularProgress  />}
+                    {orgProjectStatus ? <MileStonePriorityWidget orgProjectStatus={orgProjectStatus} /> : <CircularProgress  />}
                 </Paper>
               </Grid>
               

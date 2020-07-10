@@ -2,8 +2,10 @@ import React, { Component } from 'react';
 import * as Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import variablePie from "highcharts/modules/variable-pie.js";
+import drilldown from "highcharts/modules/drilldown";
 
 variablePie(Highcharts);
+drilldown(Highcharts)
 const slices={
     '0%': 352685,
     '10%': 352685,
@@ -18,31 +20,90 @@ const slices={
     '100%':602685
 }
 class MileStoneWidget extends Component {
+
+    progressTxt(progress){
+        const progressToken=(progress+"").split(".");
+         if(progressToken[0] && progressToken[0]==1){
+           return "100%";
+         }else if(progressToken[1] && progressToken[1].substring(0,1)>0){
+           return progressToken[1].substring(0,1)+"0%";
+         }
+         return "0%";
+      }
+      getProgress(jsonData){
+        if(!jsonData || !Array.isArray(jsonData.data)){
+            return 100;
+        }
+        let total=0;
+        let counter=0;
+        jsonData.data.forEach(t=>{
+          total+=t.progress; 
+          counter++;      
+        });
+        const progress=(total/counter)*100;
+        return Number(progress.toFixed(2));
+      }
     render() {
-        const {orgProjectMilstoneStatus} = this.props;
-        console.log(orgProjectMilstoneStatus);
-        const  data=[]; /*[{
-                        name: 'APM Benefit',
-                        y: 505370,
-                        z: 90
-                    }, {
-                        name: 'Predictive Analytics',
-                        y: 551500,
-                        z: 50
-                    }, {
-                        name: 'Consolidate and Automate Asset Reporting',
-                        y: 312685,
-                        z: 80
-                    }]*/
+        const {orgProjectStatus} = this.props;
+
+        const orgProjectMilstoneStatus={};
+
+        const  data=[];
 
         
+        orgProjectStatus && orgProjectStatus.forEach(p => {
+            p.jsonData && p.jsonData.data.forEach(t=>{
+                const progressKey= this.progressTxt(t.progress);
+                    if(!orgProjectMilstoneStatus[progressKey]){
+                        orgProjectMilstoneStatus[progressKey]={};
+                        orgProjectMilstoneStatus[progressKey].projects=[];
+                        orgProjectMilstoneStatus[progressKey].projectsAdded=[];
+                        orgProjectMilstoneStatus[progressKey].total=1;
+                        orgProjectMilstoneStatus[progressKey].projectsAdded.push(p.title);
+                        orgProjectMilstoneStatus[progressKey].projects.push({
+                            name: p.title,
+                            y: this.getProgress(p.jsonData),
+                            z: slices[progressKey]
+                        })
+                    }else{
+                        orgProjectMilstoneStatus[progressKey].total=1+orgProjectMilstoneStatus[progressKey].total;
+                        if(orgProjectMilstoneStatus[progressKey].projectsAdded.indexOf(p.title)===-1){
+                            orgProjectMilstoneStatus[progressKey].projectsAdded.push(p.title);
+                            orgProjectMilstoneStatus[progressKey].projects.push({
+                                name: p.title,
+                                y: this.getProgress(p.jsonData),
+                                z: slices[progressKey]
+                            })
+                        }
+                    }  
+
+                    
+              });
+        });
+
+        const drilldownSeries=[];
+
         Object.keys(orgProjectMilstoneStatus).forEach(p=>{
             data.push({
                 name: p,
-                y: orgProjectMilstoneStatus[p],
-                z: slices[p]
-            }); 
+                y: orgProjectMilstoneStatus[p].total,
+                z: slices[p],
+                drilldown: p
+            });
+            drilldownSeries.push({
+                name: p,
+                id: p,
+                minPointSize: 10,
+                innerSize: '30%',
+                zMin: 0,
+                data:orgProjectMilstoneStatus[p].projects
+            }) 
         })
+       
+        const drilldown={
+            series: drilldownSeries
+        }
+        
         const options = {
             credits: {
                 enabled: false
@@ -64,9 +125,12 @@ class MileStoneWidget extends Component {
                 innerSize: '30%',
                 zMin: 0,
                 name: 'milestones',
-                data
-            }]
+                data:data
+            }],
+            drilldown
         }
+
+
         return (
             <div className="line-series">
                 <HighchartsReact

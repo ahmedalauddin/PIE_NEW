@@ -372,11 +372,11 @@ module.exports = {
 
   orgnizationProjectActionStatus(req, res) {
    
-    const sql =  `SELECT pa.status,count(pa.id) as total
+    const sql =  `SELECT pa.status,pa.id,p.title,g.jsonData
                   FROM ProjectActions pa
                   inner join Projects p on p.id=pa.projId
-                  where pa.disabled=0 and p.active=1 and p.orgId=${req.params.id}
-                  group by pa.status`;
+                  left join Gantt g on g.projectId=p.id
+                  where pa.disabled=0 and p.active=1 and p.orgId=${req.params.id}`;
 
     return models.sequelize.query(
       sql, {

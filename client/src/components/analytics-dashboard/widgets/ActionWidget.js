@@ -2,55 +2,96 @@ import React, { Component } from 'react';
 import * as Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import variablePie from "highcharts/modules/variable-pie.js";
-
+import drilldown from "highcharts/modules/drilldown";
 variablePie(Highcharts);
-
+drilldown(Highcharts)
 class ActionWidget extends Component {
+
+    getProgress(jsonData){
+        if(!jsonData || !Array.isArray(jsonData.data)){
+            return 100;
+        }
+        let total=0;
+        let counter=0;
+        jsonData.data.forEach(t=>{
+          total+=t.progress; 
+          counter++;      
+        });
+        const progress=(total/counter)*100;
+        return Number(progress.toFixed(2));
+      }
     render() {
         const { orgProjectActionStatus } = this.props;
-        let newActions=0;
-        let openActions=0;
-        let closeActions=0;
-        let cancelledActions=0;
-        let onHoldActions=0;
-        orgProjectActionStatus.forEach(a=>{
-            if(a.status=="New"){
-                newActions=a.total;
 
-            }else if(a.status=="In Progress"){
-                openActions=a.total;
 
-            }else if(a.status=="Completed"){
-                closeActions=a.total;
+        const projectActionStatusData={};
+
+        
+        orgProjectActionStatus && orgProjectActionStatus.forEach(p => {
+            const status=p.status;
+            
+            if(!projectActionStatusData[status]){
+                projectActionStatusData[status]={};
+                projectActionStatusData[status].projects=[];
+                projectActionStatusData[status].projectsAdded=[];
+                projectActionStatusData[status].total=1;
+                projectActionStatusData[status].projectsAdded.push(p.title);
+                projectActionStatusData[status].projects.push({
+                    name: p.title,
+                    y: this.getProgress(p.jsonData)
+                })
+            }else{
+                projectActionStatusData[status].total=1+projectActionStatusData[status].total;
+                if(projectActionStatusData[status].projectsAdded.indexOf(p.title)===-1){
+                    projectActionStatusData[status].projectsAdded.push(p.title);
+                    projectActionStatusData[status].projects.push({
+                        name: p.title,
+                        y: this.getProgress(p.jsonData)
+                    })
+                }
             }
-            else if(a.status=="On Hold"){
-                onHoldActions=a.total;
-            }
-            else if(a.status=="Cancelled"){
-                cancelledActions=a.total;
-            }
-        })
-        const  data= [{
+        });
+
+
+    
+        const  dataFormat= {'New':{
                     name: 'New',
-                    y: newActions,
                     color:'rgb(124, 181, 236)'
-                }, {
+                }, 'In Progress':{
                     name: 'In Progress',
-                    y: openActions,
                     color:'rgb(144, 237, 125)'
-                }, {
+                }, 'Completed':{
                     name: 'Completed',
-                    y: closeActions,
                     color: 'rgb(128, 133, 233)'
-                }, {
+                }, 'On Hold':{
                     name: 'On Hold',
-                    y: closeActions,
                     color: 'rgb(67, 67, 72)'
-                }, {
+                }, 'Cancelled':{
                     name: 'Cancelled',
-                    y: closeActions,
                     color: 'rgb(247, 163, 92)'
-                }]
+                }}
+
+
+                const drilldownSeries=[];
+                const data=[];
+
+                Object.keys(projectActionStatusData).forEach(p=>{
+                    data.push({
+                        name: dataFormat[p].name,
+                        y: projectActionStatusData[p].total,
+                        color:dataFormat[p].color,
+                        drilldown: p
+                    });
+                    drilldownSeries.push({
+                        name: p,
+                        id: p,
+                        data:projectActionStatusData[p].projects
+                    }) 
+                })
+
+                const drilldown={
+                    series: drilldownSeries
+                }
         const options = {
             credits: {
                 enabled: false
@@ -83,7 +124,8 @@ class ActionWidget extends Component {
                 name: 'Actions',
                 colorByPoint: true,
                 data
-            }]
+            }],
+            drilldown
         }
         return (
             <div className="line-series">
