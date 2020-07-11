@@ -85,8 +85,8 @@ class TreeMindMap extends React.Component {
     //<editor-fold desc="// Constructor set state">
     this.state = {
       hasError: false,
-      width: window.innerWidth * 0.7,         // width for the mind map
-      height: window.innerHeight - 50,       // height for the mind map
+      width: window.innerWidth * 0.6,         // width for the mind map
+      height: window.innerHeight * 0.65,       // height for the mind map
       svg: d3.select(this.svg),
       orgName: getOrgName(),
       orgId: getOrgId(),
@@ -1121,7 +1121,8 @@ class TreeMindMap extends React.Component {
     if (this.state.hasError) {
       return <Redirect to="/Login" />;
     }
-
+    const h = Math.abs(window.innerHeight*0.10);
+    const w = window.innerWidth;
     return (
       <React.Fragment>
         <Grid
@@ -1156,7 +1157,7 @@ class TreeMindMap extends React.Component {
             />
           </Grid>
           {checkPermision('Mind Map','modify') &&
-          <Grid item sm={12}>
+          <Grid item sm={12} style={{paddingTop:0,paddingBottom:0,marginTop:0,marginBottom:0}}>
             <Button
               variant="contained"
               color="secondary"
@@ -1230,16 +1231,9 @@ class TreeMindMap extends React.Component {
             </Button>
             
           </Grid>}
-          {
-            this.state.scrollable ?
-            <Grid item sm={12} className="scrollable">
-              <svg width="900" height="600" ref={svg => (this.svg = svg)} />
-            </Grid>
-            :
-            <Grid item sm={12}>
-              <svg width="900" height="600" ref={svg => (this.svg = svg)} />
-            </Grid>
-          }
+         <Grid item sm={12} style={{margin:0,padding:0}}>
+            <svg  ref={svg => (this.svg = svg)} />
+          </Grid>
         </Grid>
         <Grid item sm={12} style={{overflow:'auto'}}>
           <Snackbar
