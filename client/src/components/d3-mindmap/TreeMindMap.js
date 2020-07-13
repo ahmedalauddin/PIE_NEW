@@ -396,14 +396,14 @@ class TreeMindMap extends React.Component {
 
     const clickedNodeIndex = i;
     const clickedNode = nodes[clickedNodeIndex];
-    const clickedNodeId = d3.select(clickedNode).attr("name");
+    const clickedNodeId = d3.select(clickedNode).attr("id");
     const otherNodes = d3
       .selectAll(nodes)
       .filter((d, i) => i !== clickedNodeIndex);
 
     if (
       currentlySelectedNode.size() > 0 &&
-      currentlySelectedNode.attr("name") === clickedNodeId
+      currentlySelectedNode.attr("id") === clickedNodeId
     ) {
       //console.log("going into edit mode!");
       d3.select(clickedNode)
