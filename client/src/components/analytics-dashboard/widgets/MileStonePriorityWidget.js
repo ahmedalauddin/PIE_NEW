@@ -60,15 +60,15 @@ class MileStonePriorityWidget extends Component {
         });
         const  dataFormat= {"1":{
                     name: 'High',
-                    y: orgProjectMilstoneStatus["1"].total,
+                    y:  orgProjectMilstoneStatus["1"] && orgProjectMilstoneStatus["1"].total,
                     color:'rgb(124, 181, 236)'
                 },"2": {
                     name: 'Normal',
-                    y: orgProjectMilstoneStatus["2"].total,
+                    y: orgProjectMilstoneStatus["2"] && orgProjectMilstoneStatus["2"].total,
                     color:'rgb(144, 237, 125)'
                 },"3": {
                     name: 'Low',
-                    y: orgProjectMilstoneStatus["3"].total,
+                    y: orgProjectMilstoneStatus["3"] && orgProjectMilstoneStatus["3"].total,
                     color: 'rgb(128, 133, 233)'
                 }}
                 const drilldownSeries=[];

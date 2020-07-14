@@ -264,11 +264,24 @@ class OrgDashboard extends Component {
     }
     rowsOptions.push(arr);
 
+    if(this.props.location.state && this.props.location.state.redirect && this.props.location.state.organizationId){
+      return (
+        <Redirect
+          to={{
+            pathname: this.props.location.state.redirect,
+            state: {
+              organizationId:this.props.location.state.organizationId
+            }
+          }}
+        />
+      );
+    }
+
     return (
       <React.Fragment>
         <CssBaseline />
         <DeleteOrganizationDialog open={this.state.openDialog} deleteId={this.state.deleteId} closeFunction={this.handelCloseDialog} delFunction={this.deactivateOrganization} heading="Are you sure you want to delete this Organization?" />
-        <Topbar currentPath={currentPath}/>
+        <Topbar currentPath={"/orgdashboard"}/>
         <div className={classes.root}>
           <Grid container justify="center" direction="column" alignItems="center" className="panel-dashboard"> 
             <PageTitle pageTitle={"All clients and projects"} />

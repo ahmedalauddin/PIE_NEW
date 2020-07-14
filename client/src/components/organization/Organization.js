@@ -248,7 +248,7 @@ class Organization extends React.Component {
     return (
       <React.Fragment>
         <CssBaseline />
-        <Topbar currentPath={"/clientorg"}/>
+        <Topbar currentPath={"/orgdashboard"}/>
         <div className={classes.root} >
           <Grid container alignItems="center" justify="center" spacing={24} lg={12}>
             <Grid item lg={10} className="page-org">

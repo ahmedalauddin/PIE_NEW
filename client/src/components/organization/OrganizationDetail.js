@@ -184,7 +184,8 @@ class OrganizationDetail extends React.Component {
     isNew: false,
     expanded: false,
     labelWidth: 0,
-    delLoader:false
+    delLoader:false,
+    readyToRedirect:false
   };
 
   handleChange = name => event => {
@@ -234,8 +235,10 @@ class OrganizationDetail extends React.Component {
         this.setState({ delLoader: false })
         this.props.messages(successMessage);
         if (orgId > 0){}else {
-           this.setState({ organizationId: organization.id, message: successMessage+'-'+organization.id })
-            this.props.history.push({pathname: '/organization/', state: {organizationId:organization.id }})
+           this.setState({  orgId: organization.orgId,organizationId: organization.id, message: successMessage })
+           // this.props.history.push({pathname: '/organization/', state: {organizationId:organization.id }})
+
+           setTimeout(()=>this.setState({readyToRedirect:true}),500);
         }
      })
         .catch(err => {
@@ -273,11 +276,25 @@ class OrganizationDetail extends React.Component {
 
   render() {
     const { classes } = this.props;
-
+    const {readyToRedirect,organizationId } =this.state;
     if (this.state.hasError) {
       return <h1>An error occurred.</h1>;
     }
 
+
+    if(readyToRedirect){
+      return (
+        <Redirect
+          to={{
+            pathname: "/orgdashboard",
+            state: {
+              redirect:"/organization",
+              organizationId
+            }
+          }}
+        />
+      );
+    }
     return (
       <form onSubmit={this.handleSubmit} noValidate>
         <Typography color="secondary" gutterBottom>
