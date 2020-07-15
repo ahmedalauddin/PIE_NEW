@@ -42,9 +42,10 @@ module.exports = {
       progress: parseInt(req.body.progress),
       startAt: req.params.startDate,
       endAt: req.params.endDate,
-      deptId: req.body.deptId
+      deptId: req.body.deptId,
+      statusId:req.body.statusId
     })
-      .then(p => {
+      .then(async p => {
         // SQL to insert all people from the org into the ProjectPersons table with
         // the project id.
         let projectId = p.id;
@@ -54,10 +55,8 @@ module.exports = {
           "where O.id = P.orgId and Pe.orgId = O.id and P.id = " + projectId + " " +
           "ON DUPLICATE KEY UPDATE personId=values(personId)";
         logger.debug(`${callerType} update ProjectPerson -> sql: ${sql}`);
-
-        return models.sequelize.query(sql);
-      })
-      .then(p => {
+        await models.sequelize.query(`update Projects set statusId=${req.body.statusId} where id = ${projectId}`)
+        await models.sequelize.query(sql);
         logger.info(`${callerType} create -> successful, id: ${p.id}`);
         res.status(201).send(p);
       })
@@ -70,7 +69,7 @@ module.exports = {
   createAndReturnNewProjectId(req, res) {
     // let _obj = util.inspect(req, { showHidden: false, depth: null });
     // logger.debug(`${callerType} create -> request: ${_obj}`);
-    return Project.create({
+    const createObject={
       title: req.body.title,
       description: req.body.description,
       orgId: parseInt(req.body.orgId),
@@ -82,9 +81,11 @@ module.exports = {
       progress: parseInt(req.body.progress),
       startAt: req.body.startAt,
       endAt: req.body.endAt,
-      deptId: req.body.deptId
-    })
-      .then(p => {
+      deptId: req.body.deptId,
+      statusId:req.body.statusId
+    };
+    return Project.create(createObject)
+      .then(async p => {
         // SQL to insert all people from the org into the ProjectPersons table with
         // the project id.
         let projectId = p.id;
@@ -95,12 +96,8 @@ module.exports = {
           "ON DUPLICATE KEY UPDATE personId=values(personId)";
         logger.debug(`${callerType} update ProjectPerson -> sql: ${sql}`);
 
-        // return models.sequelize.query(sql);
-        return projectId;
-      })
-      .then(projectId => {
-        logger.info(`${callerType} createAndReturnNewProjectId -> successful, id: ${projectId}`);
-        // res.status(201).send(p);
+        await models.sequelize.query(`update Projects set statusId=${req.body.statusId} where id = ${projectId}`)
+        await models.sequelize.query(sql);
 
         if(projectId){
           res.status(201).send({
@@ -115,6 +112,7 @@ module.exports = {
           });
         }
       })
+     
       .catch(error => {
         logger.error(`${callerType} create -> error: ${error.stack}`);
         res.status(400).send(error);

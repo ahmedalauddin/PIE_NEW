@@ -165,17 +165,18 @@ class ProjectDetail extends React.Component {
           
 
           if (res.projectId && res.projectId > 0) {
-            this.props.renderNewProject(res.projectId);
-            setTimeout(() => {
-              this.setState({
-                redirectTarget:  '/project/',
-                readyToRedirect: true,
-                // message: response.message,
-                redirectIdProject: res.projectId,
-                delLoader: false
-              });
-              this.fetchProject(res.projectId);
-            },3000);
+            window.location.assign('/project/'+res.projectId )
+            // //this.props.renderNewProject(res.projectId);
+            // setTimeout(() => {
+            //   this.setState({
+            //     redirectTarget:  '/project/',
+            //     readyToRedirect: true,
+            //     // message: response.message,
+            //     redirectIdProject: res.projectId,
+            //     delLoader: false
+            //   });
+            //   //this.fetchProject(res.projectId);
+            //},3000);
           }
         })
         .catch(err => {

@@ -95,10 +95,10 @@ class Project extends React.Component {
     this.setState({ value });
   };
 
-  setOrganizationInfo = async () => {
+  setOrganizationInfo = async (projId) => {
     console.log("called setOrganizationInfo")
     let orgId = getOrgId();
-    let projId = this.props.match.params.id || (this.props.location.state ? this.props.location.state.projId : '');
+    
     if(this.props.match.params.id && isAdministrator()){
       const res = await fetch(`/api/projects/${projId}`);
       const project = await res.json();
@@ -122,7 +122,7 @@ class Project extends React.Component {
   };
 
   renderNewProject = (newprojectid) => {
-    // console.log('newprojectid on project componet', newprojectid);
+    this.setOrganizationInfo(newprojectid)
   }
 
   handleClose = () => {
@@ -134,7 +134,8 @@ class Project extends React.Component {
   };
 
   componentDidMount() {
-    this.setOrganizationInfo();
+    let projId = this.props.match.params.id || (this.props.location.state ? this.props.location.state.projId : '');
+    this.setOrganizationInfo(projId);
     
     
   }
@@ -195,13 +196,13 @@ class Project extends React.Component {
                   }}
                 >
                 <Tab label="Project Detail" disabled={tabProcessing} /> 
-                <Tab label="Milestones and Actions" disabled={tabProcessing || !checkPermision('Projects Milestones','read')}/>                     
-                <Tab label="Additional Actions" disabled={tabProcessing || !checkPermision('Projects Additional Actions','read')} />
+                {projId && <Tab label="Milestones and Actions" disabled={tabProcessing || !checkPermision('Projects Milestones','read')}/>}                     
+                {projId && <Tab label="Additional Actions" disabled={tabProcessing || !checkPermision('Projects Additional Actions','read')} />}
               </Tabs>
 
               
                {this.state.selectedTab ==0 && <TabContainer >
-                    <ProjectDetail projectId={projId} messages={this.showMessages} progress={this.state.projectProgress} renderNewProject={(id) => this.renderNewProject(id)} />
+                    <ProjectDetail  projectId={projId} messages={this.showMessages} progress={this.state.projectProgress} renderNewProject={(id) => this.renderNewProject(id)} />
                 </TabContainer>}
                 
                 {this.state.selectedTab ==1 &&<TabContainer >
