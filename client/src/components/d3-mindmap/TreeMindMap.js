@@ -85,7 +85,7 @@ class TreeMindMap extends React.Component {
     //<editor-fold desc="// Constructor set state">
     this.state = {
       hasError: false,
-      width: window.innerWidth * 0.6,         // width for the mind map
+      width: window.innerWidth * 0.8,         // width for the mind map
       height: window.innerHeight * 0.65,       // height for the mind map
       svg: d3.select(this.svg),
       orgName: getOrgName(),
