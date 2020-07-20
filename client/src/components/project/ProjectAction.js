@@ -213,7 +213,7 @@ class ProjectAction extends React.Component {
     expanded:false,
     dueDate:"",
     dateAdded:null,
-    projects:defalutPorjectValue,
+    projects:null,
     progress:"0%",
     assigneeIds:[]
   };
@@ -535,7 +535,7 @@ console.log("assigneeIds",assigneeIds);
 
 
           <Grid container  direction="row" xs={7} sm={7} style={{padding:"1rem"}}>
-            {!projectName && projects.length>1 && <FormControl className={classes.formControl} style={{width:"100%"}} >
+            {!projectName && Array.isArray(projects) && <FormControl className={classes.formControl} style={{width:"100%"}} >
                 <InputLabel shrink htmlFor="Projects" required>Projects</InputLabel>
                 <Select
                   value={projectId}
