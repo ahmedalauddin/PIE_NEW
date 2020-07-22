@@ -359,7 +359,7 @@ export function getProjectName() {
 export function isAdministrator() {
   let isAdmin = false;
   try {
-    isAdmin = JSON.parse(store.getState().user).organization.owningOrg;
+    isAdmin = JSON.parse(store.getState().user).organization.id===1;
   } catch (error) {
     console.log("isAdministrator: error");
   }
@@ -380,7 +380,7 @@ export function isStandardUser() {
   let userId = 0;
   try {
     const user =JSON.parse(store.getState().user);
-    if(!user.isCustomerAdmin && !user.organization.owningOrg){
+    if(!user.isCustomerAdmin && !isAdministrator()){
       userId=user.id;
     }
   } catch (error) {
@@ -416,7 +416,7 @@ export function checkPermision(module,permission) {
   try {
     const user= JSON.parse(store.getState().user);
     
-    if((user.organization && user.organization.owningOrg) || user.isCustomerAdmin){
+    if(user.isCustomerAdmin || isAdministrator() ){
       return true;
     }
     const acls=user.acls;
