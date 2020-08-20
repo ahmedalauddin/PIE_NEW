@@ -32,7 +32,7 @@
     "aws-sdk": "^2.607.0",
     "babel": "^6.23.0",
     "babel-core": "^6.26.3",
-    "bcrypt": "^3.0.7",
+    "bcrypt": "^5.0.0",
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.19.0",
     "caniuse": "^0.1.3",
